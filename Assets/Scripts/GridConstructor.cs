@@ -26,6 +26,9 @@ public class GridConstructor : MonoBehaviour
 
                 if (cell.content == CellContent.Sidewalk)
                     grid.SetCellBuildable(cell.x, cell.y, true);
+
+                if (cell.content == CellContent.Road)
+                    grid.SetCellBuildable(cell.x, cell.y, true);
             }
         }
     }

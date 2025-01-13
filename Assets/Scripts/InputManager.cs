@@ -53,4 +53,17 @@ public class InputManager : MonoBehaviour
         }
         else Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
     }
+
+    // 2D Cursor to 3D World
+    public Vector3 GetCursorWorldPosition()
+    {
+        if (mainCamera == null) return Vector3.zero;
+
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+            return hit.point;
+        //    Default <¬
+        return Vector3.zero;
+    }
 }
