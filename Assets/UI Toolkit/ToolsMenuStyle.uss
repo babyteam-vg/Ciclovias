@@ -1,0 +1,29 @@
+.button {
+    -unity-font-style: bold-and-italic;
+    width: 175px;
+    height: 50px;
+    font-size: 32px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0;
+    margin-left: 5px;
+    -unity-text-align: middle-center;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    background-color: rgba(81, 159, 226, 0.39);
+    transition-duration: 0.2s;
+}
+
+.button:hover {
+    background-color: rgb(81, 159, 226);
+}

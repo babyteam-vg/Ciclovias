@@ -15,6 +15,10 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2Int> OnRightClickHold;
     public event Action<Vector2Int> OnRightClickUp;
 
+    public event Action<Vector2Int> OnMiddleClickDown;
+    public event Action<Vector2Int> OnMiddleClickHold;
+    public event Action<Vector2Int> OnMiddleClickUp;
+
     // === Methods ===
     private void Update()
     {
@@ -45,6 +49,10 @@ public class InputManager : MonoBehaviour
                 if (Input.GetMouseButtonDown(1)) OnRightClickDown?.Invoke(validGridPosition);
                 if (Input.GetMouseButton(1)) OnRightClickHold?.Invoke(validGridPosition);
                 if (Input.GetMouseButtonUp(1)) OnRightClickUp?.Invoke(validGridPosition);
+                //           Middlle Click <¬
+                if (Input.GetMouseButtonDown(2)) OnMiddleClickDown?.Invoke(validGridPosition);
+                if (Input.GetMouseButton(2)) OnMiddleClickHold?.Invoke(validGridPosition);
+                if (Input.GetMouseButtonUp(2)) OnMiddleClickUp?.Invoke(validGridPosition);
 
                 List<Cell> adjacentCells = grid.GetAdjacentCells(validGridPosition.x, validGridPosition.y);
 
