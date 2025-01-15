@@ -18,17 +18,17 @@ public class GridConstructor : MonoBehaviour
     {
         if (grid == null || customCells == null) return;
 
-        foreach (var cell in customCells)
+        foreach (var customCell in customCells)
         {
-            if (grid.IsWithinBounds(cell.x, cell.y))
+            if (grid.IsWithinBounds(customCell.x, customCell.y))
             {
-                grid.SetCellContent(cell.x, cell.y, cell.content);
-
-                if (cell.content == CellContent.Sidewalk)
-                    grid.SetCellBuildable(cell.x, cell.y, true);
-
-                if (cell.content == CellContent.Road)
-                    grid.SetCellBuildable(cell.x, cell.y, true);
+                grid.SetCellContent(customCell.x, customCell.y, customCell.content);
+                grid.SetCellBuildable(customCell.x, customCell.y, customCell.buildable);
+                grid.SetCellTraffic(customCell.x, customCell.y, customCell.traffic);
+                grid.SetCellGreenery(customCell.x, customCell.y, customCell.greenery);
+                grid.SetCellNearAttraction(customCell.x, customCell.y, customCell.nearAttraction);
+                grid.SetCellSteep(customCell.x, customCell.y, customCell.steep);
+                grid.SetCellIlluminated(customCell.x, customCell.y, customCell.illuminated);
             }
         }
     }
@@ -49,6 +49,9 @@ public class CustomCells
     public int y;
     public CellContent content;
     public bool buildable;
-    public float safety;
-    public float charm;
+    public int traffic;
+    public int greenery;
+    public bool nearAttraction;
+    public bool steep;
+    public bool illuminated;
 }

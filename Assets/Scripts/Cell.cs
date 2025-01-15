@@ -6,7 +6,12 @@ public class Cell
     public int x, y;
     private CellContent content;
     private bool buildable;
-    private float safety, charm;
+    // Safety, Charm and Flow
+    private int traffic; // -Safety / -Flow
+    private int greenery; // +Charm
+    private bool nearAttraction; // +Charm
+    private bool steep; // -Flow
+    private bool illuminated; // +Safety / +Charm
 
     // === Methods ===
     // Constructor
@@ -16,8 +21,11 @@ public class Cell
         this.y = y;
         this.content = CellContent.None;
         this.buildable = false;
-        this.safety = 0.0f;
-        this.charm = 0.0f;
+        this.traffic = 0;
+        this.greenery = 0;
+        this.nearAttraction = false;
+        this.steep = false;
+        this.illuminated = false;
     }
 
     // Setters and Getters
@@ -27,11 +35,21 @@ public class Cell
     public void SetBuildable(bool free) { this.buildable = free; }
     public bool GetBuildable() { return buildable; }
 
-    public void SetSafety(float value) { safety = Mathf.Clamp(value, 0.0f, 1.0f); }
-    public float GetSafety() { return safety; }
+    // Map Editor
+    public void SetTraffic(int value) { traffic = Mathf.Clamp(value, 0, 3); }
+    public int GetTraffic() { return traffic; }
 
-    public void SetCharm(float value) { charm = Mathf.Clamp(value, 0.0f, 1.0f); }
-    public float GetCharm() { return charm; }
+    public void SetGreenery(int value) { greenery = Mathf.Clamp(value, 0, 3); }
+    public int GetGreenery() { return greenery; }
+
+    public void SetNearAttraction(bool value) { nearAttraction = value; }
+    public bool GetNearAttraction() { return nearAttraction; }
+
+    public void SetSteep(bool value) { steep = value; }
+    public bool GetSteep() { return steep; }
+
+    public void SetIlluminated(bool value) { illuminated = value; }
+    public bool GetIlluminated() { return illuminated; }
 }
 
 public enum CellContent

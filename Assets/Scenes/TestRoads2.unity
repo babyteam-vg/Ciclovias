@@ -359,126 +359,195 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1693733546}
   customCells:
+  - x: 1
+    y: 0
+    content: 4
+    buildable: 0
+    traffic: 0
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 0
   - x: 2
     y: 0
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 0
+    nearAttraction: 1
+    steep: 0
+    illuminated: 0
   - x: 3
     y: 0
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 4
     y: 0
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 5
     y: 0
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 1
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 2
     y: 1
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 0
+    nearAttraction: 1
+    steep: 1
+    illuminated: 0
   - x: 3
     y: 1
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 4
     y: 1
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 5
     y: 1
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 1
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 2
     y: 2
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 0
+    nearAttraction: 1
+    steep: 1
+    illuminated: 0
   - x: 3
     y: 2
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 4
     y: 2
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 5
     y: 2
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 1
+    nearAttraction: 0
+    steep: 1
+    illuminated: 1
   - x: 3
     y: 3
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 0
   - x: 4
     y: 3
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 5
     y: 3
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 6
     y: 3
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 1
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 4
     y: 4
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 5
     y: 4
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 6
     y: 4
     content: 1
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 2
+    greenery: 0
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
   - x: 7
     y: 4
     content: 2
-    buildable: 0
-    safety: 0
-    charm: 0
+    buildable: 1
+    traffic: 0
+    greenery: 1
+    nearAttraction: 0
+    steep: 0
+    illuminated: 1
 --- !u!4 &285554826
 Transform:
   m_ObjectHideFlags: 0
@@ -749,7 +818,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686050530}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81c876352910a03488d7be653f844eaa, type: 3}
   m_Name: 
@@ -779,6 +848,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1693733547}
   - component: {fileID: 1693733546}
+  - component: {fileID: 1693733548}
   m_Layer: 3
   m_Name: Grid Manager
   m_TagString: Untagged
@@ -816,6 +886,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1693733548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693733545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69eb7ba1fe7ac7649b62d554026bcf6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1693733546}
+  trafficWeight: 0.5
+  greeneryWeight: 0.5
+  nearAttractionWeight: 0.5
+  steepWeight: 0.5
+  illuminationWeight: 0.5
 --- !u!1 &1798297574
 GameObject:
   m_ObjectHideFlags: 0
