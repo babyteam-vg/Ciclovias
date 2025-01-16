@@ -284,7 +284,7 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &147625065
+--- !u!1 &163933847
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -292,34 +292,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 147625067}
-  - component: {fileID: 147625066}
+  - component: {fileID: 163933849}
+  - component: {fileID: 163933848}
   m_Layer: 0
-  m_Name: ToolManager
+  m_Name: Pathfinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &147625066
+--- !u!114 &163933848
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147625065}
+  m_GameObject: {fileID: 163933847}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dde9f7c745ed2a4abccd15555bae4ae, type: 3}
+  m_Script: {fileID: 11500000, guid: b942cb28a267d9149a09f08f988ec1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &147625067
+  graph: {fileID: 53937429}
+--- !u!4 &163933849
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147625065}
+  m_GameObject: {fileID: 163933847}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -366,7 +367,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 0
   - x: 2
     y: 0
@@ -375,7 +376,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 1
-    steep: 0
+    waitingPoint: 0
     illuminated: 0
   - x: 3
     y: 0
@@ -384,7 +385,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 4
     y: 0
@@ -393,7 +394,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 5
     y: 0
@@ -402,7 +403,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 1
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 2
     y: 1
@@ -411,7 +412,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 1
-    steep: 1
+    waitingPoint: 0
     illuminated: 0
   - x: 3
     y: 1
@@ -420,7 +421,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 4
     y: 1
@@ -429,7 +430,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 5
     y: 1
@@ -438,7 +439,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 1
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 2
     y: 2
@@ -447,7 +448,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 1
-    steep: 1
+    waitingPoint: 0
     illuminated: 0
   - x: 3
     y: 2
@@ -456,7 +457,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 4
     y: 2
@@ -465,7 +466,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 5
     y: 2
@@ -474,7 +475,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 1
     nearAttraction: 0
-    steep: 1
+    waitingPoint: 0
     illuminated: 1
   - x: 3
     y: 3
@@ -483,7 +484,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 0
   - x: 4
     y: 3
@@ -492,7 +493,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 5
     y: 3
@@ -501,7 +502,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 6
     y: 3
@@ -510,7 +511,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 1
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 4
     y: 4
@@ -519,7 +520,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 5
     y: 4
@@ -528,7 +529,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 6
     y: 4
@@ -537,7 +538,7 @@ MonoBehaviour:
     traffic: 2
     greenery: 0
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
   - x: 7
     y: 4
@@ -546,7 +547,7 @@ MonoBehaviour:
     traffic: 0
     greenery: 1
     nearAttraction: 0
-    steep: 0
+    waitingPoint: 0
     illuminated: 1
 --- !u!4 &285554826
 Transform:
@@ -900,9 +901,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1693733546}
   trafficWeight: 0.5
+  dangerWeight: 0.5
   greeneryWeight: 0.5
+  revulsionWeight: 0.5
   nearAttractionWeight: 0.5
-  steepWeight: 0.5
+  waitingPointWeight: 0.5
   illuminationWeight: 0.5
 --- !u!1 &1798297574
 GameObject:
@@ -1057,7 +1060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1993311861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1097,9 +1100,9 @@ SceneRoots:
   - {fileID: 1686050531}
   - {fileID: 90856028}
   - {fileID: 1693733547}
-  - {fileID: 53937428}
   - {fileID: 285554826}
-  - {fileID: 147625067}
+  - {fileID: 53937428}
+  - {fileID: 163933849}
   - {fileID: 451904237}
   - {fileID: 718550411}
   - {fileID: 1609906039}

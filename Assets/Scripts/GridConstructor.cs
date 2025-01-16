@@ -27,7 +27,7 @@ public class GridConstructor : MonoBehaviour
                 grid.SetCellTraffic(customCell.x, customCell.y, customCell.traffic);
                 grid.SetCellGreenery(customCell.x, customCell.y, customCell.greenery);
                 grid.SetCellNearAttraction(customCell.x, customCell.y, customCell.nearAttraction);
-                grid.SetCellSteep(customCell.x, customCell.y, customCell.steep);
+                grid.SetCellWaitingPoint(customCell.x, customCell.y, customCell.waitingPoint);
                 grid.SetCellIlluminated(customCell.x, customCell.y, customCell.illuminated);
             }
         }
@@ -52,6 +52,6 @@ public class CustomCells
     public int traffic;
     public int greenery;
     public bool nearAttraction;
-    public bool steep;
+    public bool waitingPoint;
     public bool illuminated;
 }

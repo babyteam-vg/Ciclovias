@@ -9,27 +9,35 @@ public class CellScoresCalculator : MonoBehaviour
 
     [Header("Weights")]
     [Range(0f, 1f)] public float trafficWeight = 0.5f;
+    [Range(0f, 1f)] public float dangerWeight = 0.5f;
     [Range(0f, 1f)] public float greeneryWeight = 0.5f;
+    [Range(0f, 1f)] public float revulsionWeight = 0.5f;
     [Range(0f, 1f)] public float nearAttractionWeight = 0.5f;
-    [Range(0f, 1f)] public float steepWeight = 0.5f;
+    [Range(0f, 1f)] public float waitingPointWeight = 0.5f;
     [Range(0f, 1f)] public float illuminationWeight = 0.5f;
 
     // === Methods ===
     // Safety
     public float CalculateSafety(Cell cell)
     {
-        int traffic = cell.GetTraffic(); // +Traffic, -Safety
-        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated, +Safety
+        int traffic = cell.GetTraffic(); // +Traffic / -Safety
+        int danger = cell.GetDanger(); // +Danger / -Safety
+        int waitingPoint = cell.GetWaitingPoint() ? 1 : 0; // +Waiting Point / +Safety
+        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated / +Safety
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(traffic, 0, 3),
+            NormalizedValue(traffic, 0, 2),
+            NormalizedValue(danger, 0, 2),
+            NormalizedValue(waitingPoint, 0, 1),
             NormalizedValue(illuminated, 0, 1)
         };
 
         float[] weights = new float[]
         {
             trafficWeight,
+            dangerWeight,
+            waitingPointWeight,
             illuminationWeight
         };
 
@@ -39,13 +47,15 @@ public class CellScoresCalculator : MonoBehaviour
     // Charm
     public float CalculateCharm(Cell cell)
     {
-        int greenery = cell.GetGreenery(); // +Greenery, +Charm
-        int nearAttraction = cell.GetNearAttraction() ? 1 : 0; // +Attraction, +Charm
-        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated, +Charm
+        int greenery = cell.GetGreenery(); // +Greenery / +Charm
+        int revulsion = cell.GetRevulsion(); // +Revulsion / -Charm
+        int nearAttraction = cell.GetNearAttraction() ? 1 : 0; // +Near Attraction / +Charm
+        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated / +Charm
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(greenery, 0, 3),
+            NormalizedValue(greenery, 0, 2),
+            NormalizedValue(revulsion, 0, 2),
             NormalizedValue(nearAttraction, 0, 1),
             NormalizedValue(illuminated, 0, 1)
         };
@@ -53,6 +63,7 @@ public class CellScoresCalculator : MonoBehaviour
         float[] weights = new float[]
         {
             greeneryWeight,
+            revulsionWeight,
             nearAttractionWeight,
             illuminationWeight
         };
@@ -63,19 +74,19 @@ public class CellScoresCalculator : MonoBehaviour
     // Flow
     public float CalculateFlow(Cell cell)
     {
-        int traffic = cell.GetTraffic(); // +Traffic, -Flow
-        int steep = cell.GetSteep() ? 1 : 0; // Steep, -Flow
+        int traffic = cell.GetTraffic(); // +Traffic / -Flow
+        int waitingPoint = cell.GetWaitingPoint() ? 1 : 0; // +Waiting Point / -Flow
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(traffic, 0, 3),
-            NormalizedValue(steep, 0, 1)
+            NormalizedValue(traffic, 0, 2),
+            NormalizedValue(waitingPoint, 0, 1)
         };
 
         float[] weights = new float[]
         {
             trafficWeight,
-            steepWeight
+            waitingPointWeight
         };
 
         return MetricValue(normalizedValues, weights);

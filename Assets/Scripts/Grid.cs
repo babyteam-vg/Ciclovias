@@ -69,9 +69,9 @@ public class Grid : MonoBehaviour
     public void SetCellNearAttraction(int x, int y, bool nearAttraction) { gridArray[x, y].SetNearAttraction(nearAttraction); }
     public bool GetCellNearAttraction(int x, int y) { return gridArray[x, y].GetNearAttraction(); }
 
-    // Set and Get Steep
-    public void SetCellSteep(int x, int y, bool steep) { gridArray[x, y].SetSteep(steep); }
-    public bool GetCellSteep(int x, int y) { return gridArray[x, y].GetSteep(); }
+    // Set and Get Waiting Point
+    public void SetCellWaitingPoint(int x, int y, bool waitingPoint) { gridArray[x, y].SetWaitingPoint(waitingPoint); }
+    public bool GetCellWaitingPoint(int x, int y) { return gridArray[x, y].GetWaitingPoint(); }
 
     // Set and Get Illuminated
     public void SetCellIlluminated(int x, int y, bool illuminated) { gridArray[x, y].SetIlluminated(illuminated); }
