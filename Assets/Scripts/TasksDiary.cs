@@ -15,32 +15,26 @@ public class TasksDiary : MonoBehaviour
     }
 
     // OnLaneBuilt
-    private void HandleLaneBuilt(Vector2 gridPosition)
+    private void HandleLaneBuilt(Vector2Int gridPosition)
     {
         foreach (var task in tasksManager.tasks)
         {
             if (!task.completed && task.available)
-            {
-                Vector2 nodePosition = gridPosition;
-
-                if (BelongsToTask(task, nodePosition))
-                    tasksManager.ValidateTask(task);
-            }
+                if (BelongsToTask(task, gridPosition))
+                    tasksManager.CheckIfTaskCompleted(task);
         }
     }
 
     // OnLaneDestroyed
-    private void HandleLaneDestroyed(Vector2 gridPosition)
+    private void HandleLaneDestroyed(Vector2Int gridPosition)
     {
         foreach (var task in tasksManager.tasks)
-        {
             if (task.completed && task.available)
                 tasksManager.CheckIfTaskDecompleted(task);
-        }
     }
 
     // Is the New Node Part of a Task?
-    private bool BelongsToTask(Task task, Vector2 nodePosition)
+    private bool BelongsToTask(Task task, Vector2Int nodePosition)
     {
         Vector2Int gridCell = Vector2Int.FloorToInt(nodePosition);
         return task.info.startCells.Contains(gridCell) || task.info.destinationCells.Contains(gridCell);

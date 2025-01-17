@@ -12,7 +12,7 @@ public class LaneConstructor : MonoBehaviour
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
 
-    public event Action<Vector2> OnLaneBuilt;
+    public event Action<Vector2Int> OnLaneBuilt;
 
     // === Methods ===
     private void Start()
@@ -78,18 +78,14 @@ public class LaneConstructor : MonoBehaviour
     // Add a Node and Its Connections
     private void AddNodeAndConnections(Vector2Int gridPosition)
     {
-        Vector2 centeredPosition = grid.EdgeToMid(gridPosition);
-
-        if (graph.GetNode(centeredPosition) == null)
-            graph.AddNode(centeredPosition);
+        if (graph.GetNode(gridPosition) == null)
+            graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
 
         if (lastCellPosition.HasValue)
         {
-            Vector2 lastCenteredPosition = grid.EdgeToMid(lastCellPosition.Value);
-
-            if (!graph.AreConnected(lastCenteredPosition, centeredPosition))
+            if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
             {
-                graph.AddEdge(lastCenteredPosition, centeredPosition);
+                graph.AddEdge(lastCellPosition.Value, gridPosition);
                 OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
             }
         }

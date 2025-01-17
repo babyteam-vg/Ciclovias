@@ -12,7 +12,7 @@ public class LaneDestructor : MonoBehaviour
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
 
-    public event Action<Vector2> OnLaneDestroyed;
+    public event Action<Vector2Int> OnLaneDestroyed;
 
     // === Methods ===
     private void Start()
@@ -25,7 +25,7 @@ public class LaneDestructor : MonoBehaviour
     // Mouse Input: Down
     private void StartDestroying(Vector2Int gridPosition)
     {
-        if (graph.GetNode(grid.EdgeToMid(gridPosition)) != null)
+        if (graph.GetNode(gridPosition) != null)
         {
             isDestroying = true;
             lastCellPosition = gridPosition;
@@ -39,18 +39,15 @@ public class LaneDestructor : MonoBehaviour
         {
             if (lastCellPosition.HasValue && IsInCriticalArea(gridPosition))
             {
-                Vector2 centeredPosition = grid.EdgeToMid(gridPosition);
-                Vector2 lastCenteredPosition = grid.EdgeToMid(lastCellPosition.Value);
-
-                if (graph.AreConnected(lastCenteredPosition, centeredPosition))
+                if (graph.AreConnected(lastCellPosition.Value, gridPosition))
                 {
-                    graph.RemoveEdge(lastCenteredPosition, centeredPosition);
+                    graph.RemoveEdge(lastCellPosition.Value, gridPosition);
                     OnLaneDestroyed?.Invoke(gridPosition); // Notify Lane Destruction
                 }
                     
 
-                CheckAndRemoveNode(lastCenteredPosition);
-                CheckAndRemoveNode(centeredPosition);
+                CheckAndRemoveNode(lastCellPosition.Value);
+                CheckAndRemoveNode(gridPosition);
 
                 lastCellPosition = gridPosition;
             }
@@ -87,7 +84,7 @@ public class LaneDestructor : MonoBehaviour
     }
 
     // Only Remove a Lonely Node
-    private void CheckAndRemoveNode(Vector2 position)
+    private void CheckAndRemoveNode(Vector2Int position)
     {
         Node node = graph.GetNode(position);
 

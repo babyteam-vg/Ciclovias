@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CellScoresCalculator : MonoBehaviour
+public class CellScoresCalculator
 {
     [SerializeField] private Grid grid;
 
@@ -17,6 +17,8 @@ public class CellScoresCalculator : MonoBehaviour
     [Range(0f, 1f)] public float illuminationWeight = 0.5f;
 
     // === Methods ===
+    public CellScoresCalculator(Grid grid) { this.grid = grid; }
+
     // Safety
     public float CalculateSafety(Cell cell)
     {
@@ -42,6 +44,20 @@ public class CellScoresCalculator : MonoBehaviour
         };
 
         return MetricValue(normalizedValues, weights);
+    }
+
+    public float CalculatePathSafety(List<Vector2Int> path)
+    {
+        float totalSafety = 0f;
+
+        foreach (var position in path)
+        {
+            Cell cell = grid.GetCell(position.x, position.y);
+            if (cell != null)
+                totalSafety += CalculateSafety(cell);
+        }
+
+        return path.Count > 0 ? totalSafety / path.Count : 0f;
     }
 
     // Charm
@@ -71,6 +87,20 @@ public class CellScoresCalculator : MonoBehaviour
         return MetricValue(normalizedValues, weights);
     }
 
+    public float CalculatePathCharm(List<Vector2Int> path)
+    {
+        float totalCharm = 0f;
+
+        foreach (var position in path)
+        {
+            Cell cell = grid.GetCell(position.x, position.y);
+            if (cell != null)
+                totalCharm += CalculateCharm(cell);
+        }
+
+        return path.Count > 0 ? totalCharm / path.Count : 0f;
+    }
+
     // Flow
     public float CalculateFlow(Cell cell)
     {
@@ -90,6 +120,20 @@ public class CellScoresCalculator : MonoBehaviour
         };
 
         return MetricValue(normalizedValues, weights);
+    }
+
+    public float CalculatePathFlow(List<Vector2Int> path)
+    {
+        float totalFlow = 0f;
+
+        foreach (var position in path)
+        {
+            Cell cell = grid.GetCell(position.x, position.y);
+            if (cell != null)
+                totalFlow += CalculateFlow(cell);
+        }
+
+        return path.Count > 0 ? totalFlow / path.Count : 0f;
     }
 
     // [0, 3] -> [0.0, 1.0]

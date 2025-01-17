@@ -7,12 +7,17 @@ public class TasksManager : MonoBehaviour
     [SerializeField] private Graph graph;
 
     private Pathfinder pathfinder;
+    private CellScoresCalculator cellScoresCalculator;
 
     public List<Task> tasks = new List<Task>();
     public List<Task> activeTasks = new List<Task>();
 
     // === Methods ===
-    private void Awake() { pathfinder = new Pathfinder(graph); }
+    private void Awake()
+    {
+        pathfinder = new Pathfinder(graph);
+        cellScoresCalculator = new CellScoresCalculator(grid);
+    }
 
     // Activate a Task
     public void ActivateTask(Task task)
@@ -35,17 +40,17 @@ public class TasksManager : MonoBehaviour
     }
 
     // When a Lane is Built
-    public void ValidateTask(Task task)
+    public void CheckIfTaskCompleted(Task task)
     {
         if (task.completed || !task.available) return;
 
-        Vector2? startNode = FindNodeInCells(task.info.startCells);
-        Vector2? destinationNode = FindNodeInCells(task.info.destinationCells);
+        Vector2Int? startNode = FindNodeInCells(task.info.startCells);
+        Vector2Int? destinationNode = FindNodeInCells(task.info.destinationCells);
 
         if (startNode.HasValue && destinationNode.HasValue)
-        { //                  A* <¬
-            var path = pathfinder.FindPath(startNode.Value, destinationNode.Value);
-            if (path != null)
+        {
+            var (pathFound, path) = pathfinder.FindPath(startNode.Value, destinationNode.Value);
+            if (pathFound && PathMeetsRequirements(path, task))
             {
                 task.completed = true;
                 Debug.Log($"Task '{task.info.title}' Completed!");
@@ -58,25 +63,37 @@ public class TasksManager : MonoBehaviour
     {
         if (!task.completed || !task.available) return;
 
-        Vector2? startNode = FindNodeInCells(task.info.startCells);
-        Vector2? destinationNode = FindNodeInCells(task.info.destinationCells);
+        Vector2Int? startNode = FindNodeInCells(task.info.startCells);
+        Vector2Int? destinationNode = FindNodeInCells(task.info.destinationCells);
 
-        if (!startNode.HasValue || !destinationNode.HasValue ||
-            pathfinder.FindPath(startNode.Value, destinationNode.Value) == null)
+        if (startNode.HasValue && destinationNode.HasValue)
         {
-            task.completed = false;
-            Debug.Log($"Task '{task.info.title}' Decompleted");
+            var (pathFound, path) = pathfinder.FindPath(startNode.Value, destinationNode.Value);
+
+            if (!pathFound || !PathMeetsRequirements(path, task))
+            {
+                task.completed = false;
+                Debug.Log($"Task '{task.info.title}' Decompleted");
+            }
         }
     }
 
+    // Task Requirements
+    private bool PathMeetsRequirements(List<Vector2Int> path, Task task)
+    {
+        float safety = cellScoresCalculator.CalculatePathSafety(path);
+        float charm = cellScoresCalculator.CalculatePathCharm(path);
+        float flow = cellScoresCalculator.CalculatePathFlow(path);
+
+        return safety >= task.info.minSafety && charm >= task.info.minCharm && flow >= task.info.minFlow;
+    }
+
     // 
-    private Vector2? FindNodeInCells(List<Vector2Int> cells)
+    private Vector2Int? FindNodeInCells(List<Vector2Int> cells)
     {
         foreach (var cell in cells)
-        {
-            Vector2 nodePosition = grid.EdgeToMid(cell);
-            if (graph.GetNode(nodePosition) != null) return nodePosition;
-        }
+            if (graph.GetNode(cell) != null) return cell;
+
         return null;
     }
 }

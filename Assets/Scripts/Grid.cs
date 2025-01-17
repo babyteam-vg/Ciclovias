@@ -8,6 +8,7 @@ public class Grid : MonoBehaviour
     public float cellSize;
 
     private Cell[,] gridArray;
+    private CellScoresCalculator cellScoresCalculator;
 
     // === Methods ===
     private void Awake()
@@ -15,12 +16,10 @@ public class Grid : MonoBehaviour
         gridArray = new Cell[width, height];
 
         for (int x = 0; x < width; x++)
-        {
             for (int y = 0; y < height; y++)
-            {
                 gridArray[x, y] = new Cell(x, y);
-            }
-        }
+
+        cellScoresCalculator = new CellScoresCalculator(this);
     }
 
     // Get a Cell
@@ -118,9 +117,7 @@ public class Grid : MonoBehaviour
         for (int x = 0; x <= width; x++) Gizmos.DrawLine(GetWorldPositionFromCell(x, 0), GetWorldPositionFromCell(x, height));
         for (int y = 0; y <= height; y++) Gizmos.DrawLine(GetWorldPositionFromCell(0, y), GetWorldPositionFromCell(width, y));
 
-        CellScoresCalculator cellScoresCalculator = FindObjectOfType<CellScoresCalculator>();
-
-        if (Application.isPlaying && cellScoresCalculator!= null)
+        if (Application.isPlaying && cellScoresCalculator != null)
         {
             for (int x = 0; x < width; x++)
             {

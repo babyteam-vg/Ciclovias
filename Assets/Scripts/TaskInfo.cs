@@ -14,4 +14,8 @@ public class TaskInfo : ScriptableObject
 
     public List<Vector2Int> startCells;
     public List<Vector2Int> destinationCells;
+
+    [Range(0f, 1f)] public float minSafety;
+    [Range(0f, 1f)] public float minCharm;
+    [Range(0f, 1f)] public float minFlow;
 }

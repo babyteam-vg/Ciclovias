@@ -18,3 +18,6 @@ MonoBehaviour:
   - {x: 2, y: 0}
   destinationCells:
   - {x: 6, y: 4}
+  minSafety: 0
+  minCharm: 0
+  minFlow: 0

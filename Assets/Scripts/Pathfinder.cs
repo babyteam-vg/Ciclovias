@@ -12,7 +12,7 @@ public class Pathfinder
     public Pathfinder(Graph graph) { this.graph = graph; }
 
     // A* Algorythm
-    public List<Vector2> FindPath(Vector2 start, Vector2 end)
+    public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int end)
     {
         // Start and End Nodes
         Node startNode = graph.GetNode(start);
@@ -23,10 +23,12 @@ public class Pathfinder
         HashSet<PathNode> closedList = new HashSet<PathNode>();
 
         if (startNode == null || endNode == null)
-            return null;
+            return (false, null);
         //          Add Start to the Open List <¬
         PathNode startPathNode = new PathNode(startNode);
         openList.Add(startPathNode);
+
+        PathNode closestNodeToDestination = startPathNode;
 
         while (openList.Count > 0)
         {
@@ -42,7 +44,10 @@ public class Pathfinder
 
             // End Found
             if (currentNode.node == endNode)
-                return RetracePath(startPathNode, currentNode);
+                return (true, RetracePath(startPathNode, currentNode));
+
+            if (currentNode.hCost < closestNodeToDestination.hCost)
+                closestNodeToDestination = currentNode;
 
             // Process Neighbors
             foreach (Node neighbor in currentNode.node.neighbors)
@@ -67,13 +72,13 @@ public class Pathfinder
             }
         }
 
-        return null;
+        return (false, RetracePath(startPathNode, closestNodeToDestination));
     }
 
     // End to Start (Fittest Path)
-    private List<Vector2> RetracePath(PathNode startNode, PathNode endNode)
+    private List<Vector2Int> RetracePath(PathNode startNode, PathNode endNode)
     {
-        List<Vector2> path = new List<Vector2>();
+        List<Vector2Int> path = new List<Vector2Int>();
         PathNode currentNode = endNode;
 
         while (currentNode != startNode)

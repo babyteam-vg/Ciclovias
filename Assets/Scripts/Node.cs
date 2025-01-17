@@ -3,14 +3,16 @@ using UnityEngine;
 
 public class Node
 {
-    public Vector2 position;
+    public Vector2Int position;
+    public Vector2 worldPosition;
     public List<Node> neighbors;
 
     // === Methods ===
-    // Construcutor
-    public Node(Vector2 position)
+    // Constructor
+    public Node(Vector2Int position, Vector2 worldPosition)
     {
         this.position = position;
+        this.worldPosition = worldPosition;
         this.neighbors = new List<Node>();
     }
 

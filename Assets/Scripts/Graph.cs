@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class Graph : MonoBehaviour
 {
-    private Dictionary<Vector2, Node> nodes;
+    private Dictionary<Vector2Int, Node> nodes;
 
     // === Methods ===
     // Constructor
-    public Graph() { nodes = new Dictionary<Vector2, Node>(); }
+    public Graph() { nodes = new Dictionary<Vector2Int, Node>(); }
 
     // Get a Node
-    public Node GetNode(Vector2 position)
+    public Node GetNode(Vector2Int position)
     {
         nodes.TryGetValue(position, out Node node);
         return node;
     }
 
     // Add a Node
-    public void AddNode(Vector2 position)
+    public void AddNode(Vector2Int position, Vector2 worldPosition)
     {
         if (!nodes.ContainsKey(position))
-            nodes[position] = new Node(position);
+            nodes[position] = new Node(position, worldPosition);
     }
 
     // Remove a Node
-    public void RemoveNode(Vector2 position)
+    public void RemoveNode(Vector2Int position)
     {
         if (nodes.TryGetValue(position, out Node node))
         {
@@ -36,7 +36,7 @@ public class Graph : MonoBehaviour
     }
 
     // Connect 2 Nodes
-    public void AddEdge(Vector2 positionA, Vector2 positionB)
+    public void AddEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
         {
@@ -47,7 +47,7 @@ public class Graph : MonoBehaviour
     }
 
     // Disconnect 2 Nodes
-    public void RemoveEdge(Vector2 positionA, Vector2 positionB)
+    public void RemoveEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
         {
@@ -58,7 +58,7 @@ public class Graph : MonoBehaviour
     }
 
     // Check Connection
-    public bool AreConnected(Vector2 positionA, Vector2 positionB)
+    public bool AreConnected(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
             return nodes[positionA].neighbors.Contains(nodes[positionB]);
@@ -76,12 +76,12 @@ public class Graph : MonoBehaviour
 
         foreach (var node in nodes.Values)
         {
-            Vector3 worldPosition = new Vector3(node.position.x, 0, node.position.y);
+            Vector3 worldPosition = new Vector3(node.worldPosition.x, 0, node.worldPosition.y);
             Gizmos.DrawSphere(worldPosition, 0.2f);
 
             foreach (var neighbor in node.neighbors)
             {
-                Vector3 neighborPosition = new Vector3(neighbor.position.x, 0, neighbor.position.y);
+                Vector3 neighborPosition = new Vector3(neighbor.worldPosition.x, 0, neighbor.worldPosition.y);
                 Gizmos.DrawLine(worldPosition, neighborPosition);
             }
         }
