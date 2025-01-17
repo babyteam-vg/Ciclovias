@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Pathfinder : MonoBehaviour
+public class Pathfinder
 {
-    [SerializeField] private Graph graph;
+    private Graph graph;
 
     // === Methods ===
     // Constructor
-    public Pathfinder(Graph graph)
-    {
-        this.graph = graph;
-    }
+    public Pathfinder(Graph graph) { this.graph = graph; }
 
     // A* Algorythm
     public List<Vector2> FindPath(Vector2 start, Vector2 end)
@@ -70,7 +67,6 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("A* Couldn't Find a Path");
         return null;
     }
 

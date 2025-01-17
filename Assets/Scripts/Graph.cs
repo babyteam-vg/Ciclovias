@@ -69,7 +69,7 @@ public class Graph : MonoBehaviour
     // Get All Nodes
     public List<Node> GetAllNodes() { return new List<Node>(nodes.Values); }
 
-    // Debug Drawing
+    // Drawing the Nodes (Debug)
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;

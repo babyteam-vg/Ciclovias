@@ -136,7 +136,8 @@ public class Grid : MonoBehaviour
                     float charm = cellScoresCalculator.CalculateCharm(cell);
                     float flow = cellScoresCalculator.CalculateFlow(cell);
 
-                    string displayText = $"{initial} {buildable}\nS: {safety:F2}\nC: {charm:F2}\nF: {flow:F2}";
+                    //string displayText = $"{initial} {buildable}\nS: {safety:F2}\nC: {charm:F2}\nF: {flow:F2}";
+                    string displayText = $"{initial}\n{x},{y}";
                     DrawTextGizmo(displayText, position, Color.white);
                 }
             }

@@ -12,6 +12,8 @@ public class LaneConstructor : MonoBehaviour
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
 
+    public event Action<Vector2> OnLaneBuilt;
+
     // === Methods ===
     private void Start()
     {
@@ -86,7 +88,10 @@ public class LaneConstructor : MonoBehaviour
             Vector2 lastCenteredPosition = grid.EdgeToMid(lastCellPosition.Value);
 
             if (!graph.AreConnected(lastCenteredPosition, centeredPosition))
+            {
                 graph.AddEdge(lastCenteredPosition, centeredPosition);
+                OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
+            }
         }
     }
 

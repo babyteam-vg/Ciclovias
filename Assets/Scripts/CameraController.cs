@@ -68,7 +68,7 @@ public class CameraController : MonoBehaviour
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
 
         // Drag
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(2))
         {
             Plane plane = new Plane(Vector3.up, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -77,7 +77,7 @@ public class CameraController : MonoBehaviour
                 dragStartPosition = ray.GetPoint(entry);
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(2))
         {
             Plane plane = new Plane(Vector3.up, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -90,18 +90,18 @@ public class CameraController : MonoBehaviour
         }
 
         // Self Rotate
-        if (Input.GetMouseButtonDown(2))
-            rotateStartPosition = Input.mousePosition;
+        //if (Input.GetMouseButtonDown(2))
+        //    rotateStartPosition = Input.mousePosition;
 
-        if(Input.GetMouseButton(2))
-        {
-            rotatePosition = Input.mousePosition;
+        //if(Input.GetMouseButton(2))
+        //{
+        //    rotatePosition = Input.mousePosition;
 
-            Vector3 difference = rotateStartPosition - rotatePosition;
-            rotateStartPosition = rotatePosition;
+        //    Vector3 difference = rotateStartPosition - rotatePosition;
+        //    rotateStartPosition = rotatePosition;
 
-            newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
-        }               
+        //    newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
+        //}               
     }
 
     // Camera Control w/Keyboard
@@ -122,9 +122,9 @@ public class CameraController : MonoBehaviour
             newPosition += (transform.right * movementSpeed);
 
         // 90° Rotations
-        if (Input.GetKey(KeyCode.Q))
-            newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-        if (Input.GetKey(KeyCode.E))
-            newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
+        //if (Input.GetKey(KeyCode.Q))
+        //    newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+        //if (Input.GetKey(KeyCode.E))
+        //    newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
     }
 }

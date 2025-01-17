@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class LaneDestructor : MonoBehaviour
 
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
+
+    public event Action<Vector2> OnLaneDestroyed;
 
     // === Methods ===
     private void Start()
@@ -40,7 +43,11 @@ public class LaneDestructor : MonoBehaviour
                 Vector2 lastCenteredPosition = grid.EdgeToMid(lastCellPosition.Value);
 
                 if (graph.AreConnected(lastCenteredPosition, centeredPosition))
+                {
                     graph.RemoveEdge(lastCenteredPosition, centeredPosition);
+                    OnLaneDestroyed?.Invoke(gridPosition); // Notify Lane Destruction
+                }
+                    
 
                 CheckAndRemoveNode(lastCenteredPosition);
                 CheckAndRemoveNode(centeredPosition);
