@@ -44,3 +44,20 @@
 .button:active {
     background-color: rgb(250, 238, 198);
 }
+
+.button-icon {
+    height: 108px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    font-size: 80px;
+    -unity-text-align: middle-center;
+    background-color: rgba(168, 63, 72, 0);
+    color: rgb(168, 63, 72);
+    transition-duration: 0.1s;
+}
+
+.button-icon:hover {
+    -unity-font-style: bold;
+}

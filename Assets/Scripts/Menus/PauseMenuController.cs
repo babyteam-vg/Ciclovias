@@ -1,16 +1,17 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class MainMenuController : MonoBehaviour
+public class PauseMenuController : MonoBehaviour
 {
     public VisualElement ui;
 
-    private Button playButton;
+    private Button pauseButton;
+    private bool isPaused = false;
+
+    private Button resumeButton;
     private Button settingsButton;
     private Button exitButton;
 
@@ -19,8 +20,8 @@ public class MainMenuController : MonoBehaviour
 
     public void OnEnable()
     {
-        playButton = ui.Q<Button>("Play");
-        playButton.clicked += OnPlayButtonClicked;
+        resumeButton = ui.Q<Button>("Resume");
+        resumeButton.clicked += OnPlayButtonClicked;
 
         settingsButton = ui.Q<Button>("Settings");
         settingsButton.clicked += OnSettingsButtonClicked;
