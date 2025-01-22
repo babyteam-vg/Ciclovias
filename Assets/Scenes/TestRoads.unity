@@ -132,7 +132,6 @@ GameObject:
   m_Component:
   - component: {fileID: 45018535}
   - component: {fileID: 45018533}
-  - component: {fileID: 45018534}
   m_Layer: 0
   m_Name: Tasks Diary
   m_TagString: Untagged
@@ -152,32 +151,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b219e3da6af017498bcd6680af54860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  laneConstructor: {fileID: 718550410}
-  laneDestructor: {fileID: 718550412}
-  tasksManager: {fileID: 45018534}
---- !u!114 &45018534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 45018532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f50bb074940ad584ba923410edd22ccc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   grid: {fileID: 1693733546}
   graph: {fileID: 53937429}
+  laneConstructor: {fileID: 718550410}
+  laneDestructor: {fileID: 718550412}
   tasks:
-  - available: 1
-    active: 1
-    completed: 0
+  - state: 1
+    pinned: 0
     info: {fileID: 11400000, guid: c3098e89612308645ab09845f6359cec, type: 2}
-  - available: 1
-    active: 1
-    completed: 0
+    currentSafety: 0
+    currentCharm: 0
+    currentFlow: 0
+    completedLane: []
+  - state: 1
+    pinned: 0
     info: {fileID: 11400000, guid: 9131fac06fa76fc4f87f7ac0c00a4986, type: 2}
+    currentSafety: 0
+    currentCharm: 0
+    currentFlow: 0
+    completedLane: []
   activeTasks: []
 --- !u!4 &45018535
 Transform:
@@ -833,6 +825,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1668538571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1668538573}
+  - component: {fileID: 1668538572}
+  m_Layer: 5
+  m_Name: Menu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1668538572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668538571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 8df6ae7446c33e04cb77cd45ea8a4de5, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 11a6e38973f98b24f9e99ea813a19ebf,
+    type: 3}
+  m_SortingOrder: 0
+--- !u!4 &1668538573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668538571}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1686050530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,3 +1181,4 @@ SceneRoots:
   - {fileID: 718550411}
   - {fileID: 1609906039}
   - {fileID: 1993311862}
+  - {fileID: 1668538573}

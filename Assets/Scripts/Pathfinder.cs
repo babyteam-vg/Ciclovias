@@ -16,37 +16,33 @@ public class Pathfinder
     {
         // Start and End Nodes
         Node startNode = graph.GetNode(start);
-        Node endNode = graph.GetNode(end);
-
-        // Open and Closed Lists
-        List<PathNode> openList = new List<PathNode>();
-        HashSet<PathNode> closedList = new HashSet<PathNode>();
-
-        if (startNode == null || endNode == null)
+        if (startNode == null)
             return (false, null);
-        //          Add Start to the Open List <¬
-        PathNode startPathNode = new PathNode(startNode);
-        openList.Add(startPathNode);
 
-        PathNode closestNodeToDestination = startPathNode;
+        Node endNode = graph.GetNode(end);
+        bool endNodeExists = endNode != null;
 
-        while (openList.Count > 0)
+        // Open and Closed Sets
+        var openSet = new SortedSet<PathNode>(new PathNodeComparer());
+        var closedSet = new HashSet<PathNode>();
+        //          Add Start to the Open Set <¬
+        PathNode startPathNode = new PathNode(startNode, (start - end).sqrMagnitude);
+        openSet.Add(startPathNode);
+
+        PathNode closestNodeToDestination = startPathNode; // Negative Case
+
+        while (openSet.Count > 0)
         {
-            // Lowest fCost in the Open List
-            PathNode currentNode = openList[0];
-
-            foreach (PathNode node in openList)
-                if (node.fCost < currentNode.fCost || (node.fCost == currentNode.fCost && node.hCost < currentNode.hCost))
-                    currentNode = node;
-
-            openList.Remove(currentNode);
-            closedList.Add(currentNode);
+            // Get Node w/Lowest fCost
+            PathNode currentNode = openSet.Min;
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
 
             // End Found
-            if (currentNode.node == endNode)
+            if (endNodeExists && currentNode.node == endNode)
                 return (true, RetracePath(startPathNode, currentNode));
 
-            if (currentNode.hCost < closestNodeToDestination.hCost)
+            if (currentNode.hCost < closestNodeToDestination.hCost) // Negative Case
                 closestNodeToDestination = currentNode;
 
             // Process Neighbors
@@ -54,20 +50,22 @@ public class Pathfinder
             {
                 PathNode neighborPathNode = new PathNode(neighbor);
 
-                if (closedList.Contains(neighborPathNode))
+                if (closedSet.Contains(neighborPathNode))
                     continue;
-                //                   Start to Node Cost <¬
-                float tentativeGCost = currentNode.gCost + Vector2.Distance(currentNode.node.position, neighbor.position);
+                //            Start to Node Cost <¬
+                float tentativeGCost = currentNode.gCost + (currentNode.node.position - neighbor.position).sqrMagnitude;
 
-                if (tentativeGCost < neighborPathNode.gCost || !openList.Contains(neighborPathNode))
+                if (!openSet.Contains(neighborPathNode) || tentativeGCost < neighborPathNode.gCost)
                 { //           Assign Costs <¬
                     neighborPathNode.gCost = tentativeGCost;
-                    neighborPathNode.hCost = Vector2.Distance(neighbor.position, endNode.position);
+                    neighborPathNode.hCost = endNodeExists
+                        ? (neighbor.position - endNode.position).sqrMagnitude
+                        : (neighbor.position - end).sqrMagnitude;
                     neighborPathNode.fCost = neighborPathNode.gCost + neighborPathNode.hCost;
                     neighborPathNode.parentNode = currentNode;
 
-                    if (!openList.Contains(neighborPathNode))
-                        openList.Add(neighborPathNode);
+                    if (!openSet.Contains(neighborPathNode))
+                        openSet.Add(neighborPathNode);
                 }
             }
         }
@@ -92,6 +90,18 @@ public class Pathfinder
     }
 }
 
+// Comparer for PathNode
+class PathNodeComparer : IComparer<PathNode>
+{
+    public int Compare(PathNode x, PathNode y)
+    {
+        int compare = x.fCost.CompareTo(y.fCost);
+        if (compare == 0)
+            compare = x.hCost.CompareTo(y.hCost);
+        return compare;
+    }
+}
+
 public class PathNode
 {
     public Node node;
@@ -100,12 +110,12 @@ public class PathNode
     public float fCost; // Total Coost
     public PathNode parentNode;
 
-    public PathNode(Node node)
+    public PathNode(Node node, float hCost = 0f)
     {
         this.node = node;
         this.gCost = float.MaxValue;
-        this.hCost = 0;
-        this.fCost = 0;
+        this.hCost = hCost;
+        this.fCost = gCost + hCost;
         this.parentNode = null;
     }
 

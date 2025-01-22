@@ -15,11 +15,17 @@ public class LaneConstructor : MonoBehaviour
     public event Action<Vector2Int> OnLaneBuilt;
 
     // === Methods ===
-    private void Start()
+    private void OnEnable()
     {
         inputManager.OnLeftClickDown += StartBuilding;
         inputManager.OnLeftClickHold += ContinueBuilding;
         inputManager.OnLeftClickUp += ConfirmConstruction;
+    }
+    private void OnDisable()
+    {
+        inputManager.OnLeftClickDown -= StartBuilding;
+        inputManager.OnLeftClickHold -= ContinueBuilding;
+        inputManager.OnLeftClickUp -= ConfirmConstruction;
     }
 
     // Mouse Input: Down
@@ -49,6 +55,7 @@ public class LaneConstructor : MonoBehaviour
     // Mouse Input: Up
     private void ConfirmConstruction(Vector2Int gridPosition)
     {
+        CheckAndRemoveNode(gridPosition);
         isBuilding = false;
         lastCellPosition = null;
     }
@@ -91,18 +98,20 @@ public class LaneConstructor : MonoBehaviour
         }
     }
 
+    // Only Remove a Lonely Node
+    private void CheckAndRemoveNode(Vector2Int position)
+    {
+        Node node = graph.GetNode(position);
+
+        if (node != null && node.neighbors.Count == 0)
+            graph.RemoveNode(position);
+    }
+
     // Check Adjacency in 8 Directions
     private bool IsAdjacent(Vector2Int current, Vector2Int target)
     {
         int dx = Mathf.Abs(current.x - target.x);
         int dy = Mathf.Abs(current.y - target.y);
         return (dx <= 1 && dy <= 1);
-    }
-
-    private void OnDestroy()
-    {
-        inputManager.OnLeftClickDown -= StartBuilding;
-        inputManager.OnLeftClickHold -= ContinueBuilding;
-        inputManager.OnLeftClickUp -= ConfirmConstruction;
     }
 }

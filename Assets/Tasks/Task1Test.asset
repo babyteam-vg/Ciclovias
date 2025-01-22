@@ -15,9 +15,9 @@ MonoBehaviour:
   title: Test 1
   description: Connect (5, 0) with (0, 3).
   startCells:
-  - {x: 5, y: 0}
-  destinationCells:
   - {x: 0, y: 3}
+  destinationCells:
+  - {x: 5, y: 0}
   minSafety: 0
   minCharm: 0
   minFlow: 0

@@ -3,34 +3,48 @@ using UnityEngine;
 
 public class TasksDiary : MonoBehaviour
 {
+    [SerializeField] private Grid grid;
+    [SerializeField] private Graph graph;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
-    [SerializeField] private TasksManager tasksManager;
+
+    public List<Task> tasks = new List<Task>();
+    public List<Task> activeTasks = new List<Task>();
+
+    private TasksManager tasksManager;
 
     // === Methods ===
-    private void Start()
+    private void Awake()
+    {
+        Pathfinder pathfinder = new Pathfinder(graph);
+        CellScoresCalculator calculator = new CellScoresCalculator(grid);
+
+        tasksManager = new TasksManager(graph, pathfinder, calculator);
+    }
+
+    private void OnEnable()
     {
         laneConstructor.OnLaneBuilt += HandleLaneBuilt;
         laneDestructor.OnLaneDestroyed += HandleLaneDestroyed;
     }
-
-    // OnLaneBuilt
-    private void HandleLaneBuilt(Vector2Int gridPosition)
+    private void OnDisable()
     {
-        foreach (var task in tasksManager.tasks)
-        {
-            if (!task.completed && task.available)
-                if (BelongsToTask(task, gridPosition))
-                    tasksManager.CheckIfTaskCompleted(task);
-        }
+        laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
+        laneDestructor.OnLaneDestroyed -= HandleLaneDestroyed;
     }
 
-    // OnLaneDestroyed
-    private void HandleLaneDestroyed(Vector2Int gridPosition)
+    // When a Lane is Built
+    private void HandleLaneBuilt(Vector2Int newNode)
     {
-        foreach (var task in tasksManager.tasks)
-            if (task.completed && task.available)
-                tasksManager.CheckIfTaskDecompleted(task);
+        tasksManager.UpdateActiveTasks(tasks, activeTasks);
+        tasksManager.TaskInProgress(activeTasks);
+    }
+
+    // When a Lane is Destroyed
+    private void HandleLaneDestroyed(Vector2Int destroyedNode)
+    {
+        tasksManager.UpdateActiveTasks(tasks, activeTasks);
+        tasksManager.TaskInProgress(activeTasks);
     }
 
     // Is the New Node Part of a Task?

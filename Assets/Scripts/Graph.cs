@@ -5,10 +5,15 @@ using UnityEngine;
 public class Graph : MonoBehaviour
 {
     private Dictionary<Vector2Int, Node> nodes;
+    private HashSet<Vector2Int> nodePositions;
 
     // === Methods ===
     // Constructor
-    public Graph() { nodes = new Dictionary<Vector2Int, Node>(); }
+    public Graph()
+    {
+        nodes = new Dictionary<Vector2Int, Node>();
+        nodePositions = new HashSet<Vector2Int>();
+    }
 
     // Get a Node
     public Node GetNode(Vector2Int position)
@@ -21,7 +26,10 @@ public class Graph : MonoBehaviour
     public void AddNode(Vector2Int position, Vector2 worldPosition)
     {
         if (!nodes.ContainsKey(position))
+        {
             nodes[position] = new Node(position, worldPosition);
+            nodePositions.Add(position);
+        }
     }
 
     // Remove a Node
@@ -32,6 +40,7 @@ public class Graph : MonoBehaviour
             foreach (Node neighbor in node.neighbors)
                 neighbor.neighbors.Remove(node);
             nodes.Remove(position);
+            nodePositions.Remove(position);
         }
     }
 
@@ -68,6 +77,26 @@ public class Graph : MonoBehaviour
 
     // Get All Nodes
     public List<Node> GetAllNodes() { return new List<Node>(nodes.Values); }
+
+    // Is Any of These (x, y) in the Graph?
+    public bool ContainsAny(IEnumerable<Vector2Int> positions)
+    {
+        foreach (var position in positions)
+            if (nodePositions.Contains(position))
+                return true;
+
+        return false;
+    }
+
+    // First Node in Group of Cells
+    public Vector2Int? FindNodeInCells(List<Vector2Int> cells)
+    {
+        foreach (var cell in cells)
+            if (nodePositions.Contains(cell))
+                return cell; // First Valid Node in the Group
+
+        return null;
+    }
 
     // Drawing the Nodes (Debug)
     public void OnDrawGizmos()
