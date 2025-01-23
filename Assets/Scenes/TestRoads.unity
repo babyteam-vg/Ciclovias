@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b219e3da6af017498bcd6680af54860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1693733546}
+  grid: {fileID: 1693733549}
   graph: {fileID: 53937429}
   laneConstructor: {fileID: 718550410}
   laneDestructor: {fileID: 718550412}
@@ -348,7 +348,7 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &110043925
+--- !u!1 &421868726
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -356,22 +356,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 110043927}
-  - component: {fileID: 110043926}
+  - component: {fileID: 421868729}
+  - component: {fileID: 421868728}
+  - component: {fileID: 421868727}
   m_Layer: 5
-  m_Name: PauseMenu
+  m_Name: GameUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &110043926
+--- !u!114 &421868727
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110043925}
+  m_GameObject: {fileID: 421868726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034223f382d2c0146a7aefb20d3d9dce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &421868728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421868726}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -379,324 +392,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 8df6ae7446c33e04cb77cd45ea8a4de5, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 4e29d51b1570c194ba9de296184dadbd,
+  sourceAsset: {fileID: 9197481963319205126, guid: 38cc8c0a82726c344a602f21c636cbef,
     type: 3}
   m_SortingOrder: 0
---- !u!4 &110043927
+--- !u!4 &421868729
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110043925}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 127616403}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &127616401
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 127616403}
-  - component: {fileID: 127616402}
-  m_Layer: 0
-  m_Name: MenuManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &127616402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127616401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f6c20fa22fbe594a85f53ec92a57544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &127616403
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127616401}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1668538573}
-  - {fileID: 110043927}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &285554824
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 285554826}
-  - component: {fileID: 285554825}
-  m_Layer: 0
-  m_Name: Grid Constructor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &285554825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 285554824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2fdd4083a28092469750a1d8da3248e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grid: {fileID: 1693733546}
-  customCells:
-  - x: 1
-    y: 0
-    content: 4
-    buildable: 0
-    traffic: 0
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 0
-  - x: 2
-    y: 0
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 0
-  - x: 3
-    y: 0
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 4
-    y: 0
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 5
-    y: 0
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 2
-    y: 1
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 0
-  - x: 3
-    y: 1
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 4
-    y: 1
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 5
-    y: 1
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 2
-    y: 2
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 0
-  - x: 3
-    y: 2
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 4
-    y: 2
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 5
-    y: 2
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 3
-    y: 3
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 0
-  - x: 4
-    y: 3
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 5
-    y: 3
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 6
-    y: 3
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 4
-    y: 4
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 5
-    y: 4
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 6
-    y: 4
-    content: 1
-    buildable: 1
-    traffic: 2
-    greenery: 0
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 7
-    y: 4
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 0
-    waitingPoint: 0
-    illuminated: 1
-  - x: 2
-    y: 3
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 0
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 1
-  - x: 1
-    y: 3
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 1
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 1
-  - x: 0
-    y: 3
-    content: 2
-    buildable: 1
-    traffic: 0
-    greenery: 2
-    nearAttraction: 1
-    waitingPoint: 0
-    illuminated: 1
---- !u!4 &285554826
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 285554824}
+  m_GameObject: {fileID: 421868726}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -750,7 +455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1798297576}
-  grid: {fileID: 1693733546}
+  grid: {fileID: 1693733549}
 --- !u!1 &718550409
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,7 +486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17615bcd0bb90b747a21e79fda476209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1693733546}
+  grid: {fileID: 1693733549}
   graph: {fileID: 53937429}
   inputManager: {fileID: 451904238}
 --- !u!4 &718550411
@@ -811,7 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 954d43ee20688e54ba759015149d2109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1693733546}
+  grid: {fileID: 1693733549}
   graph: {fileID: 53937429}
   inputManager: {fileID: 451904238}
 --- !u!1 &1609906035
@@ -914,74 +619,12 @@ Transform:
   m_GameObject: {fileID: 1609906035}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1668538571
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1668538573}
-  - component: {fileID: 1668538572}
-  - component: {fileID: 1668538574}
-  m_Layer: 5
-  m_Name: MainMenu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1668538572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668538571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 8df6ae7446c33e04cb77cd45ea8a4de5, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 11a6e38973f98b24f9e99ea813a19ebf,
-    type: 3}
-  m_SortingOrder: 0
---- !u!4 &1668538573
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668538571}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 127616403}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1668538574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668538571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 800531c25d692b04884a98d3cd0e387c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1686050530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1051,7 +694,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1693733547}
-  - component: {fileID: 1693733546}
+  - component: {fileID: 1693733549}
+  - component: {fileID: 1693733548}
+  - component: {fileID: 1693733550}
   m_Layer: 3
   m_Name: Grid Manager
   m_TagString: Untagged
@@ -1059,21 +704,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1693733546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1693733545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fdfc1299e34e2345bb355782f334214, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  width: 10
-  height: 10
-  cellSize: 1
 --- !u!4 &1693733547
 Transform:
   m_ObjectHideFlags: 0
@@ -1089,6 +719,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1693733548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693733545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80fe5834e64688c468b9801dc132dbcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1693733549}
+  map: {fileID: 2800000, guid: 02f46b042569775419688c8afd263cd7, type: 3}
+  colorMappings:
+  - color: {r: 1, g: 1, b: 1, a: 1}
+    content: 2
+    buildable: 1
+    traffic: 0
+    danger: 0
+    greenery: 0
+    revulsion: 0
+    nearAttraction: 0
+    waitingPoint: 0
+--- !u!114 &1693733549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693733545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fdfc1299e34e2345bb355782f334214, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1693733550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693733545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae0d7e4f92078f846b7f11b37a820b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1693733549}
+  cellMaterial: {fileID: 2100000, guid: 2789a232ba233fb4397cd33f13410af3, type: 2}
+  defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  contentColors:
+  - content: 0
+    color: {r: 0, g: 0, b: 0, a: 0}
+  - content: 2
+    color: {r: 1, g: 1, b: 1, a: 0}
 --- !u!1 &1798297574
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,11 +968,10 @@ SceneRoots:
   - {fileID: 1686050531}
   - {fileID: 90856028}
   - {fileID: 1693733547}
-  - {fileID: 285554826}
   - {fileID: 53937428}
   - {fileID: 45018535}
   - {fileID: 451904237}
   - {fileID: 718550411}
-  - {fileID: 127616403}
   - {fileID: 1993311862}
   - {fileID: 1609906039}
+  - {fileID: 421868729}

@@ -1,0 +1,38 @@
+.panel {
+}
+
+.menu {
+    margin-top: 324px;
+    margin-left: 108px;
+}
+
+.button {
+    background-color: rgba(255, 255, 255, 0);
+    height: 108px;
+    -unity-font: url("project://database/Assets/Fonts/Montserrat-Regular.ttf?fileID=12800000&guid=d5c691d7cf693a04f8f5320b6f80a3f6&type=3#Montserrat-Regular");
+    font-size: 72px;
+    -unity-font-definition: initial;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    color: rgb(251, 185, 84);
+    transition-duration: 0.1s;
+    -unity-font-style: bold;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    width: auto;
+    -unity-text-align: middle-center;
+}
+
+.button:hover {
+    background-color: rgb(251, 185, 84);
+    color: rgb(255, 255, 255);
+    height: 164px;
+}
+
+.button:active {
+    background-color: rgb(251, 205, 134);
+}

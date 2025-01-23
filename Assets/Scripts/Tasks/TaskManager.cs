@@ -6,14 +6,14 @@ using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class TasksManager
+public class TaskManager
 {
     private Graph graph;
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
     // === Methods ===
-    public TasksManager(Graph graph, Pathfinder pathfinder, CellScoresCalculator cellScoresCalculator)
+    public TaskManager(Graph graph, Pathfinder pathfinder, CellScoresCalculator cellScoresCalculator)
     {
         this.graph = graph;
         this.pathfinder = pathfinder;

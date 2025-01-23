@@ -14,7 +14,6 @@ public class CellScoresCalculator
     [Range(0f, 1f)] public float revulsionWeight = 0.5f;
     [Range(0f, 1f)] public float nearAttractionWeight = 0.5f;
     [Range(0f, 1f)] public float waitingPointWeight = 0.5f;
-    [Range(0f, 1f)] public float illuminationWeight = 0.5f;
 
     // === Methods ===
     public CellScoresCalculator(Grid grid) { this.grid = grid; }
@@ -25,14 +24,12 @@ public class CellScoresCalculator
         int traffic = cell.GetTraffic(); // +Traffic / -Safety
         int danger = cell.GetDanger(); // +Danger / -Safety
         int waitingPoint = cell.GetWaitingPoint() ? 1 : 0; // +Waiting Point / +Safety
-        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated / +Safety
 
         float[] normalizedValues = new float[]
         {
             NormalizedValue(traffic, 0, 2),
             NormalizedValue(danger, 0, 2),
             NormalizedValue(waitingPoint, 0, 1),
-            NormalizedValue(illuminated, 0, 1)
         };
 
         float[] weights = new float[]
@@ -40,7 +37,6 @@ public class CellScoresCalculator
             trafficWeight,
             dangerWeight,
             waitingPointWeight,
-            illuminationWeight
         };
 
         return MetricValue(normalizedValues, weights);
@@ -66,14 +62,12 @@ public class CellScoresCalculator
         int greenery = cell.GetGreenery(); // +Greenery / +Charm
         int revulsion = cell.GetRevulsion(); // +Revulsion / -Charm
         int nearAttraction = cell.GetNearAttraction() ? 1 : 0; // +Near Attraction / +Charm
-        int illuminated = cell.GetIlluminated() ? 1 : 0; // +Illuminated / +Charm
 
         float[] normalizedValues = new float[]
         {
             NormalizedValue(greenery, 0, 2),
             NormalizedValue(revulsion, 0, 2),
             NormalizedValue(nearAttraction, 0, 1),
-            NormalizedValue(illuminated, 0, 1)
         };
 
         float[] weights = new float[]
@@ -81,7 +75,6 @@ public class CellScoresCalculator
             greeneryWeight,
             revulsionWeight,
             nearAttractionWeight,
-            illuminationWeight
         };
 
         return MetricValue(normalizedValues, weights);

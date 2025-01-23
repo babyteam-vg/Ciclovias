@@ -1,49 +1,43 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class MainMenuController : MonoBehaviour
 {
-    public VisualElement ui;
+    private VisualElement root;
 
-    private Button playButton;
+    private Button continueButton;
     private Button settingsButton;
     private Button exitButton;
 
-    // === Methods ===
-    public void Awake() { ui = GetComponent<UIDocument>().rootVisualElement; }
-
-    public void OnEnable()
+    private void OnEnable()
     {
-        playButton = ui.Q<Button>("Play");
-        playButton.clicked += OnPlayButtonClicked;
+        root = GetComponent<UIDocument>().rootVisualElement;
 
-        settingsButton = ui.Q<Button>("Settings");
-        settingsButton.clicked += OnSettingsButtonClicked;
+        continueButton = root.Q<Button>("Continue");
+        settingsButton = root.Q<Button>("Settings");
+        exitButton = root.Q<Button>("Exit");
 
-        exitButton = ui.Q<Button>("Exit");
-        exitButton.clicked += OnExitButtonClicked;
+        continueButton.clicked += OnContinueClicked;
+        settingsButton.clicked += OnSettingsClicked;
+        exitButton.clicked += OnExitClicked;
     }
 
-    private void OnPlayButtonClicked()
+    private void OnContinueClicked()
     {
-        gameObject.SetActive(false);
+        SceneManager.LoadScene("TestRoads");
     }
 
-    private void OnSettingsButtonClicked()
+    private void OnSettingsClicked()
     {
         Debug.Log("Settings!");
     }
 
-    private void OnExitButtonClicked()
+    private void OnExitClicked()
     {
         Application.Quit();
-#if UNITY_EDITOR
-        EditorApplication.isPaused = false;
-#endif
     }
 }

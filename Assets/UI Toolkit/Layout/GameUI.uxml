@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/GameUIStyle.uss?fileID=7433441132597879392&amp;guid=6d66ab08029f636429b08eb13085d789&amp;type=3#GameUIStyle" />
+    <ui:VisualElement name="Panel" style="flex-grow: 1;">
+        <ui:VisualElement name="Container" class="container" style="align-self: flex-end; justify-content: flex-start;">
+            <ui:Button text="⌂" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Home" class="icon upper-icon" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

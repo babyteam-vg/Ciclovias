@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/MenuStyle.uss?fileID=7433441132597879392&amp;guid=f777e10d39fb76042930fa8a1535fe31&amp;type=3#MenuStyle" />
+    <ui:VisualElement name="Panel" class="panel" style="flex-grow: 1;">
+        <ui:VisualElement name="Container" class="menu">
+            <ui:Label tabindex="-1" text="&lt;nombre del juego&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" style="font-size: 32px; -unity-font-style: bold; color: rgb(251, 185, 84);" />
+            <ui:Button text="Continue" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Continue" class="button" style="align-self: flex-start;" />
+            <ui:Button text="Load Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadSave" class="button" style="align-self: flex-start;" />
+            <ui:Button text="New Game" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NewGame" class="button" style="align-self: flex-start;" />
+            <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Settings" class="button" style="align-self: flex-start;" />
+            <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Exit" class="button" style="align-self: flex-start;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

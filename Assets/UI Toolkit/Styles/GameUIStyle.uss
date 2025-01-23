@@ -1,0 +1,35 @@
+.container {
+}
+
+.upper-icon {
+    transition-duration: 0.1s;
+    font-size: 104px;
+    -unity-font-style: bold;
+    -unity-font: url("project://database/Assets/Fonts/Montserrat-Regular.ttf?fileID=12800000&guid=d5c691d7cf693a04f8f5320b6f80a3f6&type=3#Montserrat-Regular");
+    -unity-font-definition: initial;
+    color: rgb(251, 185, 84);
+    height: 108px;
+    width: 108px;
+    background-color: rgba(255, 255, 255, 0);
+    -unity-text-align: middle-center;
+    padding-bottom: 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+.upper-icon:hover {
+    width: 108px;
+    background-color: rgb(251, 185, 84);
+    color: rgb(255, 255, 255);
+    height: 164px;
+}
+
+.upper-icon:active {
+    background-color: rgb(251, 205, 134);
+}

@@ -67,12 +67,12 @@ public class LaneConstructor : MonoBehaviour
         Vector3 cellWorldPosition = grid.GetWorldPositionFromCell(gridPosition.x, gridPosition.y);
 
         Vector3 criticalCenter = cellWorldPosition + new Vector3(
-            Mathf.Cos(Mathf.PI / 4) * grid.cellSize / 2,
+            Mathf.Cos(Mathf.PI / 4) * grid.GetCellSize() / 2,
             0,
-            Mathf.Sin(Mathf.PI / 4) * grid.cellSize / 2
+            Mathf.Sin(Mathf.PI / 4) * grid.GetCellSize() / 2
         );
 
-        float criticalRadius = grid.cellSize / 2;
+        float criticalRadius = grid.GetCellSize() / 2;
 
         Vector2 delta = new Vector2(
             cursorWorldPosition.x - criticalCenter.x,

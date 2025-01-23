@@ -4,23 +4,20 @@ using static Cell;
 
 public class Grid : MonoBehaviour
 {
-    public int width, height;
-    public float cellSize;
-
     private Cell[,] gridArray;
-    private CellScoresCalculator cellScoresCalculator;
+    private int width, height;
+    private float cellSize = 1f;
 
     // === Methods ===
-    private void Awake()
+    public void SetGridArray(Cell[,] cells)
     {
-        gridArray = new Cell[width, height];
-
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                gridArray[x, y] = new Cell(x, y);
-
-        cellScoresCalculator = new CellScoresCalculator(this);
+        this.gridArray = cells;
+        this.width = cells.GetLength(0);
+        this.height = cells.GetLength(1);
     }
+
+    public Vector2Int GetGridDimensions() { return new Vector2Int(width, height); }
+    public float GetCellSize() { return cellSize; }
 
     // Get a Cell
     public Cell GetCell(int x, int y) { return gridArray[x, y]; }
@@ -34,7 +31,7 @@ public class Grid : MonoBehaviour
         int x = Mathf.FloorToInt(worldPosition.x / cellSize);
         int y = Mathf.FloorToInt(worldPosition.z / cellSize);
 
-        if (IsWithinBounds(x, y))
+        if (IsWithinBounds(x, y) && GetCell(x, y) != null)
             return new Vector2Int(x, y);
         return null;
     }
@@ -72,10 +69,6 @@ public class Grid : MonoBehaviour
     public void SetCellWaitingPoint(int x, int y, bool waitingPoint) { gridArray[x, y].SetWaitingPoint(waitingPoint); }
     public bool GetCellWaitingPoint(int x, int y) { return gridArray[x, y].GetWaitingPoint(); }
 
-    // Set and Get Illuminated
-    public void SetCellIlluminated(int x, int y, bool illuminated) { gridArray[x, y].SetIlluminated(illuminated); }
-    public bool GetCellIlluminated(int x, int y) { return gridArray[x, y].GetIlluminated(); }
-
     // Is Cell Not Off Limits?
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 
@@ -106,47 +99,5 @@ public class Grid : MonoBehaviour
         float centerX = edgePosition.x + cellSize / 2;
         float centerY = edgePosition.y + cellSize / 2;
         return new Vector2(centerX, centerY);
-    }
-
-    // Drawing the Grid (Debug)
-    private void OnDrawGizmos()
-    {
-        if (gridArray == null) return;
-
-        Gizmos.color = Color.gray;
-        for (int x = 0; x <= width; x++) Gizmos.DrawLine(GetWorldPositionFromCell(x, 0), GetWorldPositionFromCell(x, height));
-        for (int y = 0; y <= height; y++) Gizmos.DrawLine(GetWorldPositionFromCell(0, y), GetWorldPositionFromCell(width, y));
-
-        if (Application.isPlaying && cellScoresCalculator != null)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Vector3 position = GetWorldPositionFromCell(x, y) + new Vector3(cellSize, 0, cellSize) * 0.5f;
-                    Cell cell = gridArray[x, y];
-
-                    string initial = cell.GetContent().ToString().Substring(0, 1).ToUpper();
-                    string buildable = cell.GetBuildable() ? "(B)" : "";
-
-                    float safety = cellScoresCalculator.CalculateSafety(cell);
-                    float charm = cellScoresCalculator.CalculateCharm(cell);
-                    float flow = cellScoresCalculator.CalculateFlow(cell);
-
-                    //string displayText = $"S: {safety:F2}\nC: {charm:F2}\nF: {flow:F2}";
-                    string displayText = $"{initial}\n{x},{y}";
-                    DrawTextGizmo(displayText, position, Color.white);
-                }
-            }
-        }
-    }
-
-    private void DrawTextGizmo(string text, Vector3 position, Color color)
-    {
-        GUIStyle style = new GUIStyle();
-        style.normal.textColor = color;
-        style.alignment = TextAnchor.MiddleCenter;
-
-        UnityEditor.Handles.Label(position, text, style);
     }
 }

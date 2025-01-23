@@ -5,10 +5,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private InputManager inputManager;
 
-    // Mouse Dragging
-    private Vector3 dragStartPosition;
-    private Vector3 dragPosition;
-
     // WASD Movement
     public float normalMovementSpeed = 0.2f;
     public float fastMovementSpeed = 1.0f;
@@ -67,41 +63,19 @@ public class CameraController : MonoBehaviour
         if (Input.mouseScrollDelta.y != 0) // Zoom
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
 
-        // Drag
+        // Self Rotate
         if (Input.GetMouseButtonDown(2))
-        {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (plane.Raycast(ray, out float entry))
-                dragStartPosition = ray.GetPoint(entry);
-        }
+            rotateStartPosition = Input.mousePosition;
 
         if (Input.GetMouseButton(2))
         {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            rotatePosition = Input.mousePosition;
 
-            if (plane.Raycast(ray, out float entry))
-            {
-                dragPosition = ray.GetPoint(entry);
-                newPosition = transform.position + dragStartPosition - dragPosition;
-            }
+            Vector3 difference = rotateStartPosition - rotatePosition;
+            rotateStartPosition = rotatePosition;
+
+            newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
         }
-
-        // Self Rotate
-        //if (Input.GetMouseButtonDown(2))
-        //    rotateStartPosition = Input.mousePosition;
-
-        //if(Input.GetMouseButton(2))
-        //{
-        //    rotatePosition = Input.mousePosition;
-
-        //    Vector3 difference = rotateStartPosition - rotatePosition;
-        //    rotateStartPosition = rotatePosition;
-
-        //    newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
-        //}               
     }
 
     // Camera Control w/Keyboard
@@ -122,9 +96,9 @@ public class CameraController : MonoBehaviour
             newPosition += (transform.right * movementSpeed);
 
         // 90° Rotations
-        //if (Input.GetKey(KeyCode.Q))
-        //    newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-        //if (Input.GetKey(KeyCode.E))
-        //    newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
+        if (Input.GetKey(KeyCode.Q))
+            newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+        if (Input.GetKey(KeyCode.E))
+            newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
     }
 }

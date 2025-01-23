@@ -13,7 +13,6 @@ public class Cell
     private int revulsion; // -Charm
     private bool nearAttraction; // +Charm
     private bool waitingPoint; // +Safey / -Flow
-    private bool illuminated; // +Safety / +Charm
 
     // === Methods ===
     // Constructor
@@ -29,7 +28,6 @@ public class Cell
         this.revulsion = 0;
         this.nearAttraction = false;
         this.waitingPoint = false;
-        this.illuminated = false;
     }
 
     // Setters and Getters
@@ -57,9 +55,6 @@ public class Cell
 
     public void SetWaitingPoint(bool value) { waitingPoint = value; }
     public bool GetWaitingPoint() { return waitingPoint; }
-
-    public void SetIlluminated(bool value) { illuminated = value; }
-    public bool GetIlluminated() { return illuminated; }
 }
 
 public enum CellContent
