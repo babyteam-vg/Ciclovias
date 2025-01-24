@@ -1,99 +1,124 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridRenderer : MonoBehaviour
 {
     [SerializeField] private Grid grid; // Referencia al componente Grid
-    [SerializeField] private Material cellMaterial; // Material para las celdas
-    [SerializeField] private Color defaultColor = Color.gray; // Color predeterminado
-    [SerializeField] private CellContentColor[] contentColors; // Colores por tipo de contenido
+    [SerializeField] private Material defaultMaterial; // Material por defecto
+    [SerializeField] private CellContentMesh[] contentMeshes; // Meshes por tipo de contenido
 
-    private Mesh mesh;
-    private Vector3[] vertices;
-    private int[] triangles;
-    private Color[] colors;
+    private Dictionary<CellContent, MeshData> meshDataDict;
 
-    private void Start() { GenerateMesh(); }
+    private void Start()
+    {
+        InitializeMeshData();
+        GenerateMeshes();
+    }
 
-    private void GenerateMesh()
+    private void InitializeMeshData()
+    {
+        // Crear un diccionario para almacenar MeshData para cada contenido
+        meshDataDict = new Dictionary<CellContent, MeshData>();
+
+        foreach (CellContentMesh contentMesh in contentMeshes)
+        {
+            meshDataDict[contentMesh.content] = new MeshData();
+        }
+    }
+
+    private void GenerateMeshes()
     {
         int width = grid.GetGridDimensions().x;
         int height = grid.GetGridDimensions().y;
-        int numCells = width * height;
 
-        mesh = new Mesh();
-        vertices = new Vector3[numCells * 4];
-        triangles = new int[numCells * 6];
-        colors = new Color[numCells * 4];
-
-        int vertexIndex = 0;
-        int triangleIndex = 0;
-
+        // Llenar MeshData para cada contenido
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                if (grid.GetCell(x, y) != null)
-                {
-                    Vector3 cellPosition = grid.GetWorldPositionFromCell(x, y);
+                Cell cell = grid.GetCell(x, y);
+                if (cell == null) continue;
 
-                    // Definir los vértices de la celda
-                    vertices[vertexIndex + 0] = cellPosition;
-                    vertices[vertexIndex + 1] = cellPosition + new Vector3(grid.GetCellSize(), 0, 0);
-                    vertices[vertexIndex + 2] = cellPosition + new Vector3(0, 0, grid.GetCellSize());
-                    vertices[vertexIndex + 3] = cellPosition + new Vector3(grid.GetCellSize(), 0, grid.GetCellSize());
+                CellContent content = cell.GetContent();
+                if (!meshDataDict.ContainsKey(content)) continue;
 
-                    // Definir los triángulos de la celda
-                    triangles[triangleIndex + 0] = vertexIndex + 0;
-                    triangles[triangleIndex + 1] = vertexIndex + 2;
-                    triangles[triangleIndex + 2] = vertexIndex + 1;
-
-                    triangles[triangleIndex + 3] = vertexIndex + 1;
-                    triangles[triangleIndex + 4] = vertexIndex + 2;
-                    triangles[triangleIndex + 5] = vertexIndex + 3;
-
-                    // Asignar color según el contenido
-                    Cell cell = grid.GetCell(x, y);
-                    Color cellColor = GetColorForContent(cell.GetContent());
-
-                    colors[vertexIndex + 0] = cellColor;
-                    colors[vertexIndex + 1] = cellColor;
-                    colors[vertexIndex + 2] = cellColor;
-                    colors[vertexIndex + 3] = cellColor;
-
-                    vertexIndex += 4;
-                    triangleIndex += 6;
-                }
+                // Agregar la celda a su MeshData correspondiente
+                Vector3 cellPosition = grid.GetWorldPositionFromCell(x, y);
+                meshDataDict[content].AddQuad(cellPosition, grid.GetCellSize());
             }
         }
 
-        // Configurar el Mesh
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.colors = colors;
-        mesh.RecalculateNormals();
+        // Crear un GameObject y MeshRenderer para cada contenido
+        foreach (var kvp in meshDataDict)
+        {
+            CellContent content = kvp.Key;
+            MeshData meshData = kvp.Value;
 
-        // Crear un MeshFilter y un MeshRenderer
-        MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
+            if (meshData.Vertices.Count == 0) continue; // Ignorar contenido sin celdas
 
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.material = cellMaterial;
+            // Crear el mesh
+            Mesh mesh = new Mesh
+            {
+                vertices = meshData.Vertices.ToArray(),
+                triangles = meshData.Triangles.ToArray()
+            };
+            mesh.RecalculateNormals();
+
+            // Crear un GameObject para este contenido
+            GameObject contentObject = new GameObject(content.ToString());
+            contentObject.transform.SetParent(transform);
+
+            // Agregar MeshFilter y MeshRenderer
+            MeshFilter meshFilter = contentObject.AddComponent<MeshFilter>();
+            meshFilter.mesh = mesh;
+
+            MeshRenderer meshRenderer = contentObject.AddComponent<MeshRenderer>();
+            meshRenderer.material = GetMaterialForContent(content);
+        }
     }
 
-    private Color GetColorForContent(CellContent content)
+    private Material GetMaterialForContent(CellContent content)
     {
-        foreach (CellContentColor contentColor in contentColors)
+        foreach (CellContentMesh contentMesh in contentMeshes)
         {
-            if (contentColor.content == content)
-                return contentColor.color;
+            if (contentMesh.content == content)
+                return contentMesh.material;
         }
-        return defaultColor; // Usar el color predeterminado si no se encuentra
+
+        return defaultMaterial; // Usar el material por defecto si no se encuentra
     }
 }
 
 [System.Serializable]
-public class CellContentColor
+public class CellContentMesh
 {
     public CellContent content; // Tipo de contenido
-    public Color color; // Color asociado
+    public Material material; // Material para este contenido
+}
+
+// Clase auxiliar para almacenar datos del Mesh
+public class MeshData
+{
+    public List<Vector3> Vertices { get; } = new List<Vector3>();
+    public List<int> Triangles { get; } = new List<int>();
+    private int vertexIndex = 0;
+
+    // Agregar un quad (rectángulo) al MeshData
+    public void AddQuad(Vector3 position, float size)
+    {
+        Vertices.Add(position);
+        Vertices.Add(position + new Vector3(size, 0, 0));
+        Vertices.Add(position + new Vector3(0, 0, size));
+        Vertices.Add(position + new Vector3(size, 0, size));
+
+        Triangles.Add(vertexIndex + 0);
+        Triangles.Add(vertexIndex + 2);
+        Triangles.Add(vertexIndex + 1);
+
+        Triangles.Add(vertexIndex + 1);
+        Triangles.Add(vertexIndex + 2);
+        Triangles.Add(vertexIndex + 3);
+
+        vertexIndex += 4;
+    }
 }

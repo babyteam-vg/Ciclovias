@@ -6,13 +6,7 @@ public class Cell
     public int x, y;
     private CellContent content;
     private bool buildable;
-    // Safety, Charm and Flow
     private int traffic; // -Safety / -Flow
-    private int danger; // -Safety
-    private int greenery; // +Charm
-    private int revulsion; // -Charm
-    private bool nearAttraction; // +Charm
-    private bool waitingPoint; // +Safey / -Flow
 
     // === Methods ===
     // Constructor
@@ -23,11 +17,6 @@ public class Cell
         this.content = CellContent.None;
         this.buildable = false;
         this.traffic = 0;
-        this.danger = 0;
-        this.greenery = 0;
-        this.revulsion = 0;
-        this.nearAttraction = false;
-        this.waitingPoint = false;
     }
 
     // Setters and Getters
@@ -40,28 +29,17 @@ public class Cell
     // Map Editor
     public void SetTraffic(int value) { traffic = Mathf.Clamp(value, 0, 2); }
     public int GetTraffic() { return traffic; }
-
-    public void SetDanger(int value) { danger = Mathf.Clamp(value, 0, 2); }
-    public int GetDanger() { return danger; }
-
-    public void SetGreenery(int value) { greenery = Mathf.Clamp(value, 0, 2); }
-    public int GetGreenery() { return greenery; }
-
-    public void SetRevulsion(int value) { revulsion = Mathf.Clamp(value, 0, 2); }
-    public int GetRevulsion() { return revulsion; }
-
-    public void SetNearAttraction(bool value) { nearAttraction = value; }
-    public bool GetNearAttraction() { return nearAttraction; }
-
-    public void SetWaitingPoint(bool value) { waitingPoint = value; }
-    public bool GetWaitingPoint() { return waitingPoint; }
 }
 
 public enum CellContent
 {
     None,
-    Road,
+    Traffic3,
+    Traffic2,
+    Traffic1,
     Sidewalk,
-    Compound,
-    Attraction
+    Dangerous,
+    Green,
+    Revulsive,
+    Attraction,
 }

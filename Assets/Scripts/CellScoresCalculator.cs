@@ -12,8 +12,6 @@ public class CellScoresCalculator
     [Range(0f, 1f)] public float dangerWeight = 0.5f;
     [Range(0f, 1f)] public float greeneryWeight = 0.5f;
     [Range(0f, 1f)] public float revulsionWeight = 0.5f;
-    [Range(0f, 1f)] public float nearAttractionWeight = 0.5f;
-    [Range(0f, 1f)] public float waitingPointWeight = 0.5f;
 
     // === Methods ===
     public CellScoresCalculator(Grid grid) { this.grid = grid; }
@@ -21,27 +19,23 @@ public class CellScoresCalculator
     // Safety
     public float CalculateSafety(Cell cell)
     {
-        int traffic = cell.GetTraffic(); // +Traffic / -Safety
-        int danger = cell.GetDanger(); // +Danger / -Safety
-        int waitingPoint = cell.GetWaitingPoint() ? 1 : 0; // +Waiting Point / +Safety
+        int traffic = cell.GetTraffic(); // Traffic: -Safety
+        int danger = cell.GetContent() == CellContent.Dangerous ? 1 : 0;
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(traffic, 0, 2),
-            NormalizedValue(danger, 0, 2),
-            NormalizedValue(waitingPoint, 0, 1),
+            NormalizedValue(traffic, 0, 3),
+            NormalizedValue(danger, 0, 1),
         };
 
         float[] weights = new float[]
         {
             trafficWeight,
             dangerWeight,
-            waitingPointWeight,
         };
 
         return MetricValue(normalizedValues, weights);
     }
-
     public float CalculatePathSafety(List<Vector2Int> path)
     {
         float totalSafety = 0f;
@@ -59,27 +53,23 @@ public class CellScoresCalculator
     // Charm
     public float CalculateCharm(Cell cell)
     {
-        int greenery = cell.GetGreenery(); // +Greenery / +Charm
-        int revulsion = cell.GetRevulsion(); // +Revulsion / -Charm
-        int nearAttraction = cell.GetNearAttraction() ? 1 : 0; // +Near Attraction / +Charm
+        int greenery = cell.GetContent() == CellContent.Green || cell.GetContent() == CellContent.Attraction ? 1: 0; // Green or Attraction: +Charm
+        int revulsion = cell.GetContent() == CellContent.Revulsive ? 1 : 0; // Revulsive: -Charm
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(greenery, 0, 2),
-            NormalizedValue(revulsion, 0, 2),
-            NormalizedValue(nearAttraction, 0, 1),
+            NormalizedValue(greenery, 0, 1),
+            NormalizedValue(revulsion, 0, 1),
         };
 
         float[] weights = new float[]
         {
             greeneryWeight,
             revulsionWeight,
-            nearAttractionWeight,
         };
 
         return MetricValue(normalizedValues, weights);
     }
-
     public float CalculatePathCharm(List<Vector2Int> path)
     {
         float totalCharm = 0f;
@@ -97,24 +87,20 @@ public class CellScoresCalculator
     // Flow
     public float CalculateFlow(Cell cell)
     {
-        int traffic = cell.GetTraffic(); // +Traffic / -Flow
-        int waitingPoint = cell.GetWaitingPoint() ? 1 : 0; // +Waiting Point / -Flow
+        int traffic = cell.GetTraffic(); // Traffic: -Flow
 
         float[] normalizedValues = new float[]
         {
-            NormalizedValue(traffic, 0, 2),
-            NormalizedValue(waitingPoint, 0, 1)
+            NormalizedValue(traffic, 0, 3),
         };
 
         float[] weights = new float[]
         {
             trafficWeight,
-            waitingPointWeight
         };
 
         return MetricValue(normalizedValues, weights);
     }
-
     public float CalculatePathFlow(List<Vector2Int> path)
     {
         float totalFlow = 0f;

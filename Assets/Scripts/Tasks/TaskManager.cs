@@ -51,6 +51,9 @@ public class TaskManager
             //                       Execute A* <¬
             var (pathFound, path) = pathfinder.FindPath(startNode, destinationNode);
 
+            foreach (Vector2Int nodePos in path)
+                Debug.Log(nodePos);
+
             float safety = cellScoresCalculator.CalculatePathSafety(path);
             float charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path);

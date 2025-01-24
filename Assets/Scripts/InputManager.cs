@@ -41,6 +41,8 @@ public class InputManager : MonoBehaviour
             if (gridPosition.HasValue)
             {
                 Vector2Int validGridPosition = gridPosition.Value;
+                if (Input.GetKeyDown(KeyCode.R))
+                    Debug.LogWarning(validGridPosition);
                 //              Left Click <¬
                 if (Input.GetMouseButtonDown(0)) OnLeftClickDown?.Invoke(validGridPosition);
                 if (Input.GetMouseButton(0)) OnLeftClickHold?.Invoke(validGridPosition);

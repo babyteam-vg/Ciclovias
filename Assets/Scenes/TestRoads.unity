@@ -678,11 +678,11 @@ MonoBehaviour:
   cameraTransform: {fileID: 1798297577}
   zoomAmount: {x: 0, y: -10, z: 1}
   minPanX: -20
-  maxPanX: 20
+  maxPanX: 300
   minPanZ: -10
-  maxPanZ: 10
+  maxPanZ: 300
   minZoomY: 20
-  maxZoomY: 140
+  maxZoomY: 300
   minZoomZ: -8
   maxZoomZ: 4
 --- !u!1 &1693733545
@@ -732,17 +732,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1693733549}
-  map: {fileID: 2800000, guid: 02f46b042569775419688c8afd263cd7, type: 3}
+  map: {fileID: 2800000, guid: a1d7d6b7568ede54191ebd1eda0aaa4d, type: 3}
   colorMappings:
   - color: {r: 1, g: 1, b: 1, a: 1}
-    content: 2
+    content: 4
     buildable: 1
     traffic: 0
-    danger: 0
-    greenery: 0
-    revulsion: 0
-    nearAttraction: 0
-    waitingPoint: 0
+  - color: {r: 0, g: 1, b: 1, a: 1}
+    content: 3
+    buildable: 1
+    traffic: 1
+  - color: {r: 1, g: 1, b: 0, a: 1}
+    content: 2
+    buildable: 1
+    traffic: 2
+  - color: {r: 1, g: 0.64705884, b: 0, a: 1}
+    content: 1
+    buildable: 1
+    traffic: 3
+  - color: {r: 1, g: 0, b: 0, a: 1}
+    content: 5
+    buildable: 1
+    traffic: 0
+  - color: {r: 0, g: 1, b: 0, a: 1}
+    content: 6
+    buildable: 1
+    traffic: 0
+  - color: {r: 0.5019608, g: 0, b: 0.5019608, a: 1}
+    content: 7
+    buildable: 1
+    traffic: 0
+  - color: {r: 0, g: 0, b: 1, a: 1}
+    content: 8
+    buildable: 1
+    traffic: 0
 --- !u!114 &1693733549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,13 +791,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1693733549}
-  cellMaterial: {fileID: 2100000, guid: 2789a232ba233fb4397cd33f13410af3, type: 2}
-  defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  contentColors:
-  - content: 0
-    color: {r: 0, g: 0, b: 0, a: 0}
+  defaultMaterial: {fileID: 2100000, guid: 2789a232ba233fb4397cd33f13410af3, type: 2}
+  contentMeshes:
+  - content: 1
+    material: {fileID: 2100000, guid: 08271586d0611364cbb3255d35b8116e, type: 2}
   - content: 2
-    color: {r: 1, g: 1, b: 1, a: 0}
+    material: {fileID: 2100000, guid: 07911dcde4e29124b85dee68a03f8c51, type: 2}
+  - content: 3
+    material: {fileID: 2100000, guid: ab0288716e54b83449c36e98a03d6fdc, type: 2}
+  - content: 4
+    material: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
+  - content: 5
+    material: {fileID: 2100000, guid: daa0f7c1c5be19c498aaf5869b3c14df, type: 2}
+  - content: 6
+    material: {fileID: 2100000, guid: 290abd62f574f1c43993c38537b96a27, type: 2}
+  - content: 7
+    material: {fileID: 2100000, guid: e0476421ea0f27a41b04cd492c2a5535, type: 2}
+  - content: 8
+    material: {fileID: 2100000, guid: cceea84a1b3e5e74782cc252b29de453, type: 2}
 --- !u!1 &1798297574
 GameObject:
   m_ObjectHideFlags: 0

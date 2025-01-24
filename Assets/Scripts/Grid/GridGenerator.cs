@@ -15,15 +15,6 @@ public class GridGenerator : MonoBehaviour
     // === Methods ===
     private void Awake() { GenerateGrid(); }
 
-    private void InitializeColorMapping()
-    {
-        colorMappingDict = new Dictionary<Color, ColorToCell>();
-        foreach (ColorToCell mapping in colorMappings)
-        {
-            colorMappingDict[mapping.color] = mapping;
-        }
-    }
-
     private void GenerateGrid()
     {
         InitializeColorMapping();
@@ -31,7 +22,7 @@ public class GridGenerator : MonoBehaviour
         int width = map.width;
         int height = map.height;
         Cell[,] cells = new Cell[width, height];
-        Color[] pixels = map.GetPixels();
+        Color[] pixels = map.GetPixels(); // Get All Pixels Instead of Reading 1 by 1
 
         for (int x = 0; x < width; x++)
         {
@@ -39,48 +30,36 @@ public class GridGenerator : MonoBehaviour
             {
                 int index = y * width + x;
                 Color pixelColor = pixels[index];
-
+                //    Transparent <¬
                 if (pixelColor.a == 0)
                     continue; // Ignore
 
-                foreach (ColorToCell colorMapping in colorMappings)
-                {
-                    if (IsColorMatch(pixelColor, colorMapping.color))
-                    {
-                        {
-                            cells[x, y] = CreateCell(x, y, colorMapping);
-                            break; // Go to Next Pixel
-                        }
-                    }
-                }
+                if (colorMappingDict.TryGetValue(pixelColor, out ColorToCell colorMapping))
+                    cells[x, y] = CreateCell(x, y, colorMapping);
             }
         }
 
         grid.SetGridArray(cells);
     }
 
+    // Array -> Dictionary
+    private void InitializeColorMapping()
+    {
+        colorMappingDict = new Dictionary<Color, ColorToCell>();
+        foreach (ColorToCell mapping in colorMappings)
+            if (!colorMappingDict.ContainsKey(mapping.color))
+                colorMappingDict[mapping.color] = mapping;
+    }
+
+    // Create a Cell 4 the Grid
     private Cell CreateCell(int x, int y, ColorToCell colorMapping)
     {
         Cell cell = new Cell(x, y);
         cell.SetContent(colorMapping.content);
         cell.SetBuildable(colorMapping.buildable);
         cell.SetTraffic(colorMapping.traffic);
-        cell.SetDanger(colorMapping.danger);
-        cell.SetGreenery(colorMapping.greenery);
-        cell.SetRevulsion(colorMapping.revulsion);
-        cell.SetNearAttraction(colorMapping.nearAttraction);
-        cell.SetWaitingPoint(colorMapping.waitingPoint);
 
         return cell;
-    }
-
-    private bool IsColorMatch(Color colorA, Color colorB)
-    {
-        float tolerance = 0.01f;
-        return Mathf.Abs(colorA.r - colorB.r) < tolerance &&
-            Mathf.Abs(colorA.g - colorB.g) < tolerance &&
-            Mathf.Abs(colorA.b - colorB.b) < tolerance &&
-            Mathf.Abs(colorA.a - colorB.a) < tolerance;
     }
 }
 
@@ -90,10 +69,5 @@ public class ColorToCell
     public Color color;
     public CellContent content;
     public bool buildable;
-    public int traffic;
-    public int danger;
-    public int greenery;
-    public int revulsion;
-    public bool nearAttraction;
-    public bool waitingPoint;
+    [Range(0, 3)] public int traffic;
 }

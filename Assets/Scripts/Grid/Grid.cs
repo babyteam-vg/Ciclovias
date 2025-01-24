@@ -57,18 +57,6 @@ public class Grid : MonoBehaviour
     public void SetCellTraffic(int x, int y, int traffic) { gridArray[x, y].SetTraffic(traffic); }
     public int GetCellTraffic(int x, int y) { return gridArray[x, y].GetTraffic(); }
 
-    // Set and Get Greenery
-    public void SetCellGreenery(int x, int y, int greenery) { gridArray[x, y].SetGreenery(greenery); }
-    public int GetCellGreenery(int x, int y) { return gridArray[x, y].GetGreenery(); }
-
-    // Set and Get Near Attraction
-    public void SetCellNearAttraction(int x, int y, bool nearAttraction) { gridArray[x, y].SetNearAttraction(nearAttraction); }
-    public bool GetCellNearAttraction(int x, int y) { return gridArray[x, y].GetNearAttraction(); }
-
-    // Set and Get Waiting Point
-    public void SetCellWaitingPoint(int x, int y, bool waitingPoint) { gridArray[x, y].SetWaitingPoint(waitingPoint); }
-    public bool GetCellWaitingPoint(int x, int y) { return gridArray[x, y].GetWaitingPoint(); }
-
     // Is Cell Not Off Limits?
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 
