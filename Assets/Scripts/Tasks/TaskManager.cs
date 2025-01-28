@@ -36,6 +36,12 @@ public class TaskManager
         }
     }
 
+    // Unlock a Task
+    public void UnlockTask(Task task)
+    {
+        ChangeTaskState(2, task);
+    }
+
     // Lane Relative to Task
     public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.info.startCells); }
     public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.info.startCells) && graph.ContainsAny(task.info.destinationCells); }
@@ -69,7 +75,9 @@ public class TaskManager
             activeTasks.Remove(task); // To Prevent Errors w/the Foreach
     }
 
-    public void ChangeTaskState(int state, Task task, List<Task> activeTasks = null, List<Vector2Int> path = null)
+    // === Methods ===
+    // Change the State of a Task
+    private void ChangeTaskState(int state, Task task, List<Task> activeTasks = null, List<Vector2Int> path = null)
     {
         switch (state)
         {
@@ -78,7 +86,7 @@ public class TaskManager
                 {
                     Debug.Log($"{task.info.title} is now Available!");
                     task.SetState(1);
-                    activeTasks.Remove(task);
+                    activeTasks?.Remove(task);
                 } break;
 
             case 2: // Activate
@@ -86,7 +94,7 @@ public class TaskManager
                 {
                     Debug.Log($"{task.info.title} is now Active!");
                     task.SetState(2);
-                    activeTasks.Add(task);
+                    activeTasks?.Add(task);
                 } break;
 
             case 3: // Complete

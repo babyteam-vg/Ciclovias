@@ -5,6 +5,7 @@ using UnityEngine;
 public class Task
 {
     [Header("Bools")]
+    [Range(0, 3)]
     public int state;
     public bool pinned; // UI Only
 

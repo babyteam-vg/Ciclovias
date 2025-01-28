@@ -58,7 +58,7 @@ public class InputManager : MonoBehaviour
 
                 List<Cell> adjacentCells = grid.GetAdjacentCells(validGridPosition.x, validGridPosition.y);
 
-                Debug.DrawRay(ray.origin, ray.direction * 1000, Color.green);
+                Debug.DrawRay(ray.origin, ray.direction * 1000, Color.blue);
             }
         }
         else Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red);

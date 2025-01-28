@@ -24,24 +24,30 @@ public class TaskDiary : MonoBehaviour
 
     private void OnEnable()
     {
-        laneConstructor.OnLaneBuilt += HandleLaneBuilt;
-        laneDestructor.OnLaneDestroyed += HandleLaneDestroyed;
+        laneConstructor.OnLaneBuilt += HandleLaneUpdated;
+        laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
     }
     private void OnDisable()
     {
-        laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
-        laneDestructor.OnLaneDestroyed -= HandleLaneDestroyed;
+        laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
+        laneDestructor.OnLaneDestroyed -= HandleLaneUpdated;
+    }
+
+    // Get All Unlocked Tasks Starting Cells
+    public List<Vector2Int> GetTasksStartCells()
+    {
+        List<Vector2Int> tasksStartCells = new List<Vector2Int>();
+
+        foreach (Task task in tasks)
+            if (task.state == 1)
+                foreach (Vector2Int startCell in task.info.startCells)
+                    tasksStartCells.Add(startCell);
+
+        return tasksStartCells;
     }
 
     // When a Lane is Built
-    private void HandleLaneBuilt(Vector2Int newNode)
-    {
-        taskManager.UpdateActiveTasks(tasks, activeTasks);
-        taskManager.TaskInProgress(activeTasks);
-    }
-
-    // When a Lane is Destroyed
-    private void HandleLaneDestroyed(Vector2Int destroyedNode)
+    private void HandleLaneUpdated(Vector2Int newNode)
     {
         taskManager.UpdateActiveTasks(tasks, activeTasks);
         taskManager.TaskInProgress(activeTasks);

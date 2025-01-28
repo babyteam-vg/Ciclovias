@@ -8,6 +8,7 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private TaskDiary taskDiary;
 
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
@@ -31,7 +32,8 @@ public class LaneConstructor : MonoBehaviour
     // Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (grid.GetCellBuildable(gridPosition.x, gridPosition.y))
+        if (grid.GetCellBuildable(gridPosition.x, gridPosition.y) &&
+            (graph.GetNode(gridPosition) != null || taskDiary.GetTasksStartCells().Contains(gridPosition)))
         {
             AddNodeAndConnections(gridPosition);
             isBuilding = true;

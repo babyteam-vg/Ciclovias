@@ -101,12 +101,12 @@ public class Graph : MonoBehaviour
     // Drawing the Nodes (Debug)
     public void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.white;
 
         foreach (var node in nodes.Values)
         {
             Vector3 worldPosition = new Vector3(node.worldPosition.x, 0, node.worldPosition.y);
-            Gizmos.DrawSphere(worldPosition, 0.2f);
+            Gizmos.DrawSphere(worldPosition, 0.1f);
 
             foreach (var neighbor in node.neighbors)
             {
