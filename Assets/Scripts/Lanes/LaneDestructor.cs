@@ -13,6 +13,7 @@ public class LaneDestructor : MonoBehaviour
     private Vector2Int? lastCellPosition = null;
 
     public event Action<Vector2Int> OnLaneDestroyed;
+    public event Action<Vector2Int> OnLaneFinished;
 
     // === Methods ===
     private void Start()
@@ -58,6 +59,7 @@ public class LaneDestructor : MonoBehaviour
     {
         isDestroying = false;
         lastCellPosition = null;
+        OnLaneFinished?.Invoke(gridPosition);
     }
 
     // Critical Area

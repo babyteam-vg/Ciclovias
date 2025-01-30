@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TreeEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -23,59 +25,144 @@ public class SplineManager : MonoBehaviour
         laneConstructor.OnLaneBuilt += BuildSplineSegment;
         laneDestructor.OnLaneDestroyed += DestroySplineSegment;
     }
-    private void Start() { BuildSpline(); }
+    //private void Start() { BuildSpline(); }
     private void OnDisable()
     {
         laneConstructor.OnLaneBuilt -= BuildSplineSegment;
         laneDestructor.OnLaneDestroyed -= DestroySplineSegment;
     }
 
-    // Spline Update Via OnLaneBuilt
-    private void BuildSplineSegment(Vector2Int affectedNodePosition)
-    {
-        var spline = splineContainer.Spline;
+    // Spline's First Generation
+    //private void BuildSpline()
+    //{
+    //    var spline = splineContainer.Spline;
+    //    spline.Clear();
 
-        Node affectedNode = graph.GetNode(affectedNodePosition);
-        if (affectedNode == null)
+    //    var allNodes = graph.GetAllNodes();
+
+    //    if (allNodes.Count < 2)
+    //        return;
+    //    //            ( )-( )-(X)-( )-( ) <¬
+    //    for (int i = 0; i < allNodes.Count; i++)
+    //    {
+    //        Node firstNode = (i > 1) ? allNodes[i - 2] : null;
+    //        Node prevNode = (i > 0) ? allNodes[i - 1] : null;
+    //        Node currNode = allNodes[i];
+    //        Node nextNode = (i < allNodes.Count - 1) ? allNodes[i + 1] : null;
+    //        Node lastNode = (i < allNodes.Count - 2) ? allNodes[i - 2] : null;
+
+    //        var dirIn = (prevNode != null) ? GetDirection(prevNode.position, currNode.position) : GridDirection.None; // ( ) ( )-(X) ( ) ( )
+    //        var dirOut = (nextNode != null) ? GetDirection(currNode.position, nextNode.position) : GridDirection.None; // ( ) ( ) (X)-( ) ( )
+    //        PathCase pathCase = GetPathCase(dirIn, dirOut);
+
+    //        (Vector3 knotPosition, Vector3 tangentIn, Vector3 tangentOut) =
+    //            CalculateKnot(
+    //                prevNode?.worldPosition ?? currNode.worldPosition,
+    //                currNode.worldPosition,
+    //                nextNode?.worldPosition ?? currNode.worldPosition,
+    //                pathCase, dirIn, dirOut);
+
+    //        var knot = new BezierKnot(
+    //            knotPosition,
+    //            tangentIn,
+    //            tangentOut,
+    //            Quaternion.identity);
+
+    //        spline.Add(knot, TangentMode.Continuous);
+    //    }
+
+    //    spline.Closed = closedLoop;
+    //}
+
+    // Spline Update Via OnLaneBuilt
+    private void BuildSplineSegment(Vector2Int gridPosition)
+    {
+        var spline = splineContainer.Spline; // Contains All Knots
+
+        Node addedNode = graph.GetNode(gridPosition);
+        if (addedNode == null)
             return;
 
-        List<Node> segmentNodes = new List<Node>();
-        segmentNodes.AddRange(affectedNode.neighbors); // Neighbours
-        segmentNodes.Insert(0, affectedNode);
+        Vector3 addedNode3DPosition = new Vector3(addedNode.worldPosition.x, 0f, addedNode.worldPosition.y);
+        List<Node> neighborNodes = addedNode.neighbors;
 
-        foreach (var node in segmentNodes)
+        Vector3 knotPosition = addedNode3DPosition;
+        Vector3 tangentIn = Vector3.zero;
+        Vector3 tangentOut = Vector3.zero;
+
+        foreach (var neighborNode in neighborNodes)
         {
-            var index = graph.GetAllNodes().IndexOf(node);
-            if (index < 0)
-                continue;
-            
-            Node prevNode = (index > 0) ? graph.GetAllNodes()[index - 1] : null;
-            Node currNode = graph.GetAllNodes()[index];
-            Node nextNode = (index < graph.GetAllNodes().Count - 1) ? graph.GetAllNodes()[index + 1] : null;
+            Vector3 neighborNode3DPosition = new Vector3(neighborNode.worldPosition.x, 0f, neighborNode.worldPosition.y);
+            List<Node> neighborNeighborNodes = neighborNode.neighbors;
 
-            var dirIn = (prevNode != null) ? GetDirection(prevNode.position, currNode.position) : GridDirection.None; // ( )-( ) ( )
-            var dirOut = (nextNode != null) ? GetDirection(currNode.position, nextNode.position) : GridDirection.None; // ( ) ( )-( )
-            PathCase pathCase = GetPathCase(dirIn, dirOut);
+            foreach (var neighborNeighborNode in neighborNeighborNodes)
+            {
+                Vector3 neighborNeighborNode3DPosition = new Vector3(neighborNeighborNode.worldPosition.x, 0f, neighborNeighborNode.worldPosition.y);
 
-            (Vector3 knotPosition, Vector3 tangentIn, Vector3 tangentOut) =
-                CalculateKnot(
-                    prevNode?.worldPosition ?? currNode.worldPosition,
-                    currNode.worldPosition,
-                    nextNode?.worldPosition ?? currNode.worldPosition,
-                    pathCase, dirIn, dirOut);
+                // Find Each Neighbor PathCase
+                GridDirection neighborDirIn = (neighborNeighborNode != null && neighborNode != null)
+                    ? GetDirection(neighborNeighborNode.position, neighborNode.position)
+                    : GridDirection.None;
+                GridDirection neighborDirOut = (neighborNode != null && addedNode != null) ?
+                    GetDirection(neighborNode.position, addedNode.position)
+                    : GridDirection.None;
+                PathCase neighbourPathCase = GetPathCase(neighborDirIn, neighborDirOut);
 
-            var knot = new BezierKnot(
-                knotPosition,
-                tangentIn,
-                tangentOut,
-                Quaternion.identity
-            );
+                switch(neighbourPathCase)
+                {
+                    case PathCase.Straight:
+                        tangentIn = Vector3.zero;
+                        tangentOut = Vector3.zero;
+                        break;
 
-            if (index < spline.Count)
-                spline[index] = knot;
-            else
-                spline.Add(knot, TangentMode.Continuous);
+                    case PathCase.Corner:
+                        if (neighborDirIn == GridDirection.Up)
+                        {
+                            knotPosition = neighborNeighborNode3DPosition;
+                            tangentOut = Vector3.forward;
+                        }
+                        else if (neighborDirIn == GridDirection.Down)
+                        {
+                            knotPosition = neighborNeighborNode3DPosition;
+                            tangentOut = Vector3.back;
+                        }
+                        else if (neighborDirIn == GridDirection.Right)
+                            if (neighborDirOut == GridDirection.Up)
+                            {
+                                tangentIn = Vector3.forward;
+                            }
+                            else
+                            {
+                                tangentIn = Vector3.back;
+                            }
+                        else if (neighborDirIn == GridDirection.Left)
+                            if (neighborDirOut == GridDirection.Up)
+                            {
+                                tangentIn = Vector3.forward;
+                            }
+                            else
+                            {
+                                tangentIn = Vector3.back;
+                            }
+                        break;
+
+                    case PathCase.Diagonal:
+                        // ...
+                        break;
+
+                    default:
+                        // ...
+                        break;
+                }
+            }
         }
+
+        var knot = new BezierKnot(
+            knotPosition,
+            tangentIn,
+            tangentOut,
+            Quaternion.identity
+        ); spline.Add(knot, TangentMode.Continuous);
     }
 
     // Spline Update Via OnLaneDestroyed
@@ -90,104 +177,79 @@ public class SplineManager : MonoBehaviour
         //spline.Remove();
     }
 
-    // Spline's First Generation
-    private void BuildSpline()
-    {
-        var spline = splineContainer.Spline;
-        spline.Clear();
-
-        var allNodes = graph.GetAllNodes();
-
-        if (allNodes.Count < 2)
-            return;
-        // ( )-(X)-( ) <¬
-        for (int i = 0; i < allNodes.Count; i++)
-        {
-            Node prevNode = (i > 0) ? allNodes[i - 1] : null;
-            Node currNode = allNodes[i];
-            Node nextNode = (i < allNodes.Count - 1) ? allNodes[i + 1] : null;
-
-            var dirIn = (prevNode != null) ? GetDirection(prevNode.position, currNode.position) : GridDirection.None; // ( )-( ) ( )
-            var dirOut = (nextNode != null) ? GetDirection(currNode.position, nextNode.position) : GridDirection.None; // ( ) ( )-( )
-            PathCase pathCase = GetPathCase(dirIn, dirOut);
-
-            (Vector3 knotPosition, Vector3 tangentIn, Vector3 tangentOut) =
-                CalculateKnot(
-                    prevNode?.worldPosition ?? currNode.worldPosition,
-                    currNode.worldPosition,
-                    nextNode?.worldPosition ?? currNode.worldPosition,
-                    pathCase, dirIn, dirOut);
-
-            var knot = new BezierKnot(
-                knotPosition,
-                tangentIn,
-                tangentOut,
-                Quaternion.identity);
-
-            spline.Add(knot, TangentMode.Continuous);
-        }
-
-        spline.Closed = closedLoop;
-    }
-
     // Knot Management
-    private (Vector3 knotPosition, Vector3 tangentIn, Vector3 tangentOut) CalculateKnot(
-        Vector2 prevNodePos, Vector2 currNodePos, Vector2 nextNodePos,
-        PathCase pathCase, GridDirection dirIn, GridDirection dirOut)
-    {
-        Vector3 prev3DNodePos = new Vector3(prevNodePos.x, 0f, prevNodePos.y);
-        Vector3 curr3DNodePos = new Vector3(currNodePos.x, 0f, currNodePos.y);
-        Vector3 next3DNodePos = new Vector3(nextNodePos.x, 0f, nextNodePos.y);
+    //private (bool addKnot, Vector3 knotPosition, Vector3 tangentIn, Vector3 tangentOut) CalculateKnot(
+    //    Vector2 formNodePos, Vector2 prevNodePos, Vector2 currNodePos, Vector2 nextNodePos,
+    //    PathCase prevPathCase, GridDirection prevDirIn, GridDirection prevDirOut,
+    //    PathCase currPathCase, GridDirection currDirIn, GridDirection currDirOut)
+    //{
+    //    Vector3 form3DNodePos = new Vector3(formNodePos.x, 0f, formNodePos.y);
+    //    Vector3 prev3DNodePos = new Vector3(prevNodePos.x, 0f, prevNodePos.y);
+    //    Vector3 curr3DNodePos = new Vector3(currNodePos.x, 0f, currNodePos.y);
+    //    Vector3 next3DNodePos = new Vector3(nextNodePos.x, 0f, nextNodePos.y);
 
-        Vector3 knotPosition = prev3DNodePos;
-        Vector3 tangentIn = Vector3.zero;
-        Vector3 tangentOut = Vector3.zero;
+    //    Vector3 knotPosition = curr3DNodePos;
+    //    Vector3 tangentIn = Vector3.zero;
+    //    Vector3 tangentOut = Vector3.zero;
 
-        switch (pathCase)
-        {
-            case PathCase.Straight:
-                break;
+    //    bool addKnot = true;
 
-            case PathCase.Corner:
-                if (dirIn == GridDirection.Up)
-                    if (dirOut == GridDirection.Right)
-                    {
-                        knotPosition = prev3DNodePos;
-                        tangentOut = Vector3.forward;
-                    }
-                    else if (dirOut == GridDirection.Left)
-                    {
-                        knotPosition = prev3DNodePos;
-                        tangentOut = Vector3.forward;
-                    }
-                //if (dirIn == GridDirection.Down)
-                //    if (dirOut == GridDirection.Right)
-                //        tangentIn = Vector3.back;
-                //    else if (dirOut == GridDirection.Left)
-                //        tangentIn = Vector3.forward;
-                //if (dirIn == GridDirection.Right)
-                //    if (dirOut == GridDirection.Up)
-                //        tangentIn = Vector3.forward;
-                //    else if (dirOut == GridDirection.Down)
-                //        tangentIn = Vector3.back;
-                //else if (dirIn == GridDirection.Left)
-                //    if (dirOut == GridDirection.Up)
-                //        tangentIn = Vector3.back;
-                //    else if (dirOut == GridDirection.Down)
-                //        tangentIn = Vector3.forward;
-                break;
+    //    var knot = new BezierKnot(
+    //            prev3DNodePos,
+    //            tangentIn,
+    //            tangentOut,
+    //            Quaternion.identity
+    //        );
 
-            case PathCase.Diagonal:
-                // ...
-                break;
+    //    switch (neighbourPathCase)
+    //    {
+    //        case PathCase.Straight:
+    //            tangentIn = Vector3.zero;
+    //            tangentOut = Vector3.zero;
+    //            break;
 
-            default:
-                knotPosition = curr3DNodePos;
-                break;
-        }
+    //        case PathCase.Corner:
+    //            if (neighborDirIn == GridDirection.Up)
+    //            {
+    //                knotPosition = neighborNeighborNode3DPosition;
+    //                tangentOut = Vector3.forward;
+    //            }
+    //            else if (neighborDirIn == GridDirection.Down)
+    //            {
+    //                knotPosition = neighborNeighborNode3DPosition;
+    //                tangentOut = Vector3.back;
+    //            }
+    //            else if (neighborDirIn == GridDirection.Right)
+    //                if (neighborDirOut == GridDirection.Up)
+    //                {
+    //                    tangentIn = Vector3.forward;
+    //                }
+    //                else
+    //                {
+    //                    tangentIn = Vector3.back;
+    //                }
+    //            else if (neighborDirIn == GridDirection.Left)
+    //                if (neighborDirOut == GridDirection.Up)
+    //                {
+    //                    tangentIn = Vector3.forward;
+    //                }
+    //                else
+    //                {
+    //                    tangentIn = Vector3.back;
+    //                }
+    //            break;
 
-        return (knotPosition, tangentIn, tangentOut);
-    }
+    //        case PathCase.Diagonal:
+    //            // ...
+    //            break;
+
+    //        default:
+    //            // ...
+    //            break;
+    //    }
+
+    //    return (addKnot, knotPosition, tangentIn, tangentOut);
+    //}
 
     // Identify Direction Between Nodes
     public GridDirection GetDirection(Vector2Int from, Vector2Int to)

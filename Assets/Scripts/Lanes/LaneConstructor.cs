@@ -12,8 +12,10 @@ public class LaneConstructor : MonoBehaviour
 
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
+    private Vector2Int? lastAddedPosition = null;
 
     public event Action<Vector2Int> OnLaneBuilt;
+    public event Action<Vector2Int> OnLaneFinished;
 
     // === Methods ===
     private void OnEnable()
@@ -60,6 +62,7 @@ public class LaneConstructor : MonoBehaviour
         CheckAndRemoveNode(gridPosition);
         isBuilding = false;
         lastCellPosition = null;
+        OnLaneFinished?.Invoke(gridPosition);
     }
 
     // Critical Area
@@ -87,6 +90,9 @@ public class LaneConstructor : MonoBehaviour
     // Add a Node and Its Connections
     private void AddNodeAndConnections(Vector2Int gridPosition)
     {
+        if (lastAddedPosition.HasValue && lastAddedPosition.Value == gridPosition)
+            return;
+
         if (graph.GetNode(gridPosition) == null)
             graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
 
@@ -94,10 +100,13 @@ public class LaneConstructor : MonoBehaviour
         {
             if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
             {
+                Debug.Log("AddNodeAndConnections");
                 graph.AddEdge(lastCellPosition.Value, gridPosition);
                 OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
             }
         }
+
+        lastAddedPosition = gridPosition;
     }
 
     // Only Remove a Lonely Node
