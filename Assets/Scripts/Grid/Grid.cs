@@ -57,6 +57,10 @@ public class Grid : MonoBehaviour
     public void SetCellTraffic(int x, int y, int traffic) { gridArray[x, y].SetTraffic(traffic); }
     public int GetCellTraffic(int x, int y) { return gridArray[x, y].GetTraffic(); }
 
+    // Set and Get Illuminated
+    public void SetCellIlluminated(int x, int y, bool illuminated) { gridArray[x, y].SetIlluminated(illuminated); }
+    public bool GetCellIlluminated(int x, int y) { return gridArray[x, y].GetIlluminated(); }
+
     // Is Cell Not Off Limits?
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 

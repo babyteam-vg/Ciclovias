@@ -33,3 +33,8 @@
 .upper-icon:active {
     background-color: rgb(251, 205, 134);
 }
+
+.task-slider {
+    width: 54px;
+    height: 164px;
+}

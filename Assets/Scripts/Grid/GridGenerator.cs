@@ -58,6 +58,7 @@ public class GridGenerator : MonoBehaviour
         cell.SetContent(colorMapping.content);
         cell.SetBuildable(colorMapping.buildable);
         cell.SetTraffic(colorMapping.traffic);
+        cell.SetIlluminated(colorMapping.illuminated);
 
         return cell;
     }
@@ -70,4 +71,5 @@ public class ColorToCell
     public CellContent content;
     public bool buildable;
     [Range(0, 3)] public int traffic;
+    public bool illuminated;
 }

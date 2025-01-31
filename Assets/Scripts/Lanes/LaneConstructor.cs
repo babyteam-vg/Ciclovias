@@ -100,7 +100,6 @@ public class LaneConstructor : MonoBehaviour
         {
             if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
             {
-                Debug.Log("AddNodeAndConnections");
                 graph.AddEdge(lastCellPosition.Value, gridPosition);
                 OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
             }

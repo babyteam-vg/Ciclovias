@@ -59,7 +59,7 @@ public class TaskManager
 
             float safety = cellScoresCalculator.CalculatePathSafety(path);
             float charm = cellScoresCalculator.CalculatePathCharm(path);
-            float flow = cellScoresCalculator.CalculatePathFlow(path);
+            float flow = cellScoresCalculator.CalculatePathFlow(path, destinationNode);
 
             activeTask.SetSafety(safety);
             activeTask.SetCharm(charm);

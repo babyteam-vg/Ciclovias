@@ -7,6 +7,7 @@ public class Cell
     private CellContent content;
     private bool buildable;
     private int traffic; // -Safety / -Flow
+    private bool illuminated;
 
     // === Methods ===
     // Constructor
@@ -17,6 +18,7 @@ public class Cell
         this.content = CellContent.None;
         this.buildable = false;
         this.traffic = 0;
+        this.illuminated = true;
     }
 
     // Setters and Getters
@@ -26,20 +28,21 @@ public class Cell
     public void SetBuildable(bool free) { this.buildable = free; }
     public bool GetBuildable() { return buildable; }
 
-    // Map Editor
-    public void SetTraffic(int value) { traffic = Mathf.Clamp(value, 0, 2); }
+    public void SetTraffic(int value) { traffic = Mathf.Clamp(value, 0, 3); }
     public int GetTraffic() { return traffic; }
+
+    public void SetIlluminated(bool value) { illuminated = value; }
+    public bool GetIlluminated() { return illuminated; }
 }
 
 public enum CellContent
 {
     None,
-    Traffic3,
-    Traffic2,
-    Traffic1,
+    Traffic,
     Sidewalk,
     Dangerous,
     Green,
-    Revulsive,
+    Repulsive,
     Attraction,
+    Stop,
 }

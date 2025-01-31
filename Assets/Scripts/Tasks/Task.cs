@@ -12,9 +12,9 @@ public class Task
     [Header("Info")]
     public TaskInfo info;
 
-    public float currentSafety;
-    public float currentCharm;
-    public float currentFlow;
+    private float currentSafety;
+    private float currentCharm;
+    private float currentFlow;
     public List<Vector2Int> completedLane;
 
     // === Methods ===
@@ -43,6 +43,6 @@ public class Task
     {
         return currentSafety >= info.minSafety &&
             currentCharm >= info.minCharm &&
-            currentFlow >= info.minFlow;
+            currentFlow >= info.flowPercentage;
     }
 }
