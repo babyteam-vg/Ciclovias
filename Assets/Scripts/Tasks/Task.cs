@@ -7,14 +7,13 @@ public class Task
     [Header("Bools")]
     [Range(0, 3)]
     public int state;
-    public bool pinned; // UI Only
 
     [Header("Info")]
     public TaskInfo info;
 
-    private float currentSafety;
-    private float currentCharm;
-    private float currentFlow;
+    public int currentSafety;
+    public int currentCharm;
+    public float currentFlow;
     public List<Vector2Int> completedLane;
 
     // === Methods ===
@@ -23,12 +22,12 @@ public class Task
     public int GetState() { return state; }
 
     // Safety
-    public void SetSafety(float value) { currentSafety = value; }
-    public float GetSafety() { return currentSafety; }
+    public void SetSafety(int value) { currentSafety = value; }
+    public int GetSafety() { return currentSafety; }
 
     // Charm
-    public void SetCharm(float value) { currentCharm = value; }
-    public float GetCharm() { return currentCharm; }
+    public void SetCharm(int value) { currentCharm = value; }
+    public int GetCharm() { return currentCharm; }
 
     // Flow
     public void SetFlow(float value) { currentFlow = value; }
@@ -41,8 +40,8 @@ public class Task
     // Requirements
     public bool MeetsRequirements()
     {
-        return currentSafety >= info.minSafety &&
+        return currentSafety >= info.maxSafetyDiscount &&
             currentCharm >= info.minCharm &&
-            currentFlow >= info.flowPercentage;
+            currentFlow >= info.minFlowPercentage;
     }
 }

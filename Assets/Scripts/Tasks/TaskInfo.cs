@@ -15,9 +15,9 @@ public class TaskInfo : ScriptableObject
     public List<Vector2Int> startCells;
     public List<Vector2Int> destinationCells;
 
-    public int minSafety;
+    public int maxSafetyDiscount;
     public int minCharm;
-    [Range(0f, 1f)] public float flowPercentage;
+    [Range(0f, 1f)] public float minFlowPercentage;
 
     public int materialLimit;
 }

@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class TaskManager
@@ -57,8 +53,8 @@ public class TaskManager
             //                       Execute A* <¬
             var (pathFound, path) = pathfinder.FindPath(startNode, destinationNode);
 
-            float safety = cellScoresCalculator.CalculatePathSafety(path);
-            float charm = cellScoresCalculator.CalculatePathCharm(path);
+            int safety = cellScoresCalculator.CalculatePathSafety(path);
+            int charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path, destinationNode);
 
             activeTask.SetSafety(safety);
@@ -92,6 +88,7 @@ public class TaskManager
                     Debug.Log($"{task.info.title} is now Active!");
                     task.SetState(2);
                     activeTasks?.Add(task);
+                    CurrentTask.Instance.PinTask(task);
                 } break;
 
             case 3: // Complete
