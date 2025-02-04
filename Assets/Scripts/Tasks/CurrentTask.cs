@@ -8,7 +8,7 @@ public class CurrentTask : MonoBehaviour
     public static CurrentTask Instance { get; private set; }
 
     public Task PinnedTask { get; private set; }
-    //public event Action<Task> OnTaskChanged;
+    //public event Action<Task> OnTaskPinned;
 
     [SerializeField] private TextMeshProUGUI titleText;
 

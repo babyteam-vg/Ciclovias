@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
 
-    private bool lockCamera = false;
+    public bool lockCamera = false;
 
     // Cursor Movement
     public bool enableEdgeScrolling = true;

@@ -88,7 +88,6 @@ public class TaskManager
                     Debug.Log($"{task.info.title} is now Active!");
                     task.SetState(2);
                     activeTasks?.Add(task);
-                    CurrentTask.Instance.PinTask(task);
                 } break;
 
             case 3: // Complete

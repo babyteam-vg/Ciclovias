@@ -1,12 +1,19 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TaskDiary : MonoBehaviour
 {
+    [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
+
+    [Header("UI References")]
+    [SerializeField] private Transform contentTransform;
+    [SerializeField] private GameObject availableTaskPrefab;
 
     public List<Task> tasks = new List<Task>();
     public List<Task> activeTasks = new List<Task>();
@@ -53,10 +60,26 @@ public class TaskDiary : MonoBehaviour
         taskManager.TaskInProgress(activeTasks);
     }
 
-    // Is the New Node Part of a Task?
-    private bool BelongsToTask(Task task, Vector2Int nodePosition)
+    public void ShowAvailableTasks()
     {
-        Vector2Int gridCell = Vector2Int.FloorToInt(nodePosition);
-        return task.info.startCells.Contains(gridCell) || task.info.destinationCells.Contains(gridCell);
+        foreach (Transform child in contentTransform)
+            Destroy(child.gameObject);
+
+        foreach (Task task in tasks)
+        {
+            if (task.state == 1 || task.state == 2)
+            { //                              Child <¬            Parent <¬
+                GameObject newItem = Instantiate(availableTaskPrefab, contentTransform);
+                //                                   TMP Part of the Prefab <¬
+                TextMeshProUGUI tmpText = newItem.GetComponentInChildren<TextMeshProUGUI>();
+                if (tmpText != null)
+                    tmpText.text = $"Task: {task.info.title}";
+                //                                        Button Part of the Prefab <¬
+                Button pinButton = newItem.transform.Find("Pin Task Button").GetComponent<Button>();
+                pinButton.onClick.AddListener(() => {
+                    CurrentTask.Instance.PinTask(task);
+                });
+            }
+        }
     }
 }

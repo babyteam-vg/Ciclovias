@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Graph : MonoBehaviour
 {
-    private Dictionary<Vector2Int, Node> nodes;
+    public Dictionary<Vector2Int, Node> nodes;
     private HashSet<Vector2Int> nodePositions;
 
     // === Methods ===
