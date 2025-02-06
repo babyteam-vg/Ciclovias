@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
+  m_Name: 0-2 Welcome
+  m_EditorClassIdentifier: 
+  map: 0
+  number: 2
+  title: Welcome
+  character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
+  dialog: "\u201COh! Just in time! Please build a bike lane so the delivery guy can
+    get here safely. I wouldn\u2019t be surprised if he gets lost with all this smoke.\u201D"
+  endDialog: "\"Thank you so much. I live a healthy life, but Mama Gio's pizzas are
+    my weakness.\u201D"
+  from: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
+  to: {fileID: 11400000, guid: 14afc8ac001c36b4b99564b34ec46230, type: 2}
+  maxSafetyDiscount: -25
+  minCharmCount: 0
+  minFlowPercentage: 0
+  minMaterial: 0
+  maxMaterial: 1000
+  materialReward: 100
+  unlockedTasks:
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 1, y: 3}

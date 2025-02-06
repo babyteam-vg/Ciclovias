@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class TaskDiary : MonoBehaviour
 {
+    public static TaskDiary Instance { get; private set; }
+
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
@@ -16,13 +18,19 @@ public class TaskDiary : MonoBehaviour
     [SerializeField] private GameObject availableTaskPrefab;
 
     public List<Task> tasks = new List<Task>();
-    public List<Task> activeTasks = new List<Task>();
 
     private TaskManager taskManager;
 
-    // === Methods ===
+    // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else Destroy(gameObject);
+
         Pathfinder pathfinder = new Pathfinder(graph);
         CellScoresCalculator calculator = new CellScoresCalculator(grid);
 
@@ -34,46 +42,48 @@ public class TaskDiary : MonoBehaviour
         laneConstructor.OnLaneBuilt += HandleLaneUpdated;
         laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
     }
+
     private void OnDisable()
     {
         laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
         laneDestructor.OnLaneDestroyed -= HandleLaneUpdated;
     }
 
-    // Get All Unlocked Tasks Starting Cells
+    // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Get All Unlocked Tasks Starting Cells
     public List<Vector2Int> GetTasksStartCells()
     {
         List<Vector2Int> tasksStartCells = new List<Vector2Int>();
 
         foreach (Task task in tasks)
-            if (task.state == 1)
-                foreach (Vector2Int startCell in task.info.startCells)
+            if (task.state == 2)
+                foreach (Vector2Int startCell in task.info.from.surroundings)
                     tasksStartCells.Add(startCell);
 
         return tasksStartCells;
     }
 
-    // When a Lane is Built
-    private void HandleLaneUpdated(Vector2Int newNode)
-    {
-        taskManager.UpdateActiveTasks(tasks, activeTasks);
-        taskManager.TaskInProgress(activeTasks);
-    }
+    // ::::: Unlock a Task
+    public void UnlockTask(Task task) { taskManager.UnlockTask(task); }
 
+    // ::::: New Task UI
+    public void AcceptTask(Task task) { taskManager.AcceptTask(task); }
+
+    // ::::: Tasks Diary UI
     public void ShowAvailableTasks()
     {
         foreach (Transform child in contentTransform)
             Destroy(child.gameObject);
 
         foreach (Task task in tasks)
-        {
-            if (task.state == 1 || task.state == 2)
+        { //       Accepted <¬          Active <¬
+            if (task.state == 2 || task.state == 3)
             { //                              Child <¬            Parent <¬
                 GameObject newItem = Instantiate(availableTaskPrefab, contentTransform);
                 //                                   TMP Part of the Prefab <¬
                 TextMeshProUGUI tmpText = newItem.GetComponentInChildren<TextMeshProUGUI>();
                 if (tmpText != null)
-                    tmpText.text = $"Task: {task.info.title}";
+                    tmpText.text = task.info.title;
                 //                                        Button Part of the Prefab <¬
                 Button pinButton = newItem.transform.Find("Pin Task Button").GetComponent<Button>();
                 pinButton.onClick.AddListener(() => {
@@ -81,5 +91,13 @@ public class TaskDiary : MonoBehaviour
                 });
             }
         }
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: When a Lane is Built or Destroyed
+    private void HandleLaneUpdated(Vector2Int newNode)
+    {
+        taskManager.UpdateActiveTasks(tasks);
+        taskManager.TaskInProgress();
     }
 }

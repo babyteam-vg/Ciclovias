@@ -43,6 +43,7 @@ public class LaneDestructor : MonoBehaviour
                 if (graph.AreConnected(lastCellPosition.Value, gridPosition))
                 {
                     graph.RemoveEdge(lastCellPosition.Value, gridPosition);
+                    ConstructionMaterial.Instance.AddMaterial(1); // Construction Material: +1
                     OnLaneDestroyed?.Invoke(gridPosition); // Notify Lane Destruction
                 }
 

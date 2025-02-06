@@ -8,7 +8,6 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private TaskDiary taskDiary;
 
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
@@ -35,7 +34,7 @@ public class LaneConstructor : MonoBehaviour
     private void StartBuilding(Vector2Int gridPosition)
     {
         if (grid.GetCellBuildable(gridPosition.x, gridPosition.y) &&
-            (graph.GetNode(gridPosition) != null || taskDiary.GetTasksStartCells().Contains(gridPosition)))
+            (graph.GetNode(gridPosition) != null || TaskDiary.Instance.GetTasksStartCells().Contains(gridPosition)))
         {
             AddNodeAndConnections(gridPosition);
             isBuilding = true;
@@ -91,18 +90,20 @@ public class LaneConstructor : MonoBehaviour
     private void AddNodeAndConnections(Vector2Int gridPosition)
     {
         if (lastAddedPosition.HasValue && lastAddedPosition.Value == gridPosition)
-            return;
+            return; // To Prevent Duplicates
 
-        if (graph.GetNode(gridPosition) == null)
-            graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
-
-        if (lastCellPosition.HasValue)
+        if (ConstructionMaterial.Instance.constructionMaterial > 0)
         {
-            if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
-            {
-                graph.AddEdge(lastCellPosition.Value, gridPosition);
-                OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
-            }
+            if (graph.GetNode(gridPosition) == null)
+                graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
+
+            if (lastCellPosition.HasValue)
+                if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
+                {
+                    graph.AddEdge(lastCellPosition.Value, gridPosition);
+                    ConstructionMaterial.Instance.ConsumeMaterial(1); // Construction Material: -1
+                    OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
+                }
         }
 
         lastAddedPosition = gridPosition;

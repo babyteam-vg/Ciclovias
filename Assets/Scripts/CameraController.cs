@@ -83,23 +83,23 @@ public class CameraController : MonoBehaviour
             HandleMouseInput();
             HandleMovementInput();
             HandleEdgeScrolling();
+
+            // Apply
+            float clampedX = Mathf.Clamp(newPosition.x, areaBounds.min.x, areaBounds.max.x);
+            float clampedZ = Mathf.Clamp(newPosition.z, areaBounds.min.z, areaBounds.max.z);
+            newPosition = new Vector3(clampedX, newPosition.y, clampedZ);
+            transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
+
+            float clampedZoomY = Mathf.Clamp(newZoom.y, minZoomHeight, maxZoomHeight);
+            newZoom = new Vector3(0f, clampedZoomY, newZoom.z);
+            cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTime);
         }
-
-        // Apply
-        float clampedX = Mathf.Clamp(newPosition.x, areaBounds.min.x, areaBounds.max.x);
-        float clampedZ = Mathf.Clamp(newPosition.z, areaBounds.min.z, areaBounds.max.z);
-        newPosition = new Vector3(clampedX, newPosition.y, clampedZ);
-        transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
-
-        float clampedZoomY = Mathf.Clamp(newZoom.y, minZoomHeight, maxZoomHeight);
-        newZoom = new Vector3(0f, clampedZoomY, newZoom.z);
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTime);
     }
 
-    private void LockCamera(Vector2Int gridPosition) { lockCamera = true; }
-    private void UnlockCamera(Vector2Int gridPosition) { lockCamera = false; }
+    public void LockCamera(Vector2Int gridPosition) { lockCamera = true; }
+    public void UnlockCamera(Vector2Int gridPosition) { lockCamera = false; }
 
     private void HandleEdgeScrolling()
     {

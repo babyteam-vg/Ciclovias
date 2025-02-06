@@ -99,20 +99,20 @@ public class Graph : MonoBehaviour
     }
 
     // Drawing the Nodes (Debug)
-    //public void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.white;
+    public void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
 
-    //    foreach (var node in nodes.Values)
-    //    {
-    //        Vector3 worldPosition = new Vector3(node.worldPosition.x, 0, node.worldPosition.y);
-    //        Gizmos.DrawSphere(worldPosition, 0.1f);
+        foreach (var node in nodes.Values)
+        {
+            Vector3 worldPosition = new Vector3(node.worldPosition.x, 0, node.worldPosition.y);
+            Gizmos.DrawSphere(worldPosition, 0.1f);
 
-    //        foreach (var neighbor in node.neighbors)
-    //        {
-    //            Vector3 neighborPosition = new Vector3(neighbor.worldPosition.x, 0, neighbor.worldPosition.y);
-    //            Gizmos.DrawLine(worldPosition, neighborPosition);
-    //        }
-    //    }
-    //}
+            foreach (var neighbor in node.neighbors)
+            {
+                Vector3 neighborPosition = new Vector3(neighbor.worldPosition.x, 0, neighbor.worldPosition.y);
+                Gizmos.DrawLine(worldPosition, neighborPosition);
+            }
+        }
+    }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ public class TaskManager
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
-    // === Methods ===
+    // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Construuctor
     public TaskManager(Graph graph, Pathfinder pathfinder, CellScoresCalculator cellScoresCalculator)
     {
         this.graph = graph;
@@ -16,40 +18,37 @@ public class TaskManager
         this.cellScoresCalculator = cellScoresCalculator;
     }
 
-    // Active <-> Deactive
-    public void UpdateActiveTasks(List<Task> tasks, List<Task> activeTasks)
+    // ::::: Active <-> Deactive
+    public void UpdateActiveTasks(List<Task> tasks)
     {
         foreach (var task in tasks)
         {
-            if (task.GetState() == 3 && !TaskLaneCompleted(task))
-                ChangeTaskState(1, task, activeTasks); // Deactivate Task
+            if (task.state == 4 && !TaskLaneCompleted(task)) // Deactivate Task
+                DecompleteTask(task); // Completed -> Accepted
             
-            if (task.GetState() == 2 && !TaskLaneStarted(task))
-                ChangeTaskState(1, task, activeTasks); // Deactivate Task
+            if (task.state == 3 && !TaskLaneStarted(task)) // Deactivate Task
+                ChangeTaskState(2, task); // Active -> Accepted
 
-            if (task.GetState() == 1 && TaskLaneStarted(task))
-                ChangeTaskState(2, task, activeTasks); // Activate Task
+            if (task.state == 2 && TaskLaneStarted(task)) // Activate Task
+                ChangeTaskState(3, task); // Accepted -> Active
         }
     }
 
-    // Unlock a Task
-    public void UnlockTask(Task task)
-    {
-        ChangeTaskState(2, task);
-    }
+    // ::::: Unlock & Accept a Task
+    public void UnlockTask(Task task) { ChangeTaskState(1, task); }
+    public void AcceptTask(Task task) { ChangeTaskState(2, task); }
 
-    // Lane Relative to Task
-    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.info.startCells); }
-    public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.info.startCells) && graph.ContainsAny(task.info.destinationCells); }
+    // ::::: Lane Relative to Task
+    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.info.from.surroundings); }
+    public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.info.from.surroundings) && graph.ContainsAny(task.info.to.surroundings); }
 
-    // Lane Building Feedback
-    public void TaskInProgress(List<Task> activeTasks)
+    // ::::: Lane Building Feedback
+    public void TaskInProgress()
     {
-        List<Task> auxTasks = new List<Task>();
-        foreach (var activeTask in activeTasks)
+        foreach (var activeTask in TaskDiary.Instance.tasks.Where(t => t.state == 3).ToList()) // Only Active Tasks
         { //                 Does the Lane Passes Through the Start? <¬            Does Not <¬
-            Vector2Int startNode = graph.FindNodeInCells(activeTask.info.startCells) ?? activeTask.info.destinationCells.FirstOrDefault();
-            Vector2Int destinationNode = graph.FindNodeInCells(activeTask.info.destinationCells) ?? activeTask.info.destinationCells.FirstOrDefault();
+            Vector2Int startNode = graph.FindNodeInCells(activeTask.info.from.surroundings) ?? activeTask.info.to.surroundings.FirstOrDefault();
+            Vector2Int destinationNode = graph.FindNodeInCells(activeTask.info.to.surroundings) ?? activeTask.info.to.surroundings.FirstOrDefault();
             //                       Execute A* <¬
             var (pathFound, path) = pathfinder.FindPath(startNode, destinationNode);
 
@@ -57,45 +56,79 @@ public class TaskManager
             int charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path, destinationNode);
 
-            activeTask.SetSafety(safety);
-            activeTask.SetCharm(charm);
-            activeTask.SetFlow(flow);
+            activeTask.currentSafetyDiscount = safety;
+            activeTask.currentCharmCount = charm;
+            activeTask.currentFlowPercentage = flow;
 
-            if (pathFound)
-                if (activeTask.MeetsRequirements())
-                    ChangeTaskState(3, activeTask, activeTasks, path);
-        } foreach (var task in auxTasks)
-            activeTasks.Remove(task); // To Prevent Errors w/the Foreach
+            if (pathFound && activeTask.MeetsRequirements())
+                CompleteTask(activeTask, path); // Complete the Task
+        }
     }
 
-    // === Methods ===
-    // Change the State of a Task
-    private void ChangeTaskState(int state, Task task, List<Task> activeTasks = null, List<Vector2Int> path = null)
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: Complete & Decomplete a Task
+    private void CompleteTask(Task task, List<Vector2Int> path)
+    {
+        ConstructionMaterial.Instance.AddMaterial(task.info.materialReward);
+
+        foreach (Vector2Int taskId in task.info.unlockedTasks)
+        {
+            int map = taskId.x;
+            int number = taskId.y;
+            Compound compound = task.info.from;
+
+            Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.map == map && t.info.number == number);
+            if (unlockedTask != null && unlockedTask.state == 0)
+            {
+                compound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
+                UnlockTask(unlockedTask);
+            }
+        }
+
+        ChangeTaskState(4, task, path); // Completed
+    }
+    private void DecompleteTask(Task task)
+    {
+        ConstructionMaterial.Instance.ConsumeMaterial(task.info.materialReward);
+        ChangeTaskState(2, task); // Completed -> Accepted
+    }
+
+    // ::::: Change the State of a Task
+    private void ChangeTaskState(int state, Task task, List<Vector2Int> path = null)
     {
         switch (state)
         {
-            case 1: // Unlock or Deactivate
-                if (task.GetState() != 1)
+            case 0: // Lock
+                if (task.state != 0)
+                    task.state = 0;
+                break;
+
+            case 1: // Unlock
+                if (task.state != 1)
+                    task.state = 1;
+                break;
+
+            case 2: // Accept
+                if (task.state != 2)
                 {
-                    Debug.Log($"{task.info.title} is now Available!");
-                    task.SetState(1);
-                    activeTasks?.Remove(task);
+                    task.state = 2;
+                    if (CurrentTask.Instance != null)
+                        CurrentTask.Instance.PinTask(task); // Pin Task
+                }
+                break;
+
+            case 3: // Activate
+                if (task.state != 3)
+                {
+                    task.state = 3;
+                    if (CurrentTask.Instance != null)
+                        CurrentTask.Instance.PinTask(task); // Pin Task
                 } break;
 
-            case 2: // Activate
-                if (task.GetState() != 2)
+            case 4: // Complete
+                if (task.state != 4)
                 {
-                    Debug.Log($"{task.info.title} is now Active!");
-                    task.SetState(2);
-                    activeTasks?.Add(task);
-                } break;
-
-            case 3: // Complete
-                if (task.GetState() != 3)
-                {
-                    Debug.Log($"{task.info.title} is now Completed!");
-                    task.SetState(3);
-                    //activeTasks.Remove(task);
+                    task.state = 4;
                     task.SetCompletedLane(path);
                 } break;
         }

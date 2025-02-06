@@ -45,4 +45,7 @@ public enum CellContent
     Repulsive,
     Attraction,
     Stop,
+    Residential,
+    Compound,
+    Road
 }

@@ -6,18 +6,32 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Task", menuName = "Task", order = 1)]
 public class TaskInfo : ScriptableObject
 {
+    [Header("ID")]
+    public int map;
+    public int number;
+
+    [Header("Basic")]
     public string title;
-    //public Character character;
-
+    public Character character;
     [TextArea(3, 6)]
-    public string description;
+    public string dialog;
+    [TextArea(3, 6)]
+    public string endDialog;
 
-    public List<Vector2Int> startCells;
-    public List<Vector2Int> destinationCells;
+    [Header("Map")]
+    public Compound from;
+    public Compound to;
 
+    [Header("Requirements")]
     public int maxSafetyDiscount;
-    public int minCharm;
+    public int minCharmCount;
     [Range(0f, 1f)] public float minFlowPercentage;
+    public int minMaterial;
+    public int maxMaterial;
 
-    public int materialLimit;
+    [Header("Rewards")]
+    public int materialReward;
+    public List<Vector2Int> unlockedTasks;
+    // Character's Dialog
+    // Social Network Comments
 }
