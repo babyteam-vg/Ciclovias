@@ -53,9 +53,9 @@ public class OverlayManager : MonoBehaviour
         cameraController.LockCamera(Vector2Int.zero);
     }
 
-    public void OnAcceptTaskPress(Task task)
+    public void OnAcceptTaskPress()
     {
-        TaskDiary.Instance.AcceptTask(task);
+        TaskDiary.Instance.AcceptTask(TaskReceiver.Instance.ReceivedTask);
         newTaskUI.SetActive(false);
         cameraController.UnlockCamera(Vector2Int.zero);
     }

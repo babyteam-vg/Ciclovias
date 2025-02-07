@@ -4,34 +4,32 @@ using UnityEngine;
 public class GridRenderer : MonoBehaviour
 {
     [SerializeField] private Grid grid; // Referencia al componente Grid
-    [SerializeField] private Material defaultMaterial; // Material por defecto
-    [SerializeField] private CellContentMesh[] contentMeshes; // Meshes por tipo de contenido
+    [SerializeField] private Material lineMaterial; // Material para los bordes
+    [SerializeField] private CellContentMesh[] contentMeshes; // Configuración de materiales por contenido
 
-    private Dictionary<CellContent, MeshData> meshDataDict;
+    private Dictionary<CellContent, List<Vector3[]>> borderDataDict;
 
     private void Start()
     {
-        InitializeMeshData();
-        GenerateMeshes();
+        InitializeBorderData();
+        GenerateBorders();
     }
 
-    private void InitializeMeshData()
+    private void InitializeBorderData()
     {
-        // Crear un diccionario para almacenar MeshData para cada contenido
-        meshDataDict = new Dictionary<CellContent, MeshData>();
+        borderDataDict = new Dictionary<CellContent, List<Vector3[]>>();
 
         foreach (CellContentMesh contentMesh in contentMeshes)
         {
-            meshDataDict[contentMesh.content] = new MeshData();
+            borderDataDict[contentMesh.content] = new List<Vector3[]>();
         }
     }
 
-    private void GenerateMeshes()
+    private void GenerateBorders()
     {
         int width = grid.GetGridDimensions().x;
         int height = grid.GetGridDimensions().y;
 
-        // Llenar MeshData para cada contenido
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -40,41 +38,58 @@ public class GridRenderer : MonoBehaviour
                 if (cell == null) continue;
 
                 CellContent content = cell.GetContent();
-                if (!meshDataDict.ContainsKey(content)) continue;
+                if (!borderDataDict.ContainsKey(content)) continue;
 
-                // Agregar la celda a su MeshData correspondiente
                 Vector3 cellPosition = grid.GetWorldPositionFromCell(x, y);
-                meshDataDict[content].AddQuad(cellPosition, grid.GetCellSize());
+                float size = grid.GetCellSize();
+
+                // Agregar los bordes de la celda a la lista
+                borderDataDict[content].Add(GetCellBorder(cellPosition, size));
             }
         }
 
-        // Crear un GameObject y MeshRenderer para cada contenido
-        foreach (var kvp in meshDataDict)
+        // Crear GameObjects con LineRenderer para cada contenido
+        foreach (var kvp in borderDataDict)
         {
             CellContent content = kvp.Key;
-            MeshData meshData = kvp.Value;
+            List<Vector3[]> borders = kvp.Value;
 
-            if (meshData.Vertices.Count == 0) continue; // Ignorar contenido sin celdas
+            if (borders.Count == 0) continue;
 
-            // Crear el mesh
-            Mesh mesh = new Mesh
+            GameObject borderObject = new GameObject(content.ToString() + "_Borders");
+            borderObject.transform.SetParent(transform);
+
+            foreach (Vector3[] border in borders)
             {
-                vertices = meshData.Vertices.ToArray(),
-                triangles = meshData.Triangles.ToArray()
-            };
-            mesh.RecalculateNormals();
-
-            // Crear un GameObject para este contenido
-            GameObject contentObject = new GameObject(content.ToString());
-            contentObject.transform.SetParent(transform);
-
-            // Agregar MeshFilter y MeshRenderer
-            MeshFilter meshFilter = contentObject.AddComponent<MeshFilter>();
-            meshFilter.mesh = mesh;
-
-            MeshRenderer meshRenderer = contentObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = GetMaterialForContent(content);
+                CreateBorderRenderer(borderObject, border, GetMaterialForContent(content));
+            }
         }
+    }
+
+    private Vector3[] GetCellBorder(Vector3 position, float size)
+    {
+        return new Vector3[]
+        {
+            position, // Esquina inferior izquierda
+            position + new Vector3(size, 0, 0), // Esquina inferior derecha
+            position + new Vector3(size, 0, size), // Esquina superior derecha
+            position + new Vector3(0, 0, size), // Esquina superior izquierda
+            position // Cierra el cuadro volviendo al punto inicial
+        };
+    }
+
+    private void CreateBorderRenderer(GameObject parent, Vector3[] border, Material material)
+    {
+        GameObject borderObject = new GameObject("Border");
+        borderObject.transform.SetParent(parent.transform);
+
+        LineRenderer lineRenderer = borderObject.AddComponent<LineRenderer>();
+        lineRenderer.positionCount = border.Length;
+        lineRenderer.SetPositions(border);
+        lineRenderer.material = material;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
+        lineRenderer.loop = false;
     }
 
     private Material GetMaterialForContent(CellContent content)
@@ -84,41 +99,14 @@ public class GridRenderer : MonoBehaviour
             if (contentMesh.content == content)
                 return contentMesh.material;
         }
-
-        return defaultMaterial; // Usar el material por defecto si no se encuentra
+        return lineMaterial; // Usar el material por defecto si no se encuentra
     }
 }
+
 
 [System.Serializable]
 public class CellContentMesh
 {
     public CellContent content; // Tipo de contenido
     public Material material; // Material para este contenido
-}
-
-// Clase auxiliar para almacenar datos del Mesh
-public class MeshData
-{
-    public List<Vector3> Vertices { get; } = new List<Vector3>();
-    public List<int> Triangles { get; } = new List<int>();
-    private int vertexIndex = 0;
-
-    // Agregar un quad (rectángulo) al MeshData
-    public void AddQuad(Vector3 position, float size)
-    {
-        Vertices.Add(position);
-        Vertices.Add(position + new Vector3(size, 0, 0));
-        Vertices.Add(position + new Vector3(0, 0, size));
-        Vertices.Add(position + new Vector3(size, 0, size));
-
-        Triangles.Add(vertexIndex + 0);
-        Triangles.Add(vertexIndex + 2);
-        Triangles.Add(vertexIndex + 1);
-
-        Triangles.Add(vertexIndex + 1);
-        Triangles.Add(vertexIndex + 2);
-        Triangles.Add(vertexIndex + 3);
-
-        vertexIndex += 4;
-    }
 }

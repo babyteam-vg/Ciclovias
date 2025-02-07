@@ -8,6 +8,7 @@ public class Task
     [Range(0, 4)] public int state; // 0:Locked 1:Unlocked 2:Accepted 3:Active 4:Completed
     public TaskInfo info;
     public List<Vector2Int> completedLane;
+    public Compound compound;
 
     [Header("Requirements")]
     public int currentSafetyDiscount;

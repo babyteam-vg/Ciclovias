@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "Compound", menuName = "Compound", order = 1)]
-public class Compound : ScriptableObject
+public class Compound : MonoBehaviour
 {
-    [Header("Basic")]
-    public string name;
-    public Vector2 reference;
-    public List<Vector2Int> surroundings;
+    [Header("Dependencies")]
+    [SerializeField] private Compound compound;
+    [SerializeField] private Image taskIconPrefab;
 
+    [Header("UI References")]
+    [SerializeField] private OverlayManager overlayManager;
+
+    private GameObject taskIconInstance;
     private Task givingTask;
-
-    public event System.Action OnTaskUnlocked;
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Compound Giving a Task?
@@ -22,39 +23,25 @@ public class Compound : ScriptableObject
     public Task GetNextAvailableTask(int currentMapState)
     {
         List<Task> tasks = TaskDiary.Instance.tasks;
-        var currentStateTasks = tasks.Where(t => t.info.from == this && t.info.map == currentMapState)
-                                     .OrderBy(t => t.info.number).ToList();
+        var currentStateTasks = tasks.Where(t => t.compound == this && t.info.map == currentMapState)
+            .OrderBy(t => t.info.number).ToList();
 
-        foreach (Task task in currentStateTasks)
-        {
-            if (task.state == 1) // Unlocked
-            {
-                if (givingTask != task)
-                {
-                    givingTask = task;
-                    OnTaskUnlocked?.Invoke();
-                }
-                return task;
-            }
-        }
-
-        if (givingTask != null) // No más tareas disponibles
-        {
-            givingTask = null;
-            OnTaskUnlocked?.Invoke();
-        }
-
-        return null;
+        givingTask = currentStateTasks.FirstOrDefault(t => t.state == 1);
+        return givingTask;
     }
 
-    // ::::: When the Player Clicks the Compound to Receive a Task
-    public void OnPlayerInteract()
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: Click on Compound (Mesh)
+    private void OnMouseDown()
     {
-        if (givingTask != null)
+        if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent UI Interference
         {
+            if (!IsGivingTask())
+                return;
+
             TaskReceiver.Instance.ReceiveTask(givingTask);
+            overlayManager.OnReceiveTaskPress();
             givingTask = null;
-            OnTaskUnlocked?.Invoke();
         }
     }
 }

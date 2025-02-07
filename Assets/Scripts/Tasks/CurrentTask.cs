@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,9 +28,19 @@ public class CurrentTask : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        if (!ThereIsPinned() && GameStateManager.Instance.CurrentMapState == 0)
+        {
+            Task firstTask = TaskDiary.Instance.tasks[0];
+            if (firstTask.state == 2)
+                PinTask(firstTask); // Automatically Pin Task 0-1 "Tutorial"
+        }
+    }
+
     private void Update()
     {
-        if (PinnedTask != null)
+        if (ThereIsPinned())
         {
             Task task = PinnedTask;
 
@@ -46,6 +57,9 @@ public class CurrentTask : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Is There a Task Pinned?
+    public bool ThereIsPinned() { return PinnedTask != null; }
+
     // ::::: Pin a Task
     public void PinTask(Task task)
     {
@@ -54,16 +68,30 @@ public class CurrentTask : MonoBehaviour
         PinnedTask = task;
         UpdateTaskUI();
     }
+    public void UnpinTask(Task task)
+    {
+        if (!ThereIsPinned()) return;
+
+        PinnedTask = null;
+        UpdateTaskUI();
+    }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: UI Only Affected When Changing the Pinned Task
     private void UpdateTaskUI()
     {
-        Task task = PinnedTask;
-
         // Texts
-        titleText.text = task.info.title;
-        startText.text = task.info.from.name;
-        destinationText.text = task.info.to.name;
+        if (ThereIsPinned())
+        {
+            titleText.text = PinnedTask.info.title;
+            startText.text = PinnedTask.info.from.compoundName;
+            destinationText.text = PinnedTask.info.to.compoundName;
+        }
+        else
+        {
+            titleText.text = "Task";
+            startText.text = "From";
+            destinationText.text = "To";
+        }
     }
 }

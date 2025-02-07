@@ -75,13 +75,13 @@ public class TaskManager
         {
             int map = taskId.x;
             int number = taskId.y;
-            Compound compound = task.info.from;
 
             Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.map == map && t.info.number == number);
             if (unlockedTask != null && unlockedTask.state == 0)
             {
-                compound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
                 UnlockTask(unlockedTask);
+                Compound compound = unlockedTask.compound;
+                compound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
             }
         }
 
@@ -130,6 +130,7 @@ public class TaskManager
                 {
                     task.state = 4;
                     task.SetCompletedLane(path);
+                    CurrentTask.Instance.UnpinTask(task);
                 } break;
         }
     }

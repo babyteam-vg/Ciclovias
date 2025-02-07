@@ -19,8 +19,8 @@ public class TaskInfo : ScriptableObject
     public string endDialog;
 
     [Header("Map")]
-    public Compound from;
-    public Compound to;
+    public CompoundInfo from;
+    public CompoundInfo to;
 
     [Header("Requirements")]
     public int maxSafetyDiscount;

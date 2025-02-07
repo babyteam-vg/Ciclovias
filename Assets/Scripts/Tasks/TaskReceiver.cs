@@ -22,10 +22,14 @@ public class TaskReceiver : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: 
+    // ::::: Is There a Received Task?
+    public bool ThereIsReceived() { return ReceivedTask != null; }
+
+    // ::::: Receive a Task
     public void ReceiveTask(Task task)
     {
-        if (ReceivedTask == task) return;
+        if (ReceivedTask == task)
+            return;
 
         ReceivedTask = task;
         UpdateTaskUI();
@@ -35,10 +39,11 @@ public class TaskReceiver : MonoBehaviour
     // ::::: UI Only Affected When Changing the Pinned Task
     private void UpdateTaskUI()
     {
-        Task task = ReceivedTask;
-
-        title.text = task.info.title;
-        dialog.text = task.info.dialog;
-        portrait.sprite = task.info.character.portrait;
+        if (ThereIsReceived())
+        {
+            title.text = ReceivedTask.info.title;
+            dialog.text = ReceivedTask.info.dialog;
+            portrait.sprite = ReceivedTask.info.character.portrait;
+        }
     }
 }
