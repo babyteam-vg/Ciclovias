@@ -7,10 +7,9 @@ public class Compound : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Compound compound;
-    [SerializeField] private Image taskIconPrefab;
 
     [Header("UI References")]
-    [SerializeField] private OverlayManager overlayManager;
+    [SerializeField] private MenuManager menuManager;
 
     private GameObject taskIconInstance;
     private Task givingTask;
@@ -23,7 +22,7 @@ public class Compound : MonoBehaviour
     public Task GetNextAvailableTask(int currentMapState)
     {
         List<Task> tasks = TaskDiary.Instance.tasks;
-        var currentStateTasks = tasks.Where(t => t.compound == this && t.info.map == currentMapState)
+        var currentStateTasks = tasks.Where(t => t.fromCompound == this && t.info.map == currentMapState)
             .OrderBy(t => t.info.number).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == 1);
@@ -40,7 +39,7 @@ public class Compound : MonoBehaviour
                 return;
 
             TaskReceiver.Instance.ReceiveTask(givingTask);
-            overlayManager.OnReceiveTaskPress();
+            menuManager.OnReceiveTaskPress();
             givingTask = null;
         }
     }

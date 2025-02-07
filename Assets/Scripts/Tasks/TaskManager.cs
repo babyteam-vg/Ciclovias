@@ -80,7 +80,7 @@ public class TaskManager
             if (unlockedTask != null && unlockedTask.state == 0)
             {
                 UnlockTask(unlockedTask);
-                Compound compound = unlockedTask.compound;
+                Compound compound = unlockedTask.fromCompound;
                 compound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
             }
         }

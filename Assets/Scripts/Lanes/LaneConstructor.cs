@@ -12,6 +12,7 @@ public class LaneConstructor : MonoBehaviour
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
     private Vector2Int? lastAddedPosition = null;
+    private Vector2Int? startCellPosition = null;
 
     public event Action<Vector2Int> OnLaneBuilt;
     public event Action<Vector2Int> OnLaneFinished;
@@ -38,6 +39,7 @@ public class LaneConstructor : MonoBehaviour
         {
             AddNodeAndConnections(gridPosition);
             isBuilding = true;
+            startCellPosition = gridPosition;
             lastCellPosition = gridPosition;
         }
     }
@@ -102,6 +104,9 @@ public class LaneConstructor : MonoBehaviour
                 {
                     graph.AddEdge(lastCellPosition.Value, gridPosition);
                     ConstructionMaterial.Instance.ConsumeMaterial(1); // Construction Material: -1
+
+                    if (lastCellPosition.Value == startCellPosition.Value)
+                        OnLaneBuilt?.Invoke(startCellPosition.Value);
                     OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
                 }
         }

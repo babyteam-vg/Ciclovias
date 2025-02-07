@@ -21,10 +21,10 @@ MonoBehaviour:
   from: {fileID: 11400000, guid: 4fcb7f1f765a25d45884c680c1318b4c, type: 2}
   to: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
   maxSafetyDiscount: -1000
-  minCharmCount: 5
+  minCharmCount: 15
   minFlowPercentage: 0
   minMaterial: 0
   maxMaterial: 1000
-  materialReward: 50
+  materialReward: 120
   unlockedTasks:
   - {x: 0, y: 2}

@@ -44,7 +44,7 @@ public class LaneDestructor : MonoBehaviour
                 {
                     graph.RemoveEdge(lastCellPosition.Value, gridPosition);
                     ConstructionMaterial.Instance.AddMaterial(1); // Construction Material: +1
-                    OnLaneDestroyed?.Invoke(gridPosition); // Notify Lane Destruction
+                    OnLaneDestroyed?.Invoke(lastCellPosition.Value); // Notify Lane Destruction
                 }
 
                 CheckAndRemoveNode(lastCellPosition.Value);
