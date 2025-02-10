@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
-  m_Name: 0-1 Tutorial
+  m_Name: 0-1 Welcome to the City
   m_EditorClassIdentifier: 
   map: 0
   number: 1
-  title: Tutorial
-  character: {fileID: 0}
+  title: Welcome to the City
+  character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialog: 
   endDialog: 
   from: {fileID: 11400000, guid: 4fcb7f1f765a25d45884c680c1318b4c, type: 2}

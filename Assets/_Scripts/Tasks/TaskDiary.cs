@@ -15,7 +15,17 @@ public class TaskDiary : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Transform contentTransform;
-    [SerializeField] private GameObject availableTaskPrefab;
+    [SerializeField] private TextMeshProUGUI taskTitle;
+    [SerializeField] private TextMeshProUGUI taskFrom;
+    [SerializeField] private TextMeshProUGUI taskTo;
+    [SerializeField] private TextMeshProUGUI requirementsSafety;
+    [SerializeField] private TextMeshProUGUI requirementsCharm;
+    [SerializeField] private TextMeshProUGUI requirementsFlow;
+    [SerializeField] private TextMeshProUGUI minimumMaterial;
+    [SerializeField] private TextMeshProUGUI maximumMaterial;
+    [SerializeField] private Button pinButton;
+    [SerializeField] private TextMeshProUGUI taskCharacter;
+    [SerializeField] private TextMeshProUGUI taskDialog;
 
     public List<Task> tasks = new List<Task>();
 
@@ -78,17 +88,23 @@ public class TaskDiary : MonoBehaviour
         foreach (Task task in tasks)
         { //       Accepted <¬          Active <¬
             if (task.state == 2 || task.state == 3)
-            { //                              Child <¬            Parent <¬
-                GameObject newItem = Instantiate(availableTaskPrefab, contentTransform);
-                //                                   TMP Part of the Prefab <¬
-                TextMeshProUGUI tmpText = newItem.GetComponentInChildren<TextMeshProUGUI>();
-                if (tmpText != null)
-                    tmpText.text = task.info.title;
-                //                                        Button Part of the Prefab <¬
-                Button pinButton = newItem.transform.Find("Pin Task Button").GetComponent<Button>();
+            {
+                taskTitle.text = task.info.title;
+                taskFrom.text = task.info.from.compoundName;
+                taskTo.text = task.info.to.compoundName;
+
+                requirementsSafety.text = task.info.maxSafetyDiscount.ToString();
+                requirementsCharm.text = task.info.minCharmCount.ToString();
+                requirementsFlow.text = task.info.minFlowPercentage.ToString();
+                minimumMaterial.text = "Min. " + task.info.minMaterial.ToString();
+                maximumMaterial.text = "Max. " + task.info.maxMaterial.ToString();
+
                 pinButton.onClick.AddListener(() => {
                     CurrentTask.Instance.PinTask(task);
                 });
+
+                //taskCharacter.text = task.info.character.characterName;
+                //taskDialog.text = task.info.dialog;
             }
         }
     }
