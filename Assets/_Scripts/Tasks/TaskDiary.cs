@@ -8,10 +8,9 @@ public class TaskDiary : MonoBehaviour
     public static TaskDiary Instance { get; private set; }
 
     [Header("Dependencies")]
-    [SerializeField] private Grid grid;
-    [SerializeField] private Graph graph;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
+    [SerializeField] private TaskManager taskManager;
 
     [Header("UI References")]
     [SerializeField] private Transform contentTransform;
@@ -29,22 +28,12 @@ public class TaskDiary : MonoBehaviour
 
     public List<Task> tasks = new List<Task>();
 
-    private TaskManager taskManager;
-
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
         else Destroy(gameObject);
-
-        Pathfinder pathfinder = new Pathfinder(graph);
-        CellScoresCalculator calculator = new CellScoresCalculator(grid);
-
-        taskManager = new TaskManager(graph, pathfinder, calculator);
     }
 
     private void OnEnable()

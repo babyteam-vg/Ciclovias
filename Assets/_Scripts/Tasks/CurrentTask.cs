@@ -9,6 +9,8 @@ public class CurrentTask : MonoBehaviour
     public static CurrentTask Instance { get; private set; }
     public Task PinnedTask { get; private set; }
 
+    [SerializeField] private TaskWaypoint taskWaypoint;
+
     [Header("UI References - Texts")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI fromText;
@@ -18,12 +20,6 @@ public class CurrentTask : MonoBehaviour
     [SerializeField] private Image safetyFill;
     [SerializeField] private Image charmFill;
     [SerializeField] private Image flowFill;
-
-    [Header("UI References - Markers")]
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private Canvas worldCanvas;
-    [SerializeField] private Image fromMarker;
-    [SerializeField] private Image toMarker;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -73,7 +69,7 @@ public class CurrentTask : MonoBehaviour
 
         PinnedTask = task;
         UpdateTaskUI();
-        //UpdateTaskMarkers();
+        taskWaypoint.UpdateTaskWaypoints(PinnedTask.fromCompound.transform, PinnedTask.toCompound.transform);
     }
     public void UnpinTask(Task task)
     {
@@ -81,8 +77,7 @@ public class CurrentTask : MonoBehaviour
 
         PinnedTask = null;
         UpdateTaskUI();
-        fromMarker.gameObject.SetActive(false);
-        toMarker.gameObject.SetActive(false);
+        taskWaypoint.HideTaskWaypoints();
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -103,35 +98,4 @@ public class CurrentTask : MonoBehaviour
             toText.text = "To";
         }
     }
-
-    //private void UpdateTaskMarkers()
-    //{
-    //    if (!ThereIsPinned() || worldCanvas == null || mainCamera == null) return;
-
-    //    // Obtener posiciones en el mundo (XZ)
-    //    Vector3 fromWorldPos = PinnedTask.fromCompound.transform.position;
-    //    Vector3 toWorldPos = PinnedTask.toCompound.transform.position;
-
-    //    // Ajustar para proyectar en el plano XZ (forzar Y según la cámara)
-    //    fromWorldPos.y = mainCamera.transform.position.y;
-    //    toWorldPos.y = mainCamera.transform.position.y;
-
-    //    // Convertir posiciones del mundo a coordenadas de pantalla
-    //    Vector3 fromScreenPos = mainCamera.WorldToScreenPoint(fromWorldPos);
-    //    Vector3 toScreenPos = mainCamera.WorldToScreenPoint(toWorldPos);
-
-    //    // Convertir coordenadas de pantalla a posiciones dentro del Canvas
-    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(
-    //        worldCanvas.transform as RectTransform, fromScreenPos, mainCamera, out Vector2 fromCanvasPos);
-    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(
-    //        worldCanvas.transform as RectTransform, toScreenPos, mainCamera, out Vector2 toCanvasPos);
-
-    //    // Aplicar posiciones a los marcadores
-    //    fromMarker.rectTransform.anchoredPosition = fromCanvasPos;
-    //    toMarker.rectTransform.anchoredPosition = toCanvasPos;
-
-    //    // Activar los marcadores
-    //    fromMarker.gameObject.SetActive(true);
-    //    toMarker.gameObject.SetActive(true);
-    //}
 }

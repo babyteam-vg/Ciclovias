@@ -3,19 +3,21 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class TaskManager
+public class TaskManager : MonoBehaviour
 {
-    private Graph graph;
+    [SerializeField] private Grid grid;
+    [SerializeField] private Graph graph;
+    [SerializeField] private AudioManager audioManager;
+
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Construuctor
-    public TaskManager(Graph graph, Pathfinder pathfinder, CellScoresCalculator cellScoresCalculator)
+    public void Awake()
     {
-        this.graph = graph;
-        this.pathfinder = pathfinder;
-        this.cellScoresCalculator = cellScoresCalculator;
+        pathfinder = new Pathfinder(graph);
+        cellScoresCalculator = new CellScoresCalculator(grid);
     }
 
     // ::::: Active <-> Deactive
@@ -131,6 +133,7 @@ public class TaskManager
                     task.state = 4;
                     task.SetCompletedLane(path);
                     CurrentTask.Instance.UnpinTask(task);
+                    audioManager.PlaySFX(audioManager.complete);
                 } break;
         }
     }

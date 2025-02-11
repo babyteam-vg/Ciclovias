@@ -9,6 +9,8 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
 
+    [SerializeField] private AudioManager audioManager;
+
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
     private Vector2Int? lastAddedPosition = null;
@@ -108,6 +110,7 @@ public class LaneConstructor : MonoBehaviour
                     if (lastCellPosition.Value == startCellPosition.Value)
                         OnLaneBuilt?.Invoke(startCellPosition.Value);
                     OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
+                    audioManager.PlaySFX(audioManager.build);
                 }
         }
 
