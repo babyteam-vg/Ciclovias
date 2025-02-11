@@ -94,7 +94,7 @@ public class LaneConstructor : MonoBehaviour
         if (lastAddedPosition.HasValue && lastAddedPosition.Value == gridPosition)
             return; // To Prevent Duplicates
 
-        if (ConstructionMaterial.Instance.constructionMaterial > 0)
+        if (ConstructionMaterial.Instance.material > 0)
         {
             if (graph.GetNode(gridPosition) == null)
                 graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
