@@ -40,13 +40,6 @@ public class CurrentTask : MonoBehaviour
 
     private void Start()
     {
-        if (!ThereIsPinned() && GameStateManager.Instance.CurrentMapState == 0)
-        {
-            Task firstTask = TaskDiary.Instance.tasks[0];
-            if (firstTask.state == 2)
-                PinTask(firstTask); // Automatically Pin Task 0-1 "Tutorial"
-        }
-
         safetyAnimator = safetySlider.GetComponent<Animator>();
         charmAnimator = charmSlider.GetComponent<Animator>();
         flowAnimator = flowSlider.GetComponent<Animator>();

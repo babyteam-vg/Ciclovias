@@ -22,19 +22,22 @@ public class TaskWaypoint : MonoBehaviour
         float minY = fromImg.GetPixelAdjustedRect().height / 2;
         float maxY = Screen.height - minY;
 
-        // Waypoints Reposition
-        Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position);
-        Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position);
+        if (CurrentTask.Instance.ThereIsPinned())
+        {
+            // Waypoints Reposition
+            Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position);
+            Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position);
 
-        // Limit to Borders of the Screen
-        fromPos.x = Mathf.Clamp(fromPos.x , minX, maxX);
-        fromPos.y = Mathf.Clamp(fromPos.y, minY, maxY);
+            // Limit to Borders of the Screen
+            fromPos.x = Mathf.Clamp(fromPos.x, minX, maxX);
+            fromPos.y = Mathf.Clamp(fromPos.y, minY, maxY);
 
-        toPos.x = Mathf.Clamp(toPos.x, minX, maxX);
-        toPos.y = Mathf.Clamp(toPos.y, minY, maxY);
+            toPos.x = Mathf.Clamp(toPos.x, minX, maxX);
+            toPos.y = Mathf.Clamp(toPos.y, minY, maxY);
 
-        fromImg.transform.position = fromPos;
-        toImg.transform.position = toPos;
+            fromImg.transform.position = fromPos;
+            toImg.transform.position = toPos;
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

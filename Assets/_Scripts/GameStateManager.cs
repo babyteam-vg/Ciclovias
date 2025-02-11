@@ -8,11 +8,26 @@ public class GameStateManager : MonoBehaviour
     public int CurrentMapState { get; private set; } = 0;
     public int CurrentSmokeState { get; private set; } = 0;
 
+    [SerializeField] private MenuManager menuManager;
+
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        if (!CurrentTask.Instance.ThereIsPinned() && GameStateManager.Instance.CurrentMapState == 0)
+        {
+            Task firstTask = TaskDiary.Instance.tasks[0];
+            if (firstTask.state == 1)
+            {
+                TaskReceiver.Instance.ReceiveTask(firstTask); // Automatically Receive Task 0-1
+                menuManager.OnReceiveTaskPress();
+            }
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

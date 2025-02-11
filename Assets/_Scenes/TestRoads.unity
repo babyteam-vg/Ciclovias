@@ -239,7 +239,6 @@ GameObject:
   m_Component:
   - component: {fileID: 58962863}
   - component: {fileID: 58962865}
-  - component: {fileID: 58962864}
   m_Layer: 0
   m_Name: UI Manager
   m_TagString: Untagged
@@ -262,18 +261,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &58962864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 58962861}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77213d45e7fa8af4fb0e4f368b66d533, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &58962865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5326,7 +5313,7 @@ MonoBehaviour:
   contentTransform: {fileID: 856228139}
   availableTaskPrefab: {fileID: 2018085436}
   tasks:
-  - state: 2
+  - state: 1
     info: {fileID: 11400000, guid: c3098e89612308645ab09845f6359cec, type: 2}
     fromCompound: {fileID: 843504999}
     toCompound: {fileID: 1141078152}
@@ -6028,7 +6015,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1174118361
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8018,6 +8005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6f25da802e1784bb8121f608cb11cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuManager: {fileID: 58962865}
 --- !u!4 &1354703810
 Transform:
   m_ObjectHideFlags: 0
@@ -10852,7 +10840,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1974877570
 RectTransform:
   m_ObjectHideFlags: 0
