@@ -23,10 +23,15 @@ public class TaskInfo : ScriptableObject
     public CompoundInfo to;
 
     [Header("Requirements")]
-    public int maxSafetyDiscount;
+    public bool safetyRequirement;
+    public int minSafetyCount;
+    public bool charmRequirement;
     public int minCharmCount;
+    public bool flowRequirement;
     [Range(0f, 1f)] public float minFlowPercentage;
+    public bool minMaterialRequirement;
     public int minMaterial;
+    public bool maxMaterialRequirement;
     public int maxMaterial;
 
     [Header("Rewards")]

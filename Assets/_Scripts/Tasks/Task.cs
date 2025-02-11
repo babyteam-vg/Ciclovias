@@ -12,7 +12,7 @@ public class Task
     public List<Vector2Int> completedLane;
 
     [Header("Requirements")]
-    public int currentSafetyDiscount;
+    public int currentSafetyCount;
     public int currentCharmCount;
     public float currentFlowPercentage;
     public int usedMaterial;
@@ -25,9 +25,14 @@ public class Task
     // ::::: Requirements
     public bool MeetsRequirements()
     {
-        return currentSafetyDiscount >= info.maxSafetyDiscount &&
-            currentCharmCount >= info.minCharmCount &&
-            currentFlowPercentage >= info.minFlowPercentage &&
-            usedMaterial >= info.minMaterial && usedMaterial <= info.maxMaterial;
+        bool meetingRequirements = true;
+
+        if (info.safetyRequirement && currentSafetyCount < info.minSafetyCount) return false;
+        if (info.charmRequirement && currentCharmCount < info.minCharmCount) return false;
+        if (info.flowRequirement && currentFlowPercentage < info.minFlowPercentage) return false;
+        if (info.minMaterialRequirement && usedMaterial < info.minMaterial) return false;
+        if (info.maxMaterialRequirement && usedMaterial > info.maxMaterial) return false;
+
+        return meetingRequirements;
     }
 }

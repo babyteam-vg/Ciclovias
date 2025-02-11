@@ -22,7 +22,7 @@ MonoBehaviour:
     my weakness.\u201D"
   from: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
   to: {fileID: 11400000, guid: 14afc8ac001c36b4b99564b34ec46230, type: 2}
-  maxSafetyDiscount: -45
+  minSafetyCount: 100
   minCharmCount: 0
   minFlowPercentage: 0
   minMaterial: 0

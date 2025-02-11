@@ -58,7 +58,7 @@ public class TaskManager : MonoBehaviour
             int charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path, destinationNode);
 
-            activeTask.currentSafetyDiscount = safety;
+            activeTask.currentSafetyCount = safety;
             activeTask.currentCharmCount = charm;
             activeTask.currentFlowPercentage = flow;
 

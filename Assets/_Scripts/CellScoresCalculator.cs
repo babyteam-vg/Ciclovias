@@ -13,26 +13,39 @@ public class CellScoresCalculator
     // Safety
     public int CalculateSafety(Cell cell)
     {
-        int traffic = cell.GetTraffic(); // Traffic: -Safety
-        int danger = cell.GetContent() == CellContent.Dangerous ? -3 : 0; // Dangerous: ---Safety
-        int illumination = cell.GetIlluminated() ? 0 : -1; // Dark: -Safety
+        int safety = 0;
 
-        return -traffic + danger + illumination;
+        CellContent content = cell.GetContent();
+        switch (content)
+        {
+            case CellContent.Traffic:
+                safety -= cell.GetTraffic();
+                break;
+            case CellContent.Dangerous:
+                safety -= 4;
+                break;
+            default:
+                safety++;
+                break;
+        }
+        int illumination = cell.GetIlluminated() ? safety : safety--; // Dark: -Safety
+
+        return safety;
     }
     public int CalculatePathSafety(List<Vector2Int> path)
     {
-        int totalSafetyDiscount = 0;
+        int totalSafety = 0;
 
         for (int i = 0; i < path.Count; i++)
         {
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
-            totalSafetyDiscount += CalculateSafety(currentCell);
+            totalSafety += CalculateSafety(currentCell);
             // Stop
             if (IsStopPoint(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null))
-                totalSafetyDiscount += 1;
+                totalSafety += 1;
         }
 
-        return totalSafetyDiscount;
+        return totalSafety;
     }
 
     // Charm

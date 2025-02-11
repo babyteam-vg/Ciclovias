@@ -16,15 +16,24 @@ MonoBehaviour:
   number: 1
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
-  dialog: 
-  endDialog: 
+  dialog: '"Welcome! I''d like to personally congratulate you for your promotion.
+    As new Bike Lane Supervisor, your first task will be to build a bike lane so
+    we can meet at the Municipaliy. Make sure it''s a charming one, people have been
+    waiting for this for quite some time."'
+  endDialog: '"Oh, wonderful! Now I will be able to come to work by bike on a lovely
+    route. I''m sure people will appreciate it as much as I do."'
   from: {fileID: 11400000, guid: 4fcb7f1f765a25d45884c680c1318b4c, type: 2}
   to: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
-  maxSafetyDiscount: -1000
-  minCharmCount: 15
+  safetyRequirement: 0
+  minSafetyCount: 0
+  charmRequirement: 1
+  minCharmCount: 25
+  flowRequirement: 0
   minFlowPercentage: 0
+  minMaterialRequirement: 0
   minMaterial: 0
-  maxMaterial: 1000
+  maxMaterialRequirement: 0
+  maxMaterial: 0
   materialReward: 120
   unlockedTasks:
   - {x: 0, y: 2}

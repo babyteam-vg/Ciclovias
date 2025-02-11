@@ -14,17 +14,7 @@ public class TaskDiary : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Transform contentTransform;
-    [SerializeField] private TextMeshProUGUI taskTitle;
-    [SerializeField] private TextMeshProUGUI taskFrom;
-    [SerializeField] private TextMeshProUGUI taskTo;
-    [SerializeField] private TextMeshProUGUI requirementsSafety;
-    [SerializeField] private TextMeshProUGUI requirementsCharm;
-    [SerializeField] private TextMeshProUGUI requirementsFlow;
-    [SerializeField] private TextMeshProUGUI minimumMaterial;
-    [SerializeField] private TextMeshProUGUI maximumMaterial;
-    [SerializeField] private Button pinButton;
-    [SerializeField] private TextMeshProUGUI taskCharacter;
-    [SerializeField] private TextMeshProUGUI taskDialog;
+    [SerializeField] private GameObject availableTaskPrefab;
 
     public List<Task> tasks = new List<Task>();
 
@@ -78,13 +68,28 @@ public class TaskDiary : MonoBehaviour
         { //       Accepted <¬          Active <¬
             if (task.state == 2 || task.state == 3)
             {
+                GameObject newItem = Instantiate(availableTaskPrefab, contentTransform);
+                newItem.gameObject.SetActive(true);
+
+                // Find Each Element
+                TextMeshProUGUI taskTitle = newItem.transform.Find("Header/Task Title").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI taskFrom = newItem.transform.Find("Body/From/Compound Name").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI taskTo = newItem.transform.Find("Body/To/Compound Name").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI requirementsSafety = newItem.transform.Find("Body/Requirements/Safety/Text (TMP)").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI requirementsCharm = newItem.transform.Find("Body/Requirements/Charm/Text (TMP)").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI requirementsFlow = newItem.transform.Find("Body/Requirements/Flow/Text (TMP)").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI minimumMaterial = newItem.transform.Find("Body/Requirements/Material/Minimum").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI maximumMaterial = newItem.transform.Find("Body/Requirements/Material/Maximum").GetComponent<TextMeshProUGUI>();
+                Button pinButton = newItem.transform.Find("Body/Button").GetComponent<Button>();
+
+                // Set the Values
                 taskTitle.text = task.info.title;
                 taskFrom.text = task.info.from.compoundName;
                 taskTo.text = task.info.to.compoundName;
 
-                requirementsSafety.text = task.info.maxSafetyDiscount.ToString();
+                requirementsSafety.text = task.info.minSafetyCount.ToString();
                 requirementsCharm.text = task.info.minCharmCount.ToString();
-                requirementsFlow.text = task.info.minFlowPercentage.ToString();
+                requirementsFlow.text = task.info.minFlowPercentage.ToString() + "%";
                 minimumMaterial.text = "Min. " + task.info.minMaterial.ToString();
                 maximumMaterial.text = "Max. " + task.info.maxMaterial.ToString();
 
