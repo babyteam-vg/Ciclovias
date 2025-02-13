@@ -8,6 +8,7 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private GraphRenderer graphRenderer;
 
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
@@ -53,6 +54,8 @@ public class TaskManager : MonoBehaviour
             Vector2Int destinationNode = graph.FindNodeInCells(activeTask.info.to.surroundings) ?? activeTask.info.to.surroundings.FirstOrDefault();
             //                       Execute A* <¬
             var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode);
+
+            graphRenderer.currentPath = path;
 
             int safety = cellScoresCalculator.CalculatePathSafety(path);
             int charm = cellScoresCalculator.CalculatePathCharm(path);

@@ -7,22 +7,22 @@ public class Graph : MonoBehaviour
     public Dictionary<Vector2Int, Node> nodes;
     private HashSet<Vector2Int> nodePositions;
 
-    // === Methods ===
-    // Constructor
+    // :::::::::: Methods ::::::::::
+    // ::::: Constructor
     public Graph()
     {
         nodes = new Dictionary<Vector2Int, Node>();
         nodePositions = new HashSet<Vector2Int>();
     }
 
-    // Get a Node
+    // ::::: Get a Node
     public Node GetNode(Vector2Int position)
     {
         nodes.TryGetValue(position, out Node node);
         return node;
     }
 
-    // Add a Node
+    // ::::: Add a Node
     public void AddNode(Vector2Int position, Vector2 worldPosition)
     {
         if (!nodes.ContainsKey(position))
@@ -32,7 +32,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // Remove a Node
+    // ::::: Remove a Node
     public void RemoveNode(Vector2Int position)
     {
         if (nodes.TryGetValue(position, out Node node))
@@ -44,7 +44,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // Connect 2 Nodes
+    // ::::: Connect 2 Nodes
     public void AddEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
@@ -55,7 +55,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // Disconnect 2 Nodes
+    // ::::: Disconnect 2 Nodes
     public void RemoveEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
@@ -66,7 +66,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // Check Connection
+    // ::::: Check Connection
     public bool AreConnected(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
@@ -75,10 +75,10 @@ public class Graph : MonoBehaviour
         return false;
     }
 
-    // Get All Nodes
+    // ::::: Get All Nodes
     public List<Node> GetAllNodes() { return new List<Node>(nodes.Values); }
 
-    // Is Any of These (x, y) in the Graph?
+    // ::::: Is Any of These (x, y) in the Graph?
     public bool ContainsAny(IEnumerable<Vector2Int> positions)
     {
         foreach (var position in positions)
@@ -88,7 +88,7 @@ public class Graph : MonoBehaviour
         return false;
     }
 
-    // First Node in Group of Cells
+    // ::::: First Node in Group of Cells
     public Vector2Int? FindNodeInCells(List<Vector2Int> cells)
     {
         foreach (var cell in cells)
@@ -96,23 +96,5 @@ public class Graph : MonoBehaviour
                 return cell; // First Valid Node in the Group
 
         return null;
-    }
-
-    // Drawing the Nodes (Debug)
-    public void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-
-        foreach (var node in nodes.Values)
-        {
-            Vector3 worldPosition = new Vector3(node.worldPosition.x, 0, node.worldPosition.y);
-            Gizmos.DrawSphere(worldPosition, 0.1f);
-
-            foreach (var neighbor in node.neighbors)
-            {
-                Vector3 neighborPosition = new Vector3(neighbor.worldPosition.x, 0, neighbor.worldPosition.y);
-                Gizmos.DrawLine(worldPosition, neighborPosition);
-            }
-        }
     }
 }

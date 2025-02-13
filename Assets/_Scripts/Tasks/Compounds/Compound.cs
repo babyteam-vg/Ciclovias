@@ -7,12 +7,36 @@ public class Compound : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Compound compound;
+    [SerializeField] private Camera mainCamera;
 
     [Header("UI References")]
     [SerializeField] private MenuManager menuManager;
+    [SerializeField] private Image newTaskImg;
 
-    private GameObject taskIconInstance;
     private Task givingTask;
+
+    // :::::::::: MONO METHODS ::::::::::
+    public void Update()
+    {
+        // Get Screen Borders
+        float minX = newTaskImg.GetPixelAdjustedRect().width / 2;
+        float maxX = Screen.width - minX;
+
+        float minY = newTaskImg.GetPixelAdjustedRect().height / 2;
+        float maxY = Screen.height - minY;
+
+        if (IsGivingTask())
+        {
+            newTaskImg.gameObject.SetActive(true);
+            Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position);
+
+            // Limit to Borders of the Screen
+            newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
+            newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
+
+            newTaskImg.transform.position = newTaskPos;
+        }
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Compound Giving a Task?
@@ -38,6 +62,7 @@ public class Compound : MonoBehaviour
             if (!IsGivingTask())
                 return;
 
+            newTaskImg.gameObject.SetActive(false);
             TaskReceiver.Instance.ReceiveTask(givingTask);
             menuManager.OnReceiveTaskPress();
             givingTask = null;

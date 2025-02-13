@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Pathfinder
@@ -13,21 +14,24 @@ public class Pathfinder
     // A* Algorythm
     public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int midPoint, Vector2Int end)
     {
+        List<Vector2Int> path = new List<Vector2Int>();
+        bool pathFound = false;
+
         // First Stretch
         var (firstPathFound, firstPath) = FindPathSegment(start, midPoint);
+        path.AddRange(firstPath);
         if (!firstPathFound)
-            return (false, firstPath); // No se encontró un camino al punto intermedio
+            pathFound = false;
 
         // Second Stretch
         var (secondPathFound, secondPath) = FindPathSegment(midPoint, end);
+        path.AddRange(secondPath.Skip(1));
         if (!secondPathFound)
-            return (false, firstPath); // No se encontró un camino al destino
+            pathFound = false;
 
-        // Unify Stretchs
-        firstPath.Add(midPoint);
-        firstPath.AddRange(secondPath);
-
-        return (true, firstPath);
+        if (firstPathFound && secondPathFound)
+            pathFound = true;
+        return (pathFound, path);
     }
 
     private (bool pathFound, List<Vector2Int> path) FindPathSegment(Vector2Int start, Vector2Int end)

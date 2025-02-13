@@ -5,28 +5,12 @@ public class GridRenderer : MonoBehaviour
 {
     [SerializeField] private Grid grid; // Referencia a la grilla
     [SerializeField] private Material lineMaterial; // Material para los bordes
-    [SerializeField] private Material laneFillMaterial; // Material blanco para ciclovías
     [SerializeField] private CellContentMesh[] contentMeshes; // Materiales por contenido
-    [SerializeField] LaneConstructor laneConstructor;
-    [SerializeField] LaneDestructor laneDestructor;
 
     private Dictionary<Vector2Int, LineRenderer> cellBorders = new Dictionary<Vector2Int, LineRenderer>();
-    private Dictionary<Vector2Int, GameObject> laneFillObjects = new Dictionary<Vector2Int, GameObject>();
-
     private void Start()
     {
         GenerateBorders();
-
-        // Escuchar eventos de construcción y destrucción de ciclovías
-        laneConstructor.OnLaneBuilt += FillLane;
-        laneDestructor.OnLaneDestroyed += RemoveLaneFill;
-    }
-
-    private void OnDestroy()
-    {
-        // Desuscribirse de los eventos al destruirse el objeto
-        laneConstructor.OnLaneBuilt -= FillLane;
-        laneDestructor.OnLaneDestroyed -= RemoveLaneFill;
     }
 
     private void GenerateBorders()
@@ -81,38 +65,6 @@ public class GridRenderer : MonoBehaviour
             position + new Vector3(0, 0, size),
             position // Cierra el cuadro volviendo al punto inicial
         };
-    }
-
-    private void FillLane(Vector2Int cellPos)
-    {
-        if (laneFillObjects.ContainsKey(cellPos)) return; // Ya tiene relleno
-
-        Vector3 worldPos = grid.GetWorldPositionFromCell(cellPos.x, cellPos.y);
-        float size = grid.GetCellSize();
-
-        GameObject fillQuad = CreateFillQuad(worldPos, size, laneFillMaterial);
-        laneFillObjects[cellPos] = fillQuad;
-    }
-
-    private void RemoveLaneFill(Vector2Int cellPos)
-    {
-        if (laneFillObjects.ContainsKey(cellPos))
-        {
-            Destroy(laneFillObjects[cellPos]);
-            laneFillObjects.Remove(cellPos);
-        }
-    }
-
-    private GameObject CreateFillQuad(Vector3 position, float size, Material material)
-    {
-        GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        quad.transform.SetParent(transform);
-        quad.transform.position = position + new Vector3(size / 2, 0.01f, size / 2); // Levantar un poco para evitar clipping
-        quad.transform.localScale = new Vector3(size, size, 1);
-        quad.transform.rotation = Quaternion.Euler(90, 0, 0); // Orientación horizontal
-
-        quad.GetComponent<MeshRenderer>().material = material;
-        return quad;
     }
 
     private Material GetMaterialForCell(Cell cell)

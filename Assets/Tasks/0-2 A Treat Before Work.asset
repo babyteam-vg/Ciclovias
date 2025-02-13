@@ -22,10 +22,15 @@ MonoBehaviour:
     my weakness.\u201D"
   from: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
   to: {fileID: 11400000, guid: 14afc8ac001c36b4b99564b34ec46230, type: 2}
+  safetyRequirement: 1
   minSafetyCount: 100
+  charmRequirement: 0
   minCharmCount: 0
+  flowRequirement: 0
   minFlowPercentage: 0
+  minMaterialRequirement: 0
   minMaterial: 0
-  maxMaterial: 1000
+  maxMaterialRequirement: 0
+  maxMaterial: 0
   materialReward: 200
   unlockedTasks: []

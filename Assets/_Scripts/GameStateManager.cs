@@ -23,10 +23,7 @@ public class GameStateManager : MonoBehaviour
         {
             Task firstTask = TaskDiary.Instance.tasks[0];
             if (firstTask.state == 1)
-            {
-                TaskReceiver.Instance.ReceiveTask(firstTask); // Automatically Receive Task 0-1
-                menuManager.OnReceiveTaskPress();
-            }
+                firstTask.fromCompound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
         }
     }
 

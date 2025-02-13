@@ -36,8 +36,7 @@ public class LaneConstructor : MonoBehaviour
     // Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (grid.GetCellBuildable(gridPosition.x, gridPosition.y) &&
-            (graph.GetNode(gridPosition) != null || TaskDiary.Instance.GetTasksStartCells().Contains(gridPosition)))
+        if (grid.GetCellBuildable(gridPosition.x, gridPosition.y))
         {
             AddNodeAndConnections(gridPosition);
             isBuilding = true;
