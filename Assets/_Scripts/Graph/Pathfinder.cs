@@ -11,47 +11,29 @@ public class Pathfinder
     // Constructor
     public Pathfinder(Graph graph) { this.graph = graph; }
 
-    // A* Algorythm
+    // A* Algorythm                                                         Player Input <¬
     public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int midPoint, Vector2Int end)
-    {
-        List<Vector2Int> path = new List<Vector2Int>();
-        bool pathFound = false;
-
-        // First Stretch
-        var (firstPathFound, firstPath) = FindPathSegment(start, midPoint);
-        path.AddRange(firstPath);
-        if (!firstPathFound)
-            pathFound = false;
-
-        // Second Stretch
-        var (secondPathFound, secondPath) = FindPathSegment(midPoint, end);
-        path.AddRange(secondPath.Skip(1));
-        if (!secondPathFound)
-            pathFound = false;
-
-        if (firstPathFound && secondPathFound)
-            pathFound = true;
-        return (pathFound, path);
-    }
-
-    private (bool pathFound, List<Vector2Int> path) FindPathSegment(Vector2Int start, Vector2Int end)
     {
         // Start and End Nodes
         Node startNode = graph.GetNode(start);
-        if (startNode == null)
-            return (false, null);
-
+        Node midNode = graph.GetNode(midPoint);
         Node endNode = graph.GetNode(end);
-        bool endNodeExists = endNode != null;
+
+        if (startNode == null || midNode == null)
+            return (false, null);
 
         // Open and Closed Sets
         var openSet = new SortedSet<PathNode>(new PathNodeComparer());
         var closedSet = new HashSet<PathNode>();
-        //          Add Start to the Open Set <¬
-        PathNode startPathNode = new PathNode(startNode, (start - end).sqrMagnitude);
+
+        // Add Start Node to Open Set
+        PathNode startPathNode = new PathNode(startNode, (start - midPoint).sqrMagnitude);
         openSet.Add(startPathNode);
 
-        PathNode closestNodeToDestination = startPathNode; // Negative Case
+        PathNode closestNodeToMid = startPathNode; // 1st Segment
+        PathNode closestNodeToEnd = null; // 2nd Segment
+
+        bool midReached = false;
 
         while (openSet.Count > 0)
         {
@@ -60,12 +42,23 @@ public class Pathfinder
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            // End Found
-            if (endNodeExists && currentNode.node == endNode)
+            // Check if MidPoint is Reached
+            if (!midReached && currentNode.node == midNode)
+            {
+                midReached = true;
+                closestNodeToEnd = currentNode; // Start the 2nd Segment
+            }
+
+            // End Found (Passing Through Mid)
+            if (midReached && currentNode.node == endNode)
                 return (true, RetracePath(startPathNode, currentNode));
 
-            if (currentNode.hCost < closestNodeToDestination.hCost) // Negative Case
-                closestNodeToDestination = currentNode;
+            // Update Closest Nodes for Negative Cases
+            if (!midReached && currentNode.hCost < closestNodeToMid.hCost)
+                closestNodeToMid = currentNode;
+
+            if (midReached && (closestNodeToEnd == null || currentNode.hCost < closestNodeToEnd.hCost))
+                closestNodeToEnd = currentNode;
 
             // Process Neighbors
             foreach (Node neighbor in currentNode.node.neighbors)
@@ -74,15 +67,22 @@ public class Pathfinder
 
                 if (closedSet.Contains(neighborPathNode))
                     continue;
-                //            Start to Node Cost <¬
+
+                // Calculate Tentative gCost
                 float tentativeGCost = currentNode.gCost + (currentNode.node.position - neighbor.position).sqrMagnitude;
 
                 if (!openSet.Contains(neighborPathNode) || tentativeGCost < neighborPathNode.gCost)
-                { //           Assign Costs <¬
+                {
                     neighborPathNode.gCost = tentativeGCost;
-                    neighborPathNode.hCost = endNodeExists
-                        ? (neighbor.position - endNode.position).sqrMagnitude
-                        : (neighbor.position - end).sqrMagnitude;
+
+                    // Set hCost Based on Current Segment
+                    if (!midReached)
+                        // 1st Segment: Heuristic is Distance to Mid
+                        neighborPathNode.hCost = (neighbor.position - midPoint).sqrMagnitude;
+                    else
+                        // 2nd Segment: Heuristic is Distance to End
+                        neighborPathNode.hCost = (neighbor.position - end).sqrMagnitude;
+
                     neighborPathNode.fCost = neighborPathNode.gCost + neighborPathNode.hCost;
                     neighborPathNode.parentNode = currentNode;
 
@@ -92,7 +92,12 @@ public class Pathfinder
             }
         }
 
-        return (false, RetracePath(startPathNode, closestNodeToDestination));
+        if (!midReached)
+            // Could Not Rach Mid
+            return (false, RetracePath(startPathNode, closestNodeToMid));
+        else
+            // Reached Mid, But Not End
+            return (false, RetracePath(startPathNode, closestNodeToEnd));
     }
 
     // End to Start (Fittest Path)

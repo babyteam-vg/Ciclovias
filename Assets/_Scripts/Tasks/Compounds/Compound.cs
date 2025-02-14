@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Compound : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private Compound compound;
     [SerializeField] private Camera mainCamera;
 
     [Header("UI References")]

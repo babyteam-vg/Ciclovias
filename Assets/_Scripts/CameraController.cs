@@ -61,7 +61,7 @@ public class CameraController : MonoBehaviour
 
     private void OnEnable()
     {
-        laneConstructor.OnLaneBuilt += LockCamera;
+        laneConstructor.OnLaneStarted += LockCamera;
         laneConstructor.OnLaneFinished += UnlockCamera;
 
         laneDestructor.OnLaneDestroyed += LockCamera;
@@ -69,7 +69,7 @@ public class CameraController : MonoBehaviour
     }
     private void OnDisable()
     {
-        laneConstructor.OnLaneBuilt -= LockCamera;
+        laneConstructor.OnLaneStarted -= LockCamera;
         laneConstructor.OnLaneFinished -= UnlockCamera;
 
         laneDestructor.OnLaneDestroyed -= LockCamera;

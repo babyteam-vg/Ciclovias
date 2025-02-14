@@ -28,13 +28,18 @@ public class GraphRenderer : MonoBehaviour
 
     private void OnEnable()
     {
-        laneConstructor.OnLaneBuilt += OnLaneBuilt;
+        laneConstructor.OnLaneStarted += HandleLaneUpdated;
+        laneConstructor.OnLaneBuilt += HandleLaneUpdated;
+        laneConstructor.LonelyNodeRemoved += EraseNode;
+
         laneDestructor.OnLaneDestroyed += OnLaneDestroyed;
     }
 
     private void OnDisable()
     {
-        laneConstructor.OnLaneBuilt -= OnLaneBuilt;
+        laneConstructor.OnLaneStarted -= HandleLaneUpdated;
+        laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
+
         laneDestructor.OnLaneDestroyed -= OnLaneDestroyed;
     }
 
@@ -48,18 +53,12 @@ public class GraphRenderer : MonoBehaviour
 
     // :::::::::: PRIVATE MEHTODS ::::::::::
     // ::::: Lane Constructor Subscriber
-    private void OnLaneBuilt(Vector2Int newNodePosition)
+    private void HandleLaneUpdated(Vector2Int newNodePosition)
     {
         Node newNode = graph.GetNode(newNodePosition);
         if (newNode == null) return;
 
-        // Draw Node
-        GameObject nodeObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        nodeObject.transform.position = new Vector3(newNode.worldPosition.x, 0.1f, newNode.worldPosition.y);
-        nodeObject.transform.localScale = Vector3.one * nodeSize;
-        nodeObject.GetComponent<Renderer>().material = standardMaterial; // Use standard material initially
-
-        nodeObjects[newNodePosition] = nodeObject;
+        DrawNode(newNodePosition, newNode.worldPosition);
 
         // Draw Edges
         foreach (Node neighbor in newNode.neighbors)
@@ -72,12 +71,7 @@ public class GraphRenderer : MonoBehaviour
     // ::::: Lane Destructor Subscriber
     private void OnLaneDestroyed(Vector2Int removedNodePosition)
     {
-        // Erase Node
-        if (nodeObjects.TryGetValue(removedNodePosition, out GameObject nodeObject))
-        {
-            Destroy(nodeObject);
-            nodeObjects.Remove(removedNodePosition);
-        }
+        EraseNode(removedNodePosition);
 
         // Erase Edges
         List<(Vector2Int, Vector2Int)> edgesToRemove = new List<(Vector2Int, Vector2Int)>();
@@ -87,12 +81,34 @@ public class GraphRenderer : MonoBehaviour
 
         foreach (var edge in edgesToRemove)
         {
-            Destroy(edgeRenderers[edge].gameObject);
-            edgeRenderers.Remove(edge);
+            EraseEdge(edge);
         }
     }
 
-    // ::::: Edges Drawer
+    // ::::: Node Drawer
+    private void DrawNode(Vector2Int nodePosition, Vector2 worldPosition)
+    {
+        if (nodeObjects.ContainsKey(nodePosition)) return; // Avoid duplicate nodes
+
+        GameObject nodeObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        nodeObject.transform.position = new Vector3(worldPosition.x, 0.3f, worldPosition.y);
+        nodeObject.transform.localScale = Vector3.one * nodeSize;
+        nodeObject.GetComponent<Renderer>().material = standardMaterial; // Use standard material initially
+
+        nodeObjects[nodePosition] = nodeObject;
+    }
+
+    // ::::: Node Eraser
+    private void EraseNode(Vector2Int nodePosition)
+    {
+        if (nodeObjects.TryGetValue(nodePosition, out GameObject nodeObject))
+        {
+            Destroy(nodeObject);
+            nodeObjects.Remove(nodePosition);
+        }
+    }
+
+    // ::::: Edge Drawer
     private void CreateEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (edgeRenderers.ContainsKey((positionA, positionB)) || edgeRenderers.ContainsKey((positionB, positionA)))
@@ -106,12 +122,22 @@ public class GraphRenderer : MonoBehaviour
         lineRenderer.startWidth = edgeWidth;
         lineRenderer.endWidth = edgeWidth;
 
-        Vector3 startPos = new Vector3(graph.GetNode(positionA).worldPosition.x, 0.1f, graph.GetNode(positionA).worldPosition.y);
-        Vector3 endPos = new Vector3(graph.GetNode(positionB).worldPosition.x, 0.1f, graph.GetNode(positionB).worldPosition.y);
+        Vector3 startPos = new Vector3(graph.GetNode(positionA).worldPosition.x, 0.3f, graph.GetNode(positionA).worldPosition.y);
+        Vector3 endPos = new Vector3(graph.GetNode(positionB).worldPosition.x, 0.3f, graph.GetNode(positionB).worldPosition.y);
 
         lineRenderer.SetPositions(new Vector3[] { startPos, endPos });
 
         edgeRenderers[(positionA, positionB)] = lineRenderer;
+    }
+
+    // ::::: Edge Eraser
+    private void EraseEdge((Vector2Int, Vector2Int) edge)
+    {
+        if (edgeRenderers.TryGetValue(edge, out LineRenderer lineRenderer))
+        {
+            Destroy(lineRenderer.gameObject);
+            edgeRenderers.Remove(edge);
+        }
     }
 
     // ::::: Material Updater

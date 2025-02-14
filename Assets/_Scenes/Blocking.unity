@@ -342,6 +342,38 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214805158}
   m_Mesh: {fileID: -3069027481131285650, guid: de54f4f6994749444979d63f3d8a7f7f, type: 3}
+--- !u!1 &337062782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337062783}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &337062783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337062782}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.55, y: 0.55, z: 0.55}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 1476022376}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &853342739
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,11 +603,90 @@ PrefabInstance:
       propertyPath: m_Name
       value: Municipalidad_V01
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 09a093366c3831b4b8593bba8735ffae,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09a093366c3831b4b8593bba8735ffae, type: 3}
+--- !u!1001 &1476022375
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 337062783}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 104.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -39.1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_Name
+      value: Blocking_V03_Ciclovia
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: de54f4f6994749444979d63f3d8a7f7f, type: 3}
+--- !u!4 &1476022376 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: de54f4f6994749444979d63f3d8a7f7f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1476022375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1493445324
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -638,6 +749,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Pizzeria_V01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ed4e36213dbefcf4baaef47e1b1a9c2a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -865,6 +981,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Blocking_V03_Ciclovia
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: de54f4f6994749444979d63f3d8a7f7f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -951,6 +1072,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tienda_Bicicletas_V01
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8390af56916e4064eb9f7b6f45ac3080,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1019,6 +1145,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arbol_02 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e7087c17bb8a046429de5e38785fe351,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1035,3 +1166,4 @@ SceneRoots:
   - {fileID: 1493445324}
   - {fileID: 2069807647}
   - {fileID: 1571275274}
+  - {fileID: 337062783}

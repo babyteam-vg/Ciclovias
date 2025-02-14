@@ -13,53 +13,73 @@ public class LaneConstructor : MonoBehaviour
 
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
-    private Vector2Int? lastAddedPosition = null;
-    private Vector2Int? startCellPosition = null;
 
+    public event Action<Vector2Int> OnLaneStarted;
     public event Action<Vector2Int> OnLaneBuilt;
     public event Action<Vector2Int> OnLaneFinished;
+    public event Action<Vector2Int> LonelyNodeRemoved;
 
-    // === Methods ===
+    // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
         inputManager.OnLeftClickDown += StartBuilding;
         inputManager.OnLeftClickHold += ContinueBuilding;
-        inputManager.OnLeftClickUp += ConfirmConstruction;
+        inputManager.OnLeftClickUp += EndBuilding;
     }
     private void OnDisable()
     {
         inputManager.OnLeftClickDown -= StartBuilding;
         inputManager.OnLeftClickHold -= ContinueBuilding;
-        inputManager.OnLeftClickUp -= ConfirmConstruction;
+        inputManager.OnLeftClickUp -= EndBuilding;
     }
 
-    // Mouse Input: Down
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
         if (grid.GetCellBuildable(gridPosition.x, gridPosition.y))
         {
-            AddNodeAndConnections(gridPosition);
+            if (graph.GetNode(gridPosition) == null)
+                graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
+
             isBuilding = true;
-            startCellPosition = gridPosition;
+            OnLaneStarted?.Invoke(gridPosition); // Notify Lane Start
             lastCellPosition = gridPosition;
         }
     }
 
-    // Mouse Input: Hold
+    // ::::: Mouse Input: Hold
     private void ContinueBuilding(Vector2Int gridPosition)
     {
-        if (isBuilding && IsAdjacent(lastCellPosition.Value, gridPosition) && grid.GetCellBuildable(gridPosition.x, gridPosition.y))
+        if (isBuilding &&
+            IsAdjacent(lastCellPosition.Value, gridPosition) &&
+            grid.GetCellBuildable(gridPosition.x, gridPosition.y) &&
+            IsInCriticalArea(gridPosition))
         {
-            if (lastCellPosition.HasValue && IsInCriticalArea(gridPosition))
+            if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
+                return; // To Prevent Duplicates
+
+            if (ConstructionMaterial.Instance.material > 0)
             {
-                AddNodeAndConnections(gridPosition);
-                lastCellPosition = gridPosition;
+                if (graph.GetNode(gridPosition) == null)
+                    graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Adds the Node
+
+                if (lastCellPosition.HasValue && !graph.AreConnected(lastCellPosition.Value, gridPosition))
+                {
+                    graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
+                    ConstructionMaterial.Instance.ConsumeMaterial(1); // Construction Material: -1
+
+                    OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
+                    audioManager.PlaySFX(audioManager.build);
+
+                    lastCellPosition = gridPosition;
+                }
             }
         }
     }
 
-    // Mouse Input: Up
-    private void ConfirmConstruction(Vector2Int gridPosition)
+    // ::::: Mouse Input: Up
+    private void EndBuilding(Vector2Int gridPosition)
     {
         CheckAndRemoveNode(gridPosition);
         isBuilding = false;
@@ -67,7 +87,8 @@ public class LaneConstructor : MonoBehaviour
         OnLaneFinished?.Invoke(gridPosition);
     }
 
-    // Critical Area
+    // :::::::::: SUPPORT METHODS ::::::::::
+    // ::::: Critical Area
     private bool IsInCriticalArea(Vector2Int gridPosition)
     { //                       Getting 3D World Position <¬
         Vector3 cursorWorldPosition = inputManager.GetCursorWorldPosition();
@@ -89,43 +110,19 @@ public class LaneConstructor : MonoBehaviour
         return delta.sqrMagnitude <= criticalRadius * criticalRadius;
     }
 
-    // Add a Node and Its Connections
-    private void AddNodeAndConnections(Vector2Int gridPosition)
-    {
-        if (lastAddedPosition.HasValue && lastAddedPosition.Value == gridPosition)
-            return; // To Prevent Duplicates
-
-        if (ConstructionMaterial.Instance.material > 0)
-        {
-            if (graph.GetNode(gridPosition) == null)
-                graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition));
-
-            if (lastCellPosition.HasValue)
-                if (!graph.AreConnected(lastCellPosition.Value, gridPosition))
-                {
-                    graph.AddEdge(lastCellPosition.Value, gridPosition);
-                    ConstructionMaterial.Instance.ConsumeMaterial(1); // Construction Material: -1
-
-                    if (lastCellPosition.Value == startCellPosition.Value)
-                        OnLaneBuilt?.Invoke(startCellPosition.Value);
-                    OnLaneBuilt?.Invoke(gridPosition); // Notify Lane Construction
-                    audioManager.PlaySFX(audioManager.build);
-                }
-        }
-
-        lastAddedPosition = gridPosition;
-    }
-
-    // Only Remove a Lonely Node
+    // ::::: Remove a Lonely Node
     private void CheckAndRemoveNode(Vector2Int position)
     {
         Node node = graph.GetNode(position);
 
         if (node != null && node.neighbors.Count == 0)
+        {
             graph.RemoveNode(position);
+            LonelyNodeRemoved?.Invoke(position);
+        }   
     }
 
-    // Check Adjacency in 8 Directions
+    // ::::: Check Adjacency in 8 Directions
     private bool IsAdjacent(Vector2Int current, Vector2Int target)
     {
         int dx = Mathf.Abs(current.x - target.x);
