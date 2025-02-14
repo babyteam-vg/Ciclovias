@@ -5,107 +5,83 @@ using UnityEngine;
 
 public class LaneDestructor : MonoBehaviour
 {
+    [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private LaneConstructor laneConstructor;
+    [SerializeField] private AudioManager audioManager;
 
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
 
+    public event Action<Vector2Int> OnDestroyStarted;
     public event Action<Vector2Int> OnLaneDestroyed;
-    public event Action<Vector2Int> OnLaneFinished;
+    public event Action<Vector2Int> OnDestroyFinished;
 
-    // === Methods ===
-    private void Start()
+    // :::::::::: MONO METHODS ::::::::::
+    private void OnEnable()
     {
         inputManager.OnRightClickDown += StartDestroying;
         inputManager.OnRightClickHold += ContinueDestroying;
         inputManager.OnRightClickUp += StopDestroying;
     }
+    private void OnDisable()
+    {
+        inputManager.OnRightClickDown -= StartDestroying;
+        inputManager.OnRightClickHold -= ContinueDestroying;
+        inputManager.OnRightClickUp -= StopDestroying;
+    }
 
-    // Mouse Input: Down
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: Mouse Input: Down
     private void StartDestroying(Vector2Int gridPosition)
     {
         if (graph.GetNode(gridPosition) != null)
         {
             isDestroying = true;
+            OnDestroyStarted?.Invoke(gridPosition);
+            DestroyNodeAndEdges(gridPosition);
+
             lastCellPosition = gridPosition;
         }
     }
 
-    // Mouse Input: Hold
+    // ::::: Mouse Input: Hold
     private void ContinueDestroying(Vector2Int gridPosition)
     {
-        if (isDestroying && IsAdjacent(lastCellPosition.Value, gridPosition))
+        if (isDestroying &&
+            grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
+            laneConstructor.IsInCriticalArea(gridPosition))
         {
-            if (lastCellPosition.HasValue && IsInCriticalArea(gridPosition))
-            {
-                if (graph.AreConnected(lastCellPosition.Value, gridPosition))
-                {
-                    graph.RemoveEdge(lastCellPosition.Value, gridPosition);
-                    ConstructionMaterial.Instance.AddMaterial(1); // Construction Material: +1
-                    OnLaneDestroyed?.Invoke(lastCellPosition.Value); // Notify Lane Destruction
-                }
+            if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
+                return; // To Prevent Duplicates
 
-                CheckAndRemoveNode(lastCellPosition.Value);
-                CheckAndRemoveNode(gridPosition);
+            DestroyNodeAndEdges(gridPosition);
 
-                lastCellPosition = gridPosition;
-            }
+            lastCellPosition = gridPosition;
         }
     }
 
-    // Mouse Input: Up
+    // ::::: Mouse Input: Up
     private void StopDestroying(Vector2Int gridPosition)
     {
+        graph.CheckAndRemoveNode(gridPosition);
         isDestroying = false;
         lastCellPosition = null;
-        OnLaneFinished?.Invoke(gridPosition);
+        OnDestroyFinished?.Invoke(gridPosition); // !
     }
 
-    // Critical Area
-    private bool IsInCriticalArea(Vector2Int gridPosition)
-    { //                       Getting 3D World Position <¬
-        Vector3 cursorWorldPosition = inputManager.GetCursorWorldPosition();
-        Vector3 cellWorldPosition = grid.GetWorldPositionFromCell(gridPosition.x, gridPosition.y);
-
-        Vector3 criticalCenter = cellWorldPosition + new Vector3(
-            Mathf.Cos(Mathf.PI / 4) * grid.GetCellSize() / 2,
-            0,
-            Mathf.Sin(Mathf.PI / 4) * grid.GetCellSize() / 2
-        );
-
-        float criticalRadius = grid.GetCellSize() / 2;
-
-        Vector2 delta = new Vector2(
-            cursorWorldPosition.x - criticalCenter.x,
-            cursorWorldPosition.z - criticalCenter.z
-        );
-
-        return delta.sqrMagnitude <= criticalRadius * criticalRadius;
-    }
-
-    // Only Remove a Lonely Node
-    private void CheckAndRemoveNode(Vector2Int position)
+    // ::::: Destruction Waterfall
+    private void DestroyNodeAndEdges(Vector2Int gridPosition)
     {
-        Node node = graph.GetNode(position);
-
-        if (node != null && node.neighbors.Count == 0)
-            graph.RemoveNode(position);
-    }
-
-    // Check 8 Directions
-    private bool IsAdjacent(Vector2Int current, Vector2Int target)
-    {
-        int dx = Mathf.Abs(current.x - target.x);
-        int dy = Mathf.Abs(current.y - target.y);
-        return (dx <= 1 && dy <= 1);
-    }
-
-    private void OnDestroy()
-    {
-        inputManager.OnRightClickDown -= StartDestroying;
-        inputManager.OnRightClickHold -= ContinueDestroying;
-        inputManager.OnRightClickUp -= StopDestroying;
+        graph.RemoveNode(gridPosition);
+        Node node = graph.GetNode(gridPosition);
+        if (node != null)
+        {
+            int edgeCount = node.neighbors.Count;
+            ConstructionMaterial.Instance.AddMaterial(edgeCount); // Add material for each removed edge
+            OnLaneDestroyed?.Invoke(gridPosition);
+        }
     }
 }

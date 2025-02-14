@@ -1,13 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Graph : MonoBehaviour
 {
     public Dictionary<Vector2Int, Node> nodes;
     private HashSet<Vector2Int> nodePositions;
 
-    // :::::::::: Methods ::::::::::
+    public event Action<Vector2Int> OnNodeAdded;
+    public event Action<Vector2Int, Vector2Int> OnEdgeAdded;
+    public event Action<Vector2Int> OnNodeRemoved;
+    public event Action<Vector2Int, Vector2Int> OnEdgeRemoved;
+    public event Action<Vector2Int> OnLonelyNodeRemoved;
+
+    // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Constructor
     public Graph()
     {
@@ -29,6 +38,7 @@ public class Graph : MonoBehaviour
         {
             nodes[position] = new Node(position, worldPosition);
             nodePositions.Add(position);
+            OnNodeAdded?.Invoke(position); // !
         }
     }
 
@@ -38,9 +48,14 @@ public class Graph : MonoBehaviour
         if (nodes.TryGetValue(position, out Node node))
         {
             foreach (Node neighbor in node.neighbors)
+            {
                 neighbor.neighbors.Remove(node);
+                OnEdgeRemoved?.Invoke(position, neighbor.position); // !
+            }
+
             nodes.Remove(position);
             nodePositions.Remove(position);
+            OnNodeRemoved?.Invoke(position); // !
         }
     }
 
@@ -52,6 +67,7 @@ public class Graph : MonoBehaviour
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
             nodeA.AddNeighbor(nodeB);
+            OnEdgeAdded?.Invoke(positionA, positionB); // !
         }
     }
 
@@ -63,6 +79,7 @@ public class Graph : MonoBehaviour
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
             nodeA.RemoveNeighbor(nodeB);
+            OnEdgeRemoved?.Invoke(positionA, positionB); // !
         }
     }
 
@@ -96,5 +113,17 @@ public class Graph : MonoBehaviour
                 return cell; // First Valid Node in the Group
 
         return null;
+    }
+
+    // ::::: Remove a Lonely Node
+    public void CheckAndRemoveNode(Vector2Int position)
+    {
+        Node node = GetNode(position);
+
+        if (node != null && node.neighbors.Count == 0)
+        {
+            RemoveNode(position);
+            OnLonelyNodeRemoved?.Invoke(position); // !
+        }
     }
 }

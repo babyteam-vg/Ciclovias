@@ -9,17 +9,15 @@ public class GraphRenderer : MonoBehaviour
     public float nodeSize = 0.2f;
     public float edgeWidth = 0.1f;
 
+    [Header("Dependencies")]
     [SerializeField] private Graph graph;
     private Dictionary<Vector2Int, GameObject> nodeObjects;
     private Dictionary<(Vector2Int, Vector2Int), LineRenderer> edgeRenderers;
 
-    [SerializeField] private LaneConstructor laneConstructor;
-    [SerializeField] private LaneDestructor laneDestructor;
-
     // Public field to store the current path (provided by TasksManager)
     public List<Vector2Int> currentPath = new List<Vector2Int>();
 
-    // :::::::::: MONO MEHTODS ::::::::::
+    // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         nodeObjects = new Dictionary<Vector2Int, GameObject>();
@@ -28,19 +26,22 @@ public class GraphRenderer : MonoBehaviour
 
     private void OnEnable()
     {
-        laneConstructor.OnLaneStarted += HandleLaneUpdated;
-        laneConstructor.OnLaneBuilt += HandleLaneUpdated;
-        laneConstructor.LonelyNodeRemoved += EraseNode;
-
-        laneDestructor.OnLaneDestroyed += OnLaneDestroyed;
+        // Subscribe to Graph events
+        graph.OnNodeAdded += HandleNodeAdded;
+        graph.OnEdgeAdded += HandleEdgeAdded;
+        graph.OnNodeRemoved += HandleNodeRemoved;
+        graph.OnEdgeRemoved += HandleEdgeRemoved;
+        graph.OnLonelyNodeRemoved += HandleLonelyNodeRemoved;
     }
 
     private void OnDisable()
     {
-        laneConstructor.OnLaneStarted -= HandleLaneUpdated;
-        laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
-
-        laneDestructor.OnLaneDestroyed -= OnLaneDestroyed;
+        // Unsubscribe from Graph events
+        graph.OnNodeAdded -= HandleNodeAdded;
+        graph.OnEdgeAdded -= HandleEdgeAdded;
+        graph.OnNodeRemoved -= HandleNodeRemoved;
+        graph.OnEdgeRemoved -= HandleEdgeRemoved;
+        graph.OnLonelyNodeRemoved -= HandleLonelyNodeRemoved;
     }
 
     private void Update()
@@ -49,35 +50,36 @@ public class GraphRenderer : MonoBehaviour
         UpdateMaterials();
     }
 
-    // :::::::::: PUBLIC MEHTODS ::::::::::
-
-    // :::::::::: PRIVATE MEHTODS ::::::::::
-    // ::::: Lane Constructor Subscriber
-    private void HandleLaneUpdated(Vector2Int newNodePosition)
+    // :::::::::: EVENT HANDLERS ::::::::::
+    // ::::: Handle Node Added
+    private void HandleNodeAdded(Vector2Int nodePosition)
     {
-        Node newNode = graph.GetNode(newNodePosition);
-        if (newNode == null) return;
+        Node node = graph.GetNode(nodePosition);
+        if (node == null) return;
 
-        DrawNode(newNodePosition, newNode.worldPosition);
-
-        // Draw Edges
-        foreach (Node neighbor in newNode.neighbors)
-        {
-            Vector2Int neighborPosition = neighbor.position;
-            CreateEdge(newNodePosition, neighborPosition);
-        }
+        DrawNode(nodePosition, node.worldPosition);
     }
 
-    // ::::: Lane Destructor Subscriber
-    private void OnLaneDestroyed(Vector2Int removedNodePosition)
+    // ::::: Handle Edge Added
+    private void HandleEdgeAdded(Vector2Int positionA, Vector2Int positionB)
     {
-        EraseNode(removedNodePosition);
+        DrawEdge(positionA, positionB);
+    }
 
-        // Erase Edges
+    // ::::: Handle Node Removed
+    private void HandleNodeRemoved(Vector2Int nodePosition)
+    {
+        EraseNode(nodePosition);
+
+        // Remove all edges connected to this node
         List<(Vector2Int, Vector2Int)> edgesToRemove = new List<(Vector2Int, Vector2Int)>();
         foreach (var edge in edgeRenderers.Keys)
-            if (edge.Item1 == removedNodePosition || edge.Item2 == removedNodePosition)
+        {
+            if (edge.Item1 == nodePosition || edge.Item2 == nodePosition)
+            {
                 edgesToRemove.Add(edge);
+            }
+        }
 
         foreach (var edge in edgesToRemove)
         {
@@ -85,6 +87,19 @@ public class GraphRenderer : MonoBehaviour
         }
     }
 
+    // ::::: Handle Edge Removed
+    private void HandleEdgeRemoved(Vector2Int positionA, Vector2Int positionB)
+    {
+        EraseEdge((positionA, positionB));
+    }
+
+    // ::::: Handle Lonely Node Removed
+    private void HandleLonelyNodeRemoved(Vector2Int nodePosition)
+    {
+        EraseNode(nodePosition);
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Node Drawer
     private void DrawNode(Vector2Int nodePosition, Vector2 worldPosition)
     {
@@ -109,10 +124,10 @@ public class GraphRenderer : MonoBehaviour
     }
 
     // ::::: Edge Drawer
-    private void CreateEdge(Vector2Int positionA, Vector2Int positionB)
+    private void DrawEdge(Vector2Int positionA, Vector2Int positionB)
     {
         if (edgeRenderers.ContainsKey((positionA, positionB)) || edgeRenderers.ContainsKey((positionB, positionA)))
-            return; // Avoid Duplicate Edges
+            return; // Avoid duplicate edges
 
         // Draw an Edge
         GameObject edgeObject = new GameObject("Edge");

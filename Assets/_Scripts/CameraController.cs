@@ -59,22 +59,22 @@ public class CameraController : MonoBehaviour
         screenSize = new Vector2(Screen.width, Screen.height);
     }
 
-    private void OnEnable()
-    {
-        laneConstructor.OnLaneStarted += LockCamera;
-        laneConstructor.OnLaneFinished += UnlockCamera;
+    //private void OnEnable()
+    //{
+    //    laneConstructor.OnLaneStarted += LockCamera;
+    //    laneConstructor.OnLaneFinished += UnlockCamera;
 
-        laneDestructor.OnLaneDestroyed += LockCamera;
-        laneDestructor.OnLaneFinished += UnlockCamera;
-    }
-    private void OnDisable()
-    {
-        laneConstructor.OnLaneStarted -= LockCamera;
-        laneConstructor.OnLaneFinished -= UnlockCamera;
+    //    laneDestructor.OnLaneDestroyed += LockCamera;
+    //    laneDestructor.OnLaneFinished += UnlockCamera;
+    //}
+    //private void OnDisable()
+    //{
+    //    laneConstructor.OnLaneStarted -= LockCamera;
+    //    laneConstructor.OnLaneFinished -= UnlockCamera;
 
-        laneDestructor.OnLaneDestroyed -= LockCamera;
-        laneDestructor.OnLaneFinished -= UnlockCamera;
-    }
+    //    laneDestructor.OnLaneDestroyed -= LockCamera;
+    //    laneDestructor.OnLaneFinished -= UnlockCamera;
+    //}
 
     private void LateUpdate()
     {

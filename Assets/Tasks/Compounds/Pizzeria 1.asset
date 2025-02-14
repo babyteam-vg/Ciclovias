@@ -14,13 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Pizzeria
   surroundings:
-  - {x: 120, y: 64}
-  - {x: 120, y: 65}
-  - {x: 120, y: 66}
-  - {x: 120, y: 67}
-  - {x: 120, y: 68}
-  - {x: 120, y: 69}
-  - {x: 121, y: 64}
-  - {x: 122, y: 64}
-  - {x: 123, y: 64}
-  - {x: 124, y: 64}
+  - {x: 52, y: 34}
+  - {x: 52, y: 33}
+  - {x: 52, y: 32}
+  - {x: 53, y: 32}
+  - {x: 54, y: 32}
+  - {x: 55, y: 32}
+  - {x: 56, y: 32}

@@ -16,12 +16,15 @@ MonoBehaviour:
   number: 1
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
-  dialog: '"Welcome! I''d like to personally congratulate you for your promotion.
-    As new Bike Lane Supervisor, your first task will be to build a bike lane so
-    we can meet at the Municipaliy. Make sure it''s a charming one, people have been
-    waiting for this for quite some time."'
-  endDialog: '"Oh, wonderful! Now I will be able to come to work by bike on a lovely
-    route. I''m sure people will appreciate it as much as I do."'
+  dialogs:
+  - "Oh, veo que te han promovido a nuestra ciudad, \xA1muchas felicidades!"
+  - "Me presento, soy el Alcalde, \xBFpor qu\xE9 mejor no ponemos en marcha tus habilidades?"
+  - "Construye una ciclov\xEDa desde la Tienda de Bicicletas hasta la Municipalidad."
+  - "Yo me encargar\xE9 de proporcionarte material de construcci\xF3n\u2026 al menos
+    dentro de nuestro presupuesto hahaha."
+  - "Desde hace tiempo que deseo una ruta hasta all\xED en bicicleta, \xA1conf\xEDo
+    en que ser\xE1 muy atractiva y con mucho encanto!"
+  context: "Construye una ciclov\xEDa [...]."
   from: {fileID: 11400000, guid: 4fcb7f1f765a25d45884c680c1318b4c, type: 2}
   to: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
   safetyRequirement: 0
@@ -37,3 +40,7 @@ MonoBehaviour:
   materialReward: 120
   unlockedTasks:
   - {x: 0, y: 2}
+  rewardDialogs:
+  - "Sab\xEDa que tus habilidades eran lo que necesit\xE1bamos para devolver la vida
+    a esta apagada ciudad."
+  - "\xA1Siempre que te necesite te lo har\xE9 saber!"

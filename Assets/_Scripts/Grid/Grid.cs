@@ -8,7 +8,7 @@ public class Grid : MonoBehaviour
     private int width, height;
     private float cellSize = 1f;
 
-    // === Methods ===
+    // :::::::::: PUBLIC METHODS ::::::::::
     public void SetGridArray(Cell[,] cells)
     {
         this.gridArray = cells;
@@ -19,13 +19,13 @@ public class Grid : MonoBehaviour
     public Vector2Int GetGridDimensions() { return new Vector2Int(width, height); }
     public float GetCellSize() { return cellSize; }
 
-    // Get a Cell
+    // ::::: Get a Cell
     public Cell GetCell(int x, int y) { return gridArray[x, y]; }
 
-    // Grid (x, y) to World (i, j, k)
+    // ::::: Grid (x, y) to World (i, j, k)
     public Vector3 GetWorldPositionFromCell(int x, int y) { return new Vector3(x, 0, y) * cellSize; }
 
-    // World (i, j, k) to Grid (x, y)
+    // ::::: World (i, j, k) to Grid (x, y)
     public Vector2Int? GetCellFromWorldPosition(Vector3 worldPosition)
     {
         int x = Mathf.FloorToInt(worldPosition.x / cellSize);
@@ -36,7 +36,7 @@ public class Grid : MonoBehaviour
         return null;
     }
 
-    // Set and Get Content
+    // ::::: Set and Get Content
     public void SetCellContent(int x, int y, CellContent content)
     {
         if (IsWithinBounds(x, y))
@@ -48,23 +48,23 @@ public class Grid : MonoBehaviour
             return gridArray[x, y].GetContent();
         return CellContent.None;
     }
-    
-    // Set and Get Buildable
+
+    // ::::: Set and Get Buildable
     public void SetCellBuildable(int x, int y, bool buildable) { gridArray[x, y].SetBuildable(buildable); }
     public bool GetCellBuildable(int x, int y) { return gridArray[x, y].GetBuildable(); }
 
-    // Set and Get Traffic
+    // ::::: Set and Get Traffic
     public void SetCellTraffic(int x, int y, int traffic) { gridArray[x, y].SetTraffic(traffic); }
     public int GetCellTraffic(int x, int y) { return gridArray[x, y].GetTraffic(); }
 
-    // Set and Get Illuminated
+    // ::::: Set and Get Illuminated
     public void SetCellIlluminated(int x, int y, bool illuminated) { gridArray[x, y].SetIlluminated(illuminated); }
     public bool GetCellIlluminated(int x, int y) { return gridArray[x, y].GetIlluminated(); }
 
-    // Is Cell Not Off Limits?
+    // ::::: Is Cell Not Off Limits?
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 
-    // Get Adjacent Cells to [x][y]
+    // ::::: Get Adjacent Cells to [x][y]
     public List<Cell> GetAdjacentCells(int x, int y)
     {
         List<Cell> adjacentCells = new List<Cell>();
@@ -85,7 +85,15 @@ public class Grid : MonoBehaviour
         return adjacentCells;
     }
 
-    // Edge to Center of a Cell
+    // ::::: Check Adjacency in 8 Directions
+    public bool IsAdjacent(Vector2Int current, Vector2Int target)
+    {
+        int dx = Mathf.Abs(current.x - target.x);
+        int dy = Mathf.Abs(current.y - target.y);
+        return (dx <= 1 && dy <= 1);
+    }
+
+    // ::::: Edge to Center of a Cell
     public Vector2 EdgeToMid(Vector2 edgePosition)
     {
         float centerX = edgePosition.x + cellSize / 2;

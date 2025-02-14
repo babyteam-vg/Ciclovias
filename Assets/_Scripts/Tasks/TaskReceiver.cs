@@ -42,7 +42,7 @@ public class TaskReceiver : MonoBehaviour
         if (ThereIsReceived())
         {
             title.text = ReceivedTask.info.title;
-            dialog.text = ReceivedTask.info.dialog;
+            //dialog.text = ReceivedTask.info.dialog;
             portrait.sprite = ReceivedTask.info.character.portrait;
         }
     }

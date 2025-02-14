@@ -13,10 +13,9 @@ public class TaskInfo : ScriptableObject
     [Header("Basic")]
     public string title;
     public Character character;
+    public List<string> dialogs;
     [TextArea(3, 6)]
-    public string dialog;
-    [TextArea(3, 6)]
-    public string endDialog;
+    public string context;
 
     [Header("Map")]
     public CompoundInfo from;
@@ -37,6 +36,7 @@ public class TaskInfo : ScriptableObject
     [Header("Rewards")]
     public int materialReward;
     public List<Vector2Int> unlockedTasks;
+    public List<string> rewardDialogs;
     // Character's Dialog
     // Social Network Comments
 }
