@@ -144,7 +144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 36470169}
   m_Layer: 5
-  m_Name: Dialog
+  m_Name: Dialog Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -315,7 +315,7 @@ MonoBehaviour:
   pauseUI: {fileID: 1098760243}
   tasksDiaryUI: {fileID: 1957175625}
   receiveTaskUI: {fileID: 1231900767}
-  dialogUI: {fileID: 0}
+  dialogUI: {fileID: 1470979732}
 --- !u!1 &62598395
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +669,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: de54f4f6994749444979d63f3d8a7f7f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1098366851326786325, guid: de54f4f6994749444979d63f3d8a7f7f,
         type: 3}
@@ -1553,7 +1553,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1798297576}
-  menuManager: {fileID: 58962865}
   newTaskImg: {fileID: 97281404}
 --- !u!64 &224817460
 MeshCollider:
@@ -2218,6 +2217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3178d6833f116e4fa54a58ce14e33e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portrait: {fileID: 1562389358}
+  dialog: {fileID: 1058815542}
+  dialogs: []
+  textSpeed: 0.05
 --- !u!4 &454984594
 Transform:
   m_ObjectHideFlags: 0
@@ -3730,7 +3733,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1798297576}
-  menuManager: {fileID: 58962865}
   newTaskImg: {fileID: 97281404}
 --- !u!64 &611375350
 MeshCollider:
@@ -3900,7 +3902,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1798297576}
-  menuManager: {fileID: 58962865}
   newTaskImg: {fileID: 97281404}
 --- !u!64 &633541559
 MeshCollider:
@@ -4112,7 +4113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &645460226
 Transform:
   m_ObjectHideFlags: 0
@@ -5233,7 +5234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 880674390}
   m_Layer: 5
-  m_Name: Dialog
+  m_Name: Context Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5506,7 +5507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 690955901}
-  dialog: {fileID: 1149233066}
+  context: {fileID: 1149233066}
   portrait: {fileID: 1284520976}
 --- !u!224 &957420301 stripped
 RectTransform:
@@ -6071,7 +6072,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   standardMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
-  highlightMaterial: {fileID: 2100000, guid: daa0f7c1c5be19c498aaf5869b3c14df, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: 028a2b72dfdef03409b41cc4aebeeb8f, type: 2}
   nodeSize: 0.2
   edgeWidth: 0.1
   graph: {fileID: 53937429}
@@ -6160,7 +6161,7 @@ GameObject:
   - component: {fileID: 1058815543}
   - component: {fileID: 1058815542}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Dialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6763,7 +6764,7 @@ GameObject:
   - component: {fileID: 1149233067}
   - component: {fileID: 1149233066}
   m_Layer: 5
-  m_Name: Dialog Text
+  m_Name: Context
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9668,7 +9669,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1609906036
 MeshCollider:
   m_ObjectHideFlags: 0

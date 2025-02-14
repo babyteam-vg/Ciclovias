@@ -75,7 +75,6 @@ public class LaneDestructor : MonoBehaviour
     // ::::: Destruction Waterfall
     private void DestroyNodeAndEdges(Vector2Int gridPosition)
     {
-        graph.RemoveNode(gridPosition);
         Node node = graph.GetNode(gridPosition);
         if (node != null)
         {
@@ -83,5 +82,7 @@ public class LaneDestructor : MonoBehaviour
             ConstructionMaterial.Instance.AddMaterial(edgeCount); // Add material for each removed edge
             OnLaneDestroyed?.Invoke(gridPosition);
         }
+
+        graph.RemoveNode(gridPosition);
     }
 }

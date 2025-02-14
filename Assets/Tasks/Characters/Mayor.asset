@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8405361602554b34d880475ea5cfb82c, type: 3}
   m_Name: Mayor
   m_EditorClassIdentifier: 
-  name: Mayor
+  characterName: Mayor
   portrait: {fileID: 21300000, guid: 86b448711d72d8145964349a5f542bb1, type: 3}

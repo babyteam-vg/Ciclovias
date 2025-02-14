@@ -9,7 +9,6 @@ public class Compound : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     [Header("UI References")]
-    [SerializeField] private MenuManager menuManager;
     [SerializeField] private Image newTaskImg;
 
     private Task givingTask;
@@ -63,7 +62,6 @@ public class Compound : MonoBehaviour
 
             newTaskImg.gameObject.SetActive(false);
             TaskReceiver.Instance.ReceiveTask(givingTask);
-            menuManager.OnReceiveTaskPress();
             givingTask = null;
         }
     }

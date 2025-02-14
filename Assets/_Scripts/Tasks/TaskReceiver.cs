@@ -9,7 +9,7 @@ public class TaskReceiver : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI title;
-    [SerializeField] private TextMeshProUGUI dialog;
+    [SerializeField] private TextMeshProUGUI context;
     [SerializeField] private Image portrait;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -32,6 +32,7 @@ public class TaskReceiver : MonoBehaviour
             return;
 
         ReceivedTask = task;
+        MenuManager.Instance.OnOpenDialog();
         UpdateTaskUI();
     }
 
@@ -42,7 +43,7 @@ public class TaskReceiver : MonoBehaviour
         if (ThereIsReceived())
         {
             title.text = ReceivedTask.info.title;
-            //dialog.text = ReceivedTask.info.dialog;
+            context.text = ReceivedTask.info.context;
             portrait.sprite = ReceivedTask.info.character.portrait;
         }
     }

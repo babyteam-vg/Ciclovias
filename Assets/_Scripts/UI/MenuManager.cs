@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    public static MenuManager Instance { get; private set; }
+
     [Header("Dependencies")]
     [SerializeField] CameraController cameraController;
 
@@ -14,7 +16,16 @@ public class MenuManager : MonoBehaviour
     public GameObject receiveTaskUI;
     public GameObject dialogUI;
 
-    // :::::::::: PAUSE MANAGER MANAGER ::::::::::
+    // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    // :::::::::: PAUSE MANAGER ::::::::::
     // ::::: Pause Menu
     public void OnPauseMenuPress()
     {
@@ -63,6 +74,7 @@ public class MenuManager : MonoBehaviour
     public void OnOpenDialog()
     {
         dialogUI.SetActive(true);
+        DialogManager.Instance.StartDialog();
         cameraController.LockCamera(Vector2Int.zero);
     }
     public void OnCloseDialog()
