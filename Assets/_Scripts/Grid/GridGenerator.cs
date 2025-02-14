@@ -70,6 +70,6 @@ public class ColorToCell
     public Color color;
     public CellContent content;
     public bool buildable;
-    [Range(0, 3)] public int traffic;
+    [Range(0, 4)] public int traffic;
     public bool illuminated;
 }

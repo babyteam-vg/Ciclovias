@@ -15,6 +15,7 @@ public class MenuManager : MonoBehaviour
     public GameObject tasksDiaryUI;
     public GameObject receiveTaskUI;
     public GameObject dialogUI;
+    public GameObject endBuildUI;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -30,12 +31,12 @@ public class MenuManager : MonoBehaviour
     public void OnPauseMenuPress()
     {
         pauseUI.SetActive(true);
-        cameraController.LockCamera(Vector2Int.zero);
+        Time.timeScale = 0;
     }
     public void OnContinuePress()
     {
         pauseUI.SetActive(false);
-        cameraController.UnlockCamera(Vector2Int.zero);
+        Time.timeScale = 1;
     }
     public void OnMainMenuPress()
     {
@@ -48,25 +49,25 @@ public class MenuManager : MonoBehaviour
     {
         TaskDiary.Instance.ShowAvailableTasks();
         tasksDiaryUI.SetActive(true);
-        cameraController.LockCamera(Vector2Int.zero);
+        Time.timeScale = 0;
     }
     public void OnTasksDiaryClose()
     {
         tasksDiaryUI.SetActive(false);
-        cameraController.UnlockCamera(Vector2Int.zero);
+        Time.timeScale = 1;
     }
 
     // ::::: Receive Task
     public void OnReceiveTaskPress()
     {
         receiveTaskUI.SetActive(true);
-        cameraController.LockCamera(Vector2Int.zero);
+        Time.timeScale = 0;
     }
     public void OnAcceptTaskPress()
     {
+        Time.timeScale = 1;
         TaskDiary.Instance.AcceptTask(TaskReceiver.Instance.ReceivedTask);
         receiveTaskUI.SetActive(false);
-        cameraController.UnlockCamera(Vector2Int.zero);
     }
 
     // :::::::::: DIALOG MANAGER ::::::::::
@@ -74,12 +75,18 @@ public class MenuManager : MonoBehaviour
     public void OnOpenDialog()
     {
         dialogUI.SetActive(true);
-        DialogManager.Instance.StartDialog();
         cameraController.LockCamera(Vector2Int.zero);
+        DialogManager.Instance.StartDialog();
     }
     public void OnCloseDialog()
     {
-        dialogUI.SetActive(false);
         cameraController.UnlockCamera(Vector2Int.zero);
+        dialogUI.SetActive(false);
+    }
+
+    public void OnOpenEndBuild() // 4 THE BUILD 1!!!
+    {
+        endBuildUI.SetActive(true);
+        Time.timeScale = 0;
     }
 }

@@ -14,16 +14,16 @@ public class CameraController : MonoBehaviour
 
     // Cursor Movement
     public bool enableEdgeScrolling = true;
-    public float edgeThreshold = 5f;
     private Vector2 screenSize;
+    private float edgeThreshold = 5f;
 
     // WASD Movement
     public float movementSpeed;
     public float movementTime = 10f;
     private Vector3 newPosition;
-    const float MIN_MOV_SPEED = 15;
-    const float BASE_MOV_SPEED = 50f;
-    const float MAX_MOV_SPEED = 60f;
+    const float MIN_MOV_SPEED = 10;
+    const float BASE_MOV_SPEED = 20f;
+    const float MAX_MOV_SPEED = 40f;
 
     // Rotation
     public float rotationAmount = 0.2f;
@@ -42,14 +42,31 @@ public class CameraController : MonoBehaviour
     private float midZoomHeight;
     private float maxZoomHeight;
 
-    // === Methods ===
+    // :::::::::: MONO METHODS ::::::::::
+    private void OnEnable()
+    {
+        laneConstructor.OnBuildStarted += LockCamera;
+        laneConstructor.OnBuildFinished += UnlockCamera;
+
+        laneDestructor.OnDestroyStarted += LockCamera;
+        laneDestructor.OnDestroyFinished += UnlockCamera;
+    }
+    private void OnDisable()
+    {
+        laneConstructor.OnBuildStarted -= LockCamera;
+        laneConstructor.OnBuildFinished -= UnlockCamera;
+
+        laneDestructor.OnDestroyStarted -= LockCamera;
+        laneDestructor.OnDestroyFinished -= UnlockCamera;
+    }
+
     private void Start()
     {
         movementSpeed = BASE_MOV_SPEED;
 
         areaBounds = boundingPlane.GetComponent<Renderer>().bounds;
-        minZoomHeight = areaBounds.min.y + 100f;
-        maxZoomHeight = areaBounds.max.y + 300f;
+        minZoomHeight = areaBounds.min.y + 50f;
+        maxZoomHeight = areaBounds.max.y + 150f;
         midZoomHeight = (minZoomHeight + maxZoomHeight) / 2f;
 
         newPosition = transform.position;
@@ -58,23 +75,6 @@ public class CameraController : MonoBehaviour
 
         screenSize = new Vector2(Screen.width, Screen.height);
     }
-
-    //private void OnEnable()
-    //{
-    //    laneConstructor.OnLaneStarted += LockCamera;
-    //    laneConstructor.OnLaneFinished += UnlockCamera;
-
-    //    laneDestructor.OnLaneDestroyed += LockCamera;
-    //    laneDestructor.OnLaneFinished += UnlockCamera;
-    //}
-    //private void OnDisable()
-    //{
-    //    laneConstructor.OnLaneStarted -= LockCamera;
-    //    laneConstructor.OnLaneFinished -= UnlockCamera;
-
-    //    laneDestructor.OnLaneDestroyed -= LockCamera;
-    //    laneDestructor.OnLaneFinished -= UnlockCamera;
-    //}
 
     private void LateUpdate()
     {
@@ -98,9 +98,11 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    // :::::::::: PUBLIC METHODS ::::::::::
     public void LockCamera(Vector2Int gridPosition) { lockCamera = true; }
     public void UnlockCamera(Vector2Int gridPosition) { lockCamera = false; }
 
+    // :::::::::: PRIVATE METHODS ::::::::::
     private void HandleEdgeScrolling()
     {
         if (!enableEdgeScrolling) return;

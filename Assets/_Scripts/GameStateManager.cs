@@ -27,6 +27,13 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    private void Update() // 4 THE BUILD 1!!!
+    {
+        Task secondTask = TaskDiary.Instance.tasks[1];
+        if (secondTask.state == 4)
+            MenuManager.Instance.OnOpenEndBuild();
+    }
+
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Advance, Reduce
     public void AdvanceMapState() { CurrentMapState++; }

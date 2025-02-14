@@ -16,14 +16,20 @@ MonoBehaviour:
   number: 2
   title: A Treat Before Work
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
-  dialog: "\u201COh! Just in time! Please build a bike lane so the delivery guy can
-    get here safely. I wouldn\u2019t be surprised if he gets lost with all this smoke.\u201D"
-  endDialog: "\"Thank you so much. I live a healthy life, but Mama Gio's pizzas are
-    my weakness.\u201D"
+  dialogs:
+  - "Gracias por venir, te cit\xE9 aqu\xED para... \xBFuh? Dame un momento..."
+  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de Mama Gio, no puedo
+    creerlo\u2026"
+  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la Municipalidad
+    hasta all\xED?"
+  - "A los repartidores siempre les ocurre algo por la mala visibilidad, as\xED que
+    te encargo una buena seguridad para la ruta por favor. \xA1De seguro todos te
+    lo agradecer\xE1n!"
+  context: '[...]'
   from: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
   to: {fileID: 11400000, guid: 14afc8ac001c36b4b99564b34ec46230, type: 2}
   safetyRequirement: 1
-  minSafetyCount: 100
+  minSafetyCount: 18
   charmRequirement: 0
   minCharmCount: 0
   flowRequirement: 0
@@ -32,5 +38,6 @@ MonoBehaviour:
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
-  materialReward: 200
+  materialReward: 100
   unlockedTasks: []
+  rewardDialogs: []
