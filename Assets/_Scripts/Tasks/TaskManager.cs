@@ -74,7 +74,7 @@ public class TaskManager : MonoBehaviour
     // ::::: Complete & Decomplete a Task
     private void CompleteTask(Task task, List<Vector2Int> path)
     {
-        ConstructionMaterial.Instance.AddMaterial(task.info.materialReward);
+        GameManager.Instance.AddMaterial(task.info.materialReward);
 
         foreach (Vector2Int taskId in task.info.unlockedTasks)
         {
@@ -94,7 +94,7 @@ public class TaskManager : MonoBehaviour
     }
     private void DecompleteTask(Task task)
     {
-        ConstructionMaterial.Instance.ConsumeMaterial(task.info.materialReward);
+        GameManager.Instance.ConsumeMaterial(task.info.materialReward);
         ChangeTaskState(2, task); // Completed -> Accepted
     }
 

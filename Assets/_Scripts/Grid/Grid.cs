@@ -24,6 +24,8 @@ public class Grid : MonoBehaviour
 
     // ::::: Grid (x, y) to World (i, j, k)
     public Vector3 GetWorldPositionFromCell(int x, int y) { return new Vector3(x, 0, y) * cellSize; }
+    public Vector3 GetWorldPositionFromCellCentered(float x, float y) { return new Vector3((x + 0.5f) * cellSize, 0, (y + 0.5f) * cellSize); }
+
 
     // ::::: World (i, j, k) to Grid (x, y)
     public Vector2Int? GetCellFromWorldPosition(Vector3 worldPosition)
@@ -49,19 +51,7 @@ public class Grid : MonoBehaviour
         return CellContent.None;
     }
 
-    // ::::: Set and Get Buildable
-    public void SetCellBuildable(int x, int y, bool buildable) { gridArray[x, y].SetBuildable(buildable); }
-    public bool GetCellBuildable(int x, int y) { return gridArray[x, y].GetBuildable(); }
-
-    // ::::: Set and Get Traffic
-    public void SetCellTraffic(int x, int y, int traffic) { gridArray[x, y].SetTraffic(traffic); }
-    public int GetCellTraffic(int x, int y) { return gridArray[x, y].GetTraffic(); }
-
-    // ::::: Set and Get Illuminated
-    public void SetCellIlluminated(int x, int y, bool illuminated) { gridArray[x, y].SetIlluminated(illuminated); }
-    public bool GetCellIlluminated(int x, int y) { return gridArray[x, y].GetIlluminated(); }
-
-    // ::::: Is Cell Not Off Limits?
+    // ::::: Is [x][y] Not Off Limits?
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 
     // ::::: Get Adjacent Cells to [x][y]
@@ -72,13 +62,13 @@ public class Grid : MonoBehaviour
         for (int dx = -1; dx <= 1; dx++)
         {
             for (int dy = -1; dy <= 1; dy++)
-            { //      Skip Central Cell <¬
-                if (dx == 0 && dy == 0) continue;
+            { 
+                if (dx == 0 && dy == 0) continue; // Omitir la celda central
 
                 int newX = x + dx;
                 int newY = y + dy;
 
-                if (IsWithinBounds(newX, newY))
+                if (IsWithinBounds(newX, newY) && gridArray[newX, newY] != null) // Evitar agregar celdas nulas
                     adjacentCells.Add(gridArray[newX, newY]);
             }
         }
@@ -94,7 +84,7 @@ public class Grid : MonoBehaviour
     }
 
     // ::::: Edge to Center of a Cell
-    public Vector2 EdgeToMid(Vector2 edgePosition)
+    public Vector2 EdgeToMid(Vector2Int edgePosition)
     {
         float centerX = edgePosition.x + cellSize / 2;
         float centerY = edgePosition.y + cellSize / 2;

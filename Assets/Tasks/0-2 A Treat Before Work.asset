@@ -38,6 +38,7 @@ MonoBehaviour:
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
-  materialReward: 100
-  unlockedTasks: []
+  materialReward: 20
+  unlockedTasks:
+  - {x: 0, y: 3}
   rewardDialogs: []

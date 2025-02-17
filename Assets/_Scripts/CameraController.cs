@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private InputManager inputManager;
     [SerializeField] private GameObject boundingPlane;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;

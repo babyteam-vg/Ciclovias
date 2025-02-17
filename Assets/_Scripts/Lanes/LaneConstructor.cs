@@ -8,6 +8,7 @@ public class LaneConstructor : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
+    [SerializeField] private CellHighlighter cellHighlighter;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private AudioManager audioManager;
 
@@ -25,6 +26,7 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickHold += ContinueBuilding;
         inputManager.OnLeftClickUp += StopBuilding;
     }
+
     private void OnDisable()
     {
         inputManager.OnLeftClickDown -= StartBuilding;
@@ -32,35 +34,14 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickUp -= StopBuilding;
     }
 
-    // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Critical Area
-    public bool IsInCriticalArea(Vector2Int gridPosition)
-    { //                       Getting 3D World Position <¬
-        Vector3 cursorWorldPosition = inputManager.GetCursorWorldPosition();
-        Vector3 cellWorldPosition = grid.GetWorldPositionFromCell(gridPosition.x, gridPosition.y);
-
-        Vector3 criticalCenter = cellWorldPosition + new Vector3(
-            Mathf.Cos(Mathf.PI / 4) * grid.GetCellSize() / 2,
-            0,
-            Mathf.Sin(Mathf.PI / 4) * grid.GetCellSize() / 2
-        );
-
-        float criticalRadius = grid.GetCellSize() / 2;
-
-        Vector2 delta = new Vector2(
-            cursorWorldPosition.x - criticalCenter.x,
-            cursorWorldPosition.z - criticalCenter.z
-        );
-
-        return delta.sqrMagnitude <= criticalRadius * criticalRadius;
-    }
-
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (grid.GetCellBuildable(gridPosition.x, gridPosition.y))
+        if (grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
         {
+            cellHighlighter.HighlightBuildableCells(gridPosition);
+
             if (graph.GetNode(gridPosition) == null)
                 graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
 
@@ -75,21 +56,23 @@ public class LaneConstructor : MonoBehaviour
     {
         if (isBuilding &&
             grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
-            grid.GetCellBuildable(gridPosition.x, gridPosition.y) &&
+            grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable() &&
             IsInCriticalArea(gridPosition))
         {
             if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
 
-            if (ConstructionMaterial.Instance.material > 0)
+            if (GameManager.Instance.MaterialAmount > 0)
             {
+                cellHighlighter.HighlightBuildableCells(gridPosition);
+
                 if (graph.GetNode(gridPosition) == null)
-                    graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Adds the Node
+                    graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
 
                 if (lastCellPosition.HasValue && !graph.AreConnected(lastCellPosition.Value, gridPosition))
                 {
                     graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
-                    ConstructionMaterial.Instance.ConsumeMaterial(1); // Construction Material: -1
+                    GameManager.Instance.ConsumeMaterial(1); // Construction Material: -1
                     audioManager.PlaySFX(audioManager.build);
 
                     OnLaneBuilt?.Invoke(gridPosition); // !
@@ -104,7 +87,67 @@ public class LaneConstructor : MonoBehaviour
     {
         graph.CheckAndRemoveNode(gridPosition);
         isBuilding = false;
+        cellHighlighter.ClearHighlight();
         lastCellPosition = null;
-        OnBuildFinished?.Invoke(gridPosition); // !
+        OnBuildFinished?.Invoke(gridPosition);  // !
+    }
+
+    // ::::: Critical Areas
+    private bool IsInCriticalArea(Vector2Int gridPosition)
+    {
+        if (!lastCellPosition.HasValue)
+            return false;
+
+        Vector3 cursorWorldPosition = inputManager.GetCursorWorldPosition();
+        Vector3 cellWorldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
+
+        Vector2Int direction = gridPosition - lastCellPosition.Value;
+        bool isDiagonal = Mathf.Abs(direction.x) == 1 && Mathf.Abs(direction.y) == 1;
+
+        if (isDiagonal) // Diagonal
+        {
+            float halfCellSize = grid.GetCellSize() / 2;
+
+            float minX = cellWorldPosition.x - halfCellSize;
+            float maxX = cellWorldPosition.x + halfCellSize;
+            float minZ = cellWorldPosition.z - halfCellSize;
+            float maxZ = cellWorldPosition.z + halfCellSize;
+
+            bool isInside = cursorWorldPosition.x >= minX && cursorWorldPosition.x <= maxX &&
+                            cursorWorldPosition.z >= minZ && cursorWorldPosition.z <= maxZ;
+
+            return isInside;
+        }
+        else // Directly Adjacent
+        {
+            float halfCellSize = grid.GetCellSize() / 2;
+            float quarterCellSize = grid.GetCellSize() / 4;
+
+            float minX, maxX, minZ, maxZ;
+
+            if (direction.x != 0)
+            {
+                // Horizontal
+                minX = cellWorldPosition.x + (direction.x > 0 ? 0 : -halfCellSize);
+                maxX = cellWorldPosition.x + (direction.x > 0 ? halfCellSize : 0);
+                minZ = cellWorldPosition.z - halfCellSize;
+                maxZ = cellWorldPosition.z + halfCellSize;
+            }
+            else if (direction.y != 0)
+            {
+                // Vertical
+                minX = cellWorldPosition.x - halfCellSize;
+                maxX = cellWorldPosition.x + halfCellSize;
+                minZ = cellWorldPosition.z + (direction.y > 0 ? 0 : -halfCellSize);
+                maxZ = cellWorldPosition.z + (direction.y > 0 ? halfCellSize : 0);
+            }
+            else
+                return false;
+
+            bool isInside = cursorWorldPosition.x >= minX && cursorWorldPosition.x <= maxX &&
+                            cursorWorldPosition.z >= minZ && cursorWorldPosition.z <= maxZ;
+
+            return isInside;
+        }
     }
 }

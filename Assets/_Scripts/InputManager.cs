@@ -19,52 +19,89 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2Int> OnMiddleClickHold;
     public event Action<Vector2Int> OnMiddleClickUp;
 
-    // === Methods ===
+    private bool isLeftMouseButtonDown = false;
+    private bool isRightMouseButtonDown = false;
+    private bool isMiddleMouseButtonDown = false;
+
+    private Vector2Int? lastGridPosition = null;
+
+    // :::::::::: Methods ::::::::::
     private void Update()
     {
         HandleMouseInput();
     }
 
-    // Mouse, RayCast and Events
+    // ::::: Mouse, RayCast and Events
     private void HandleMouseInput()
     {
         if (mainCamera == null || grid == null) return;
 
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        
+
+        Vector2Int? gridPosition = null;
+
         if (Physics.Raycast(ray, out hit))
         {
             Vector3 worldPosition = hit.point;
-            Vector2Int? gridPosition = grid.GetCellFromWorldPosition(worldPosition);
+            gridPosition = grid.GetCellFromWorldPosition(worldPosition);
 
             if (gridPosition.HasValue)
             {
                 Vector2Int validGridPosition = gridPosition.Value;
-                if (Input.GetKeyDown(KeyCode.R))
-                    Debug.LogWarning(validGridPosition);
-                //              Left Click <¬
-                if (Input.GetMouseButtonDown(0)) OnLeftClickDown?.Invoke(validGridPosition);
-                if (Input.GetMouseButton(0)) OnLeftClickHold?.Invoke(validGridPosition);
-                if (Input.GetMouseButtonUp(0)) OnLeftClickUp?.Invoke(validGridPosition);
-                //             Right Click <¬
-                if (Input.GetMouseButtonDown(1)) OnRightClickDown?.Invoke(validGridPosition);
-                if (Input.GetMouseButton(1)) OnRightClickHold?.Invoke(validGridPosition);
-                if (Input.GetMouseButtonUp(1)) OnRightClickUp?.Invoke(validGridPosition);
-                //           Middlle Click <¬
-                if (Input.GetMouseButtonDown(2)) OnMiddleClickDown?.Invoke(validGridPosition);
-                if (Input.GetMouseButton(2)) OnMiddleClickHold?.Invoke(validGridPosition);
-                if (Input.GetMouseButtonUp(2)) OnMiddleClickUp?.Invoke(validGridPosition);
+                lastGridPosition = validGridPosition;
 
-                List<Cell> adjacentCells = grid.GetAdjacentCells(validGridPosition.x, validGridPosition.y);
+                // Left Click
+                if (Input.GetMouseButtonDown(0))
+                {
+                    isLeftMouseButtonDown = true;
+                    OnLeftClickDown?.Invoke(validGridPosition);
+                }
+                if (Input.GetMouseButton(0)) OnLeftClickHold?.Invoke(validGridPosition);
+
+                // Right Click
+                if (Input.GetMouseButtonDown(1))
+                {
+                    isRightMouseButtonDown = true;
+                    OnRightClickDown?.Invoke(validGridPosition);
+                }
+                if (Input.GetMouseButton(1)) OnRightClickHold?.Invoke(validGridPosition);
+
+                // Middle Click
+                if (Input.GetMouseButtonDown(2))
+                {
+                    isMiddleMouseButtonDown = true;
+                    OnMiddleClickDown?.Invoke(validGridPosition);
+                }
+                if (Input.GetMouseButton(2)) OnMiddleClickHold?.Invoke(validGridPosition);
 
                 Debug.DrawRay(ray.origin, ray.direction * 1000, Color.blue);
             }
         }
-        else Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red);
+        else
+            Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red);
+
+        // Handle Mouse Button Up Events Globally
+        if (isLeftMouseButtonDown && Input.GetMouseButtonUp(0))
+        {
+            isLeftMouseButtonDown = false;
+            OnLeftClickUp?.Invoke(lastGridPosition ?? Vector2Int.zero);
+        }
+
+        if (isRightMouseButtonDown && Input.GetMouseButtonUp(1))
+        {
+            isRightMouseButtonDown = false;
+            OnRightClickUp?.Invoke(lastGridPosition ?? Vector2Int.zero);
+        }
+
+        if (isMiddleMouseButtonDown && Input.GetMouseButtonUp(2))
+        {
+            isMiddleMouseButtonDown = false;
+            OnMiddleClickUp?.Invoke(lastGridPosition ?? Vector2Int.zero);
+        }
     }
 
-    // 2D Cursor to 3D World
+    // ::::: 2D Cursor to 3D World
     public Vector3 GetCursorWorldPosition()
     {
         if (mainCamera == null) return Vector3.zero;

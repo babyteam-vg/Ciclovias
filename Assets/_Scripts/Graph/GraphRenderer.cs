@@ -8,6 +8,7 @@ public class GraphRenderer : MonoBehaviour
     public Material highlightMaterial; // Material for highlighted nodes and edges
     public float nodeSize = 0.2f;
     public float edgeWidth = 0.1f;
+    public float elevation = 0.1f;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
@@ -106,7 +107,7 @@ public class GraphRenderer : MonoBehaviour
         if (nodeObjects.ContainsKey(nodePosition)) return; // Avoid duplicate nodes
 
         GameObject nodeObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        nodeObject.transform.position = new Vector3(worldPosition.x, 0.3f, worldPosition.y);
+        nodeObject.transform.position = new Vector3(worldPosition.x, elevation, worldPosition.y);
         nodeObject.transform.localScale = Vector3.one * nodeSize;
         nodeObject.GetComponent<Renderer>().material = standardMaterial; // Use standard material initially
 
@@ -137,8 +138,8 @@ public class GraphRenderer : MonoBehaviour
         lineRenderer.startWidth = edgeWidth;
         lineRenderer.endWidth = edgeWidth;
 
-        Vector3 startPos = new Vector3(graph.GetNode(positionA).worldPosition.x, 0.3f, graph.GetNode(positionA).worldPosition.y);
-        Vector3 endPos = new Vector3(graph.GetNode(positionB).worldPosition.x, 0.3f, graph.GetNode(positionB).worldPosition.y);
+        Vector3 startPos = new Vector3(graph.GetNode(positionA).worldPosition.x, elevation, graph.GetNode(positionA).worldPosition.y);
+        Vector3 endPos = new Vector3(graph.GetNode(positionB).worldPosition.x, elevation, graph.GetNode(positionB).worldPosition.y);
 
         lineRenderer.SetPositions(new Vector3[] { startPos, endPos });
 

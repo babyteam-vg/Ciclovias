@@ -52,13 +52,12 @@ public class LaneDestructor : MonoBehaviour
     {
         if (isDestroying &&
             grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
-            laneConstructor.IsInCriticalArea(gridPosition))
+            IsInCriticalArea(gridPosition))
         {
             if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
 
             DestroyNodeAndEdges(gridPosition);
-
             lastCellPosition = gridPosition;
         }
     }
@@ -79,10 +78,69 @@ public class LaneDestructor : MonoBehaviour
         if (node != null)
         {
             int edgeCount = node.neighbors.Count;
-            ConstructionMaterial.Instance.AddMaterial(edgeCount); // Add material for each removed edge
+            GameManager.Instance.AddMaterial(edgeCount); // Add material for each removed edge
             OnLaneDestroyed?.Invoke(gridPosition);
         }
 
         graph.RemoveNode(gridPosition);
+    }
+
+    // ::::: Critical Areas
+    private bool IsInCriticalArea(Vector2Int gridPosition)
+    {
+        if (!lastCellPosition.HasValue)
+            return false;
+
+        Vector3 cursorWorldPosition = inputManager.GetCursorWorldPosition();
+        Vector3 cellWorldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
+
+        Vector2Int direction = gridPosition - lastCellPosition.Value;
+        bool isDiagonal = Mathf.Abs(direction.x) == 1 && Mathf.Abs(direction.y) == 1;
+
+        if (isDiagonal) // Diagonal
+        {
+            float halfCellSize = grid.GetCellSize() / 2;
+
+            float minX = cellWorldPosition.x - halfCellSize;
+            float maxX = cellWorldPosition.x + halfCellSize;
+            float minZ = cellWorldPosition.z - halfCellSize;
+            float maxZ = cellWorldPosition.z + halfCellSize;
+
+            bool isInside = cursorWorldPosition.x >= minX && cursorWorldPosition.x <= maxX &&
+                            cursorWorldPosition.z >= minZ && cursorWorldPosition.z <= maxZ;
+
+            return isInside;
+        }
+        else // Directly Adjacent
+        {
+            float halfCellSize = grid.GetCellSize() / 2;
+            float quarterCellSize = grid.GetCellSize() / 4;
+
+            float minX, maxX, minZ, maxZ;
+
+            if (direction.x != 0)
+            {
+                // Horizontal
+                minX = cellWorldPosition.x + (direction.x > 0 ? 0 : -halfCellSize);
+                maxX = cellWorldPosition.x + (direction.x > 0 ? halfCellSize : 0);
+                minZ = cellWorldPosition.z - halfCellSize;
+                maxZ = cellWorldPosition.z + halfCellSize;
+            }
+            else if (direction.y != 0)
+            {
+                // Vertical
+                minX = cellWorldPosition.x - halfCellSize;
+                maxX = cellWorldPosition.x + halfCellSize;
+                minZ = cellWorldPosition.z + (direction.y > 0 ? 0 : -halfCellSize);
+                maxZ = cellWorldPosition.z + (direction.y > 0 ? halfCellSize : 0);
+            }
+            else
+                return false;
+
+            bool isInside = cursorWorldPosition.x >= minX && cursorWorldPosition.x <= maxX &&
+                            cursorWorldPosition.z >= minZ && cursorWorldPosition.z <= maxZ;
+
+            return isInside;
+        }
     }
 }
