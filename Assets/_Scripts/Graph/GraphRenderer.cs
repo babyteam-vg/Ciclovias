@@ -8,21 +8,32 @@ public class GraphRenderer : MonoBehaviour
     public Material highlightMaterial; // Material for highlighted nodes and edges
     public float nodeSize = 0.2f;
     public float edgeWidth = 0.1f;
-    public float elevation = 0.11f;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
+    [SerializeField] private GameObject plane;
     private Dictionary<Vector2Int, GameObject> nodeObjects;
     private Dictionary<(Vector2Int, Vector2Int), LineRenderer> edgeRenderers;
 
     // Public field to store the current path (provided by TasksManager)
     public List<Vector2Int> currentPath = new List<Vector2Int>();
 
+    private float elevation = 0.1f;
+
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         nodeObjects = new Dictionary<Vector2Int, GameObject>();
         edgeRenderers = new Dictionary<(Vector2Int, Vector2Int), LineRenderer>();
+    }
+
+    private void Start()
+    {
+        if (plane != null)
+        {
+            Renderer renderer = plane.GetComponent<Renderer>();
+            elevation = renderer.bounds.max.y;
+        }
     }
 
     private void OnEnable()

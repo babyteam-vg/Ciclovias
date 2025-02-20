@@ -11,6 +11,7 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private GraphRenderer graphRenderer;
+    [SerializeField] private LaneScores laneScores;
 
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
@@ -66,6 +67,7 @@ public class TaskManager : MonoBehaviour
             var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode);
 
             graphRenderer.currentPath = path;
+            laneScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
 
             int safety = cellScoresCalculator.CalculatePathSafety(path);
             int charm = cellScoresCalculator.CalculatePathCharm(path);

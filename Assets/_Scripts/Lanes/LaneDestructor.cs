@@ -11,7 +11,9 @@ public class LaneDestructor : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private InGameMenuManager inGameMenuManager;
 
+    private bool isAllowed = true;
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
 
@@ -25,19 +27,23 @@ public class LaneDestructor : MonoBehaviour
         inputManager.OnRightClickDown += StartDestroying;
         inputManager.OnRightClickHold += ContinueDestroying;
         inputManager.OnRightClickUp += StopDestroying;
+        inGameMenuManager.MenuOpened += BlockDestroying;
+        inGameMenuManager.MenuClosed += UnblockDestroying;
     }
     private void OnDisable()
     {
         inputManager.OnRightClickDown -= StartDestroying;
         inputManager.OnRightClickHold -= ContinueDestroying;
         inputManager.OnRightClickUp -= StopDestroying;
+        inGameMenuManager.MenuOpened += BlockDestroying;
+        inGameMenuManager.MenuClosed += UnblockDestroying;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse Input: Down
     private void StartDestroying(Vector2Int gridPosition)
     {
-        if (graph.GetNode(gridPosition) != null)
+        if (isAllowed && graph.GetNode(gridPosition) != null)
         {
             isDestroying = true;
             OnDestroyStarted?.Invoke(gridPosition);
@@ -143,4 +149,8 @@ public class LaneDestructor : MonoBehaviour
             return isInside;
         }
     }
+
+    // ::::: Menu? Allowing
+    private void BlockDestroying() { isAllowed = false; }
+    private void UnblockDestroying() { isAllowed = true; }
 }

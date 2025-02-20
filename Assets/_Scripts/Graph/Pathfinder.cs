@@ -96,7 +96,7 @@ public class Pathfinder
             // Could Not Rach Mid
             return (false, RetracePath(startPathNode, closestNodeToMid));
         else
-            // Reached Mid, But Not End
+            // Mid Reached, But Not End
             return (false, RetracePath(startPathNode, closestNodeToEnd));
     }
 

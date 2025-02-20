@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class LaneHighlighter : MonoBehaviour
@@ -7,13 +6,24 @@ public class LaneHighlighter : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Material highlightMaterial;
+    [SerializeField] private GameObject plane;
 
     [Header("Variables")]
     public float fadeRadius = 2.5f; // Maximum Radius
     public float softness = 3f; // Opacity's Aggressiveness
-    public float elevation = 0.11f;
 
+    private float elevation = 0.1f;
     private List<GameObject> highlights = new List<GameObject>();
+
+    // :::::::::: MONO METHODS ::::::::::
+    private void Start()
+    {
+        if (plane != null)
+        {
+            Renderer renderer = plane.GetComponent<Renderer>();
+            elevation = renderer.bounds.max.y;
+        }
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: When OnBuildStarted & OnLaneBuilt

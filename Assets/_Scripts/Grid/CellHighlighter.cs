@@ -6,11 +6,10 @@ public class CellHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
+    [SerializeField] private GameObject plane;
     [SerializeField] private CellContentMesh[] contentMeshes;
 
-    [Header("Variables")]
-    public float elevation = 0.11f;
-
+    private float elevation = 0.1f;
     private Dictionary<CellContent, Material> contentMaterialMap;
     private List<GameObject> highlights = new List<GameObject>();
 
@@ -20,6 +19,15 @@ public class CellHighlighter : MonoBehaviour
         contentMaterialMap = new Dictionary<CellContent, Material>();
         foreach (var mesh in contentMeshes)
             contentMaterialMap[mesh.content] = mesh.material;
+    }
+
+    private void Start()
+    {
+        if (plane != null)
+        {
+            Renderer renderer = plane.GetComponent<Renderer>();
+            elevation = renderer.bounds.max.y;
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

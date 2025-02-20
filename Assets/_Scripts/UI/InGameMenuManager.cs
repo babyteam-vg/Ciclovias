@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +20,9 @@ public class InGameMenuManager : MonoBehaviour
     public GameObject dialogUI;
     public GameObject endBuildUI;
 
+    public event Action MenuOpened;
+    public event Action MenuClosed;
+
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
@@ -27,19 +32,30 @@ public class InGameMenuManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        taskManager.TaskCompleted += EndBuild;
+    }
+    private void OnDisable()
+    {
+        taskManager.TaskCompleted -= EndBuild;
+    }
+
     // :::::::::: PAUSE MANAGER ::::::::::
     // ::::: Pause Menu
     public void OnPauseMenuPress()
     {
         pauseUI.SetActive(true);
+        MenuOpened?.Invoke();
     }
     public void OnContinuePress()
     {
         pauseUI.SetActive(false);
+        MenuClosed?.Invoke();
     }
     public void OnMainMenuPress()
     {
-        //SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 
     // :::::::::: TASK MANAGER ::::::::::
@@ -48,21 +64,25 @@ public class InGameMenuManager : MonoBehaviour
     {
         TaskDiary.Instance.ShowAvailableTasks();
         tasksDiaryUI.SetActive(true);
+        MenuOpened?.Invoke(); // !
     }
     public void OnTasksDiaryClose()
     {
         tasksDiaryUI.SetActive(false);
+        MenuClosed?.Invoke(); // !
     }
 
     // ::::: Receive Task
     public void OnReceiveTaskPress()
     {
         receiveTaskUI.SetActive(true);
+        MenuOpened?.Invoke(); // !
     }
     public void OnAcceptTaskPress()
     {
         taskManager.AcceptTask(TaskReceiver.Instance.ReceivedTask);
         receiveTaskUI.SetActive(false);
+        MenuClosed?.Invoke(); // !
     }
 
     // :::::::::: DIALOG MANAGER ::::::::::
@@ -71,15 +91,18 @@ public class InGameMenuManager : MonoBehaviour
     {
         dialogUI.SetActive(true);
         dialogManager.StartDialog(task);
+        MenuOpened?.Invoke(); // !
     }
     public void OnCloseDialog()
     {
         dialogUI.SetActive(false);
+        MenuClosed?.Invoke(); // !
     }
 
-    public void OnOpenEndBuild() // 4 THE BUILD 1!!!
+    // ::::: To End the Builds
+    public void EndBuild(Task task)
     {
-        endBuildUI.SetActive(true);
-        Time.timeScale = 0;
+        if (TaskDiary.Instance.tasks.Last().state == 4)
+            endBuildUI.SetActive(true);
     }
 }

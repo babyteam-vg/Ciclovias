@@ -28,7 +28,7 @@ MonoBehaviour:
   context: "Construye una ciclov\xEDa segura para que los repartidores de Mama Gio
     puedan llegar a la Municipalidad sin perderse a causa del humo."
   safetyRequirement: 1
-  minSafetyCount: 15
+  minSafetyCount: 20
   charmRequirement: 0
   minCharmCount: 0
   flowRequirement: 0

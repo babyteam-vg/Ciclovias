@@ -12,7 +12,9 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private LaneHighlighter laneHighlighter;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private InGameMenuManager inGameMenuManager;
 
+    private bool isAllowed = true;
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
 
@@ -26,6 +28,8 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickDown += StartBuilding;
         inputManager.OnLeftClickHold += ContinueBuilding;
         inputManager.OnLeftClickUp += StopBuilding;
+        inGameMenuManager.MenuOpened += BlockBuilding;
+        inGameMenuManager.MenuClosed += UnblockBuilding;
     }
 
     private void OnDisable()
@@ -33,13 +37,15 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickDown -= StartBuilding;
         inputManager.OnLeftClickHold -= ContinueBuilding;
         inputManager.OnLeftClickUp -= StopBuilding;
+        inGameMenuManager.MenuOpened -= BlockBuilding;
+        inGameMenuManager.MenuClosed -= UnblockBuilding;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
+        if (isAllowed && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
         {
             laneHighlighter.HighlightBuildableCells(gridPosition);
             cellHighlighter.HighlightBuildableCells(gridPosition);
@@ -156,4 +162,8 @@ public class LaneConstructor : MonoBehaviour
             return isInside;
         }
     }
+
+    // ::::: Menu? Allowing
+    private void BlockBuilding() { isAllowed = false; }
+    private void UnblockBuilding() { isAllowed = true; }
 }

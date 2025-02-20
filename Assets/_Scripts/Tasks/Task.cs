@@ -20,14 +20,16 @@ public class Task
     // ::::: Requirements
     public bool MeetsRequirements()
     {
-        bool meetingRequirements = true;
-
-        if (info.safetyRequirement && currentSafetyCount < info.minSafetyCount) return false;
-        if (info.charmRequirement && currentCharmCount < info.minCharmCount) return false;
-        if (info.flowRequirement && currentFlowPercentage < info.minFlowPercentage) return false;
-        if (info.minMaterialRequirement && usedMaterial < info.minMaterial) return false;
-        if (info.maxMaterialRequirement && usedMaterial > info.maxMaterial) return false;
-
-        return meetingRequirements;
+        return MeetsSafetyRequirement() &&
+               MeetsCharmRequirement() &&
+               MeetsFlowRequirement() &&
+               MeetsMinMaterialRequirement() &&
+               MeetsMaxMaterialRequirement();
     }
+
+    public bool MeetsSafetyRequirement() { return !info.safetyRequirement || currentSafetyCount >= info.minSafetyCount; }
+    public bool MeetsCharmRequirement() { return !info.charmRequirement || currentCharmCount >= info.minCharmCount; }
+    public bool MeetsFlowRequirement() { return !info.flowRequirement || currentFlowPercentage >= info.minFlowPercentage; }
+    public bool MeetsMinMaterialRequirement() { return !info.minMaterialRequirement || usedMaterial >= info.minMaterial; }
+    public bool MeetsMaxMaterialRequirement() { return !info.maxMaterialRequirement || usedMaterial <= info.maxMaterial; }
 }
