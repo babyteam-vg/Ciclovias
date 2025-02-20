@@ -1,39 +1,53 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class CellHighlighter : MonoBehaviour
 {
+    [Header("Dependencies")]
     [SerializeField] private Grid grid;
-    [SerializeField] private Material highlightMaterial;
+    [SerializeField] private CellContentMesh[] contentMeshes;
 
-    public float fadeRadius = 1.4f; // Maximum Radius
-    public float softness = 1.4f; // Opacity's Aggressiveness
+    [Header("Variables")]
     public float elevation = 0.11f;
 
+    private Dictionary<CellContent, Material> contentMaterialMap;
     private List<GameObject> highlights = new List<GameObject>();
+
+    // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        contentMaterialMap = new Dictionary<CellContent, Material>();
+        foreach (var mesh in contentMeshes)
+            contentMaterialMap[mesh.content] = mesh.material;
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: When OnBuildStarted & OnLaneBuilt
     public void HighlightBuildableCells(Vector2Int gridPosition)
     {
-        ClearHighlight(); // Clear previous highlights
+        ClearHighlight(); // Limpiar resaltados anteriores
 
         List<Cell> adjacentCells = grid.GetAdjacentCells(gridPosition.x, gridPosition.y);
-
-        Vector3 centerWorldPos = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
 
         foreach (Cell cell in adjacentCells)
         {
             if (cell == null || !cell.GetBuildable()) continue;
 
-            Vector3 worldPos = grid.GetWorldPositionFromCell(cell.x, cell.y);
-            GameObject highlight = CreateHighlightBorder(worldPos, centerWorldPos);
-            highlights.Add(highlight);
+            CellContent cellContent = cell.GetContent();
+
+            if (contentMaterialMap.ContainsKey(cellContent))
+            {
+                List<Cell> cellsWithSameContent = grid.GetAdjacentCellsOfContent(
+                    new Vector2Int(cell.x, cell.y), cellContent);
+
+                foreach (Cell sameContentCell in cellsWithSameContent)
+                    CreateHighlightFill(new Vector2Int(sameContentCell.x, sameContentCell.y), cellContent);
+            }
         }
     }
 
-    // ::::: When OnBuildFinished
+    // ::::: Limpiar resaltados
     public void ClearHighlight()
     {
         foreach (GameObject highlight in highlights)
@@ -43,64 +57,25 @@ public class CellHighlighter : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    // ::::: Radial Border Shader
-    private GameObject CreateHighlightBorder(Vector3 position, Vector3 centerWorldPos)
+    private void CreateHighlightFill(Vector2Int gridPosition, CellContent content)
     {
-        GameObject highlight = new GameObject("HighlightBorder");
-        highlight.transform.position = position + new Vector3(grid.GetCellSize() / 2, elevation, grid.GetCellSize() / 2);
-        highlight.transform.localScale = new Vector3(grid.GetCellSize(), 1, grid.GetCellSize());
+        Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
 
-        MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
-        Material material = new Material(highlightMaterial);
-        material.SetVector("_Center", centerWorldPos);
-        material.SetFloat("_FadeRadius", fadeRadius);
-        material.SetFloat("_Softness", softness);
-        meshRenderer.material = material;
+        GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        quad.transform.position = worldPosition + new Vector3(0, elevation, 0);
+        quad.transform.rotation = Quaternion.Euler(90, 0, 0);
+        quad.transform.localScale = new Vector3(grid.GetCellSize(), grid.GetCellSize(), 1);
 
-        MeshFilter meshFilter = highlight.AddComponent<MeshFilter>();
-        meshFilter.mesh = CreateBorderMesh();
+        if (contentMaterialMap.TryGetValue(content, out Material material))
+            quad.GetComponent<Renderer>().material = material;
 
-        return highlight;
+        highlights.Add(quad);
     }
+}
 
-    // ::::: Border Mesh
-    private Mesh CreateBorderMesh()
-    {
-        Mesh mesh = new Mesh();
-        float innerOffset = 0.48f;
-
-        Vector3[] vertices = new Vector3[]
-        {
-            new Vector3(-0.5f, 0, -0.5f), // Outer Vertices
-            new Vector3(0.5f, 0, -0.5f),
-            new Vector3(0.5f, 0, 0.5f),
-            new Vector3(-0.5f, 0, 0.5f),
-
-            new Vector3(-innerOffset, 0, -innerOffset), // Inner Vertices
-            new Vector3(innerOffset, 0, -innerOffset),
-            new Vector3(innerOffset, 0, innerOffset),
-            new Vector3(-innerOffset, 0, innerOffset)
-        };
-
-        int[] triangles = new int[]
-        {
-            0, 4, 1, // Bottom Border
-            1, 4, 5,
-
-            1, 5, 2, // Right Border
-            2, 5, 6,
-
-            2, 6, 3, // Top Border
-            3, 6, 7,
-
-            3, 7, 0, // Left Border
-            0, 7, 4
-        };
-
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
-
-        return mesh;
-    }
+[System.Serializable]
+public class CellContentMesh
+{
+    public CellContent content;
+    public Material material;
 }

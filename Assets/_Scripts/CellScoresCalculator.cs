@@ -18,14 +18,23 @@ public class CellScoresCalculator
         CellContent content = cell.GetContent();
         switch (content)
         {
-            case CellContent.Traffic:
-                safety -= cell.GetTraffic();
+            case CellContent.Road:
+                safety -= 8;
+                break;
+            case CellContent.Traffic3:
+                safety -= 4;
+                break;
+            case CellContent.Traffic2:
+                safety -= 2;
+                break;
+            case CellContent.Traffic1:
+                safety -= 1;
                 break;
             case CellContent.Dangerous:
                 safety -= 4;
                 break;
             default:
-                safety++;
+                safety += 1;
                 break;
         }
         int illumination = cell.GetIlluminated() ? safety : safety--; // Dark: -Safety
@@ -41,8 +50,8 @@ public class CellScoresCalculator
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
             totalSafety += CalculateSafety(currentCell);
             // Stop
-            if (IsStopPoint(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null))
-                totalSafety += 1;
+            //if (IsStopPoint(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null))
+            //    totalSafety += 1;
         }
 
         return totalSafety;
@@ -51,11 +60,25 @@ public class CellScoresCalculator
     // Charm
     public int CalculateCharm(Cell cell)
     {
-        int greenery = cell.GetContent() == CellContent.Green ? 1 : 0; // Green: +Charm
-        int repulsion = cell.GetContent() == CellContent.Repulsive ? -2 : 0; // Repulsive: -Charm
-        int attractiveness = cell.GetContent() == CellContent.Attraction ? 2 : 0; // Attraction: ++Charm
+        int charm = 0;
 
-        return greenery + repulsion + attractiveness;
+        CellContent content = cell.GetContent();
+        switch (content)
+        {
+            case CellContent.Green:
+                charm += 1;
+                break;
+            case CellContent.Repulsive:
+                charm -= 2;
+                break;
+            case CellContent.Attraction:
+                charm += 3;
+                break;
+            default:
+                break;
+        }
+
+        return charm;
     }
     public int CalculatePathCharm(List<Vector2Int> path)
     {
@@ -71,13 +94,13 @@ public class CellScoresCalculator
     }
 
     // Flow
-    public float CalculateFlow(Cell cell)
-    {
-        int crowded = cell.GetContent() == CellContent.Attraction ? -1 : 0; // Traffic: -Flow
-        int illumination = cell.GetIlluminated() ? 0 : -1; // Dark: -Flow 
+    //public float CalculateFlow(Cell cell)
+    //{
+    //    int crowded = cell.GetContent() == CellContent.Attraction ? -1 : 0; // Traffic: -Flow
+    //    int illumination = cell.GetIlluminated() ? 0 : -1; // Dark: -Flow 
 
-        return crowded + illumination;
-    }
+    //    return crowded + illumination;
+    //}
     public float CalculatePathFlow(List<Vector2Int> path, Vector2Int destinationCell)
     {
         float totalFlow = 0f;
@@ -85,10 +108,10 @@ public class CellScoresCalculator
         for (int i = 0; i < path.Count; i++)
         {
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
-                totalFlow += CalculateFlow(currentCell);
+            //totalFlow += CalculateFlow(currentCell);
             // Stop
-            if (IsStopPoint(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null))
-                totalFlow -= 2; // Stop: --Flow
+            //if (IsStopPoint(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null))
+            //    totalFlow -= 2; // Stop: --Flow
             // Detour
             if (IsGettingCloser(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null, destinationCell))
                 totalFlow += 1; // +Flow
@@ -98,12 +121,12 @@ public class CellScoresCalculator
         return path.Count > 0 ? Mathf.Clamp(totalFlow / path.Count, 0f, 1f) : 0f;
     }
 
-    private bool IsStopPoint(Cell currentCell, Cell nextCell)
-    {
-        return currentCell.GetContent() == CellContent.Stop &&
-            nextCell.GetContent() == CellContent.Traffic &&
-            nextCell != null;
-    }
+    //private bool IsStopPoint(Cell currentCell, Cell nextCell)
+    //{
+    //    return currentCell.GetContent() == CellContent.Stop &&
+    //        nextCell.GetContent() == CellContent.Traffic &&
+    //        nextCell != null;
+    //}
 
     private bool IsGettingCloser(Cell currentCell, Cell nextCell, Vector2Int destinationCell)
     {

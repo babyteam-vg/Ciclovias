@@ -25,7 +25,6 @@ public class GridGenerator : MonoBehaviour
         Color[] pixels = map.GetPixels(); // Get All Pixels Instead of Reading 1 by 1
 
         for (int x = 0; x < width; x++)
-        {
             for (int y = 0; y < height; y++)
             {
                 int index = y * width + x;
@@ -34,10 +33,13 @@ public class GridGenerator : MonoBehaviour
                 if (pixelColor.a == 0)
                     continue; // Ignore
 
+                bool illuminated = true;
+                if (pixelColor.a >= 0.45 && pixelColor.a <= 0.55)
+                    illuminated = false;
+
                 if (colorMappingDict.TryGetValue(pixelColor, out ColorToCell colorMapping))
-                    cells[x, y] = CreateCell(x, y, colorMapping);
+                    cells[x, y] = CreateCell(x, y, colorMapping, illuminated);
             }
-        }
 
         grid.SetGridArray(cells);
     }
@@ -52,13 +54,12 @@ public class GridGenerator : MonoBehaviour
     }
 
     // Create a Cell 4 the Grid
-    private Cell CreateCell(int x, int y, ColorToCell colorMapping)
+    private Cell CreateCell(int x, int y, ColorToCell colorMapping, bool illuminated)
     {
         Cell cell = new Cell(x, y);
         cell.SetContent(colorMapping.content);
         cell.SetBuildable(colorMapping.buildable);
-        cell.SetTraffic(colorMapping.traffic);
-        cell.SetIlluminated(colorMapping.illuminated);
+        cell.SetIlluminated(illuminated);
 
         return cell;
     }
@@ -70,6 +71,4 @@ public class ColorToCell
     public Color color;
     public CellContent content;
     public bool buildable;
-    [Range(0, 4)] public int traffic;
-    public bool illuminated;
 }

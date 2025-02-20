@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class InputManager : MonoBehaviour
 {
+    [Header("Dependencies")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Grid grid;
 
@@ -45,6 +46,9 @@ public class InputManager : MonoBehaviour
         {
             Vector3 worldPosition = hit.point;
             gridPosition = grid.GetCellFromWorldPosition(worldPosition);
+
+            if (Input.GetKeyDown(KeyCode.R)) // Debug Purposes
+                Debug.LogWarning($"{gridPosition}");
 
             if (gridPosition.HasValue)
             {

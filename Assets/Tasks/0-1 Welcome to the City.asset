@@ -18,15 +18,14 @@ MonoBehaviour:
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
   - "Oh, veo que te han promovido a nuestra ciudad, \xA1muchas felicidades!"
-  - "Me presento, soy el Alcalde, \xBFpor qu\xE9 mejor no ponemos en marcha tus habilidades?"
+  - "Me presento, soy el alcalde, \xBFpor qu\xE9 mejor no ponemos en marcha tus habilidades?"
   - "Construye una ciclov\xEDa desde la Tienda de Bicicletas hasta la Municipalidad."
   - "Yo me encargar\xE9 de proporcionarte material de construcci\xF3n\u2026 al menos
     dentro de nuestro presupuesto hahaha."
   - "Desde hace tiempo que deseo una ruta hasta all\xED en bicicleta, \xA1conf\xEDo
     en que ser\xE1 muy atractiva y con mucho encanto!"
-  context: "Construye una ciclov\xEDa con encanto [...]."
-  from: {fileID: 11400000, guid: 4fcb7f1f765a25d45884c680c1318b4c, type: 2}
-  to: {fileID: 11400000, guid: 94ef4f1413eba23479566748551fb6da, type: 2}
+  context: "Construye una ciclov\xEDa con encanto desde la Tienda de Bicicletas hasta
+    la Municipalidad para conocer al alcalde."
   safetyRequirement: 0
   minSafetyCount: 0
   charmRequirement: 1

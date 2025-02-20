@@ -17,10 +17,6 @@ public class TaskInfo : ScriptableObject
     [TextArea(3, 6)]
     public string context;
 
-    [Header("Map")]
-    public CompoundInfo from;
-    public CompoundInfo to;
-
     [Header("Requirements")]
     public bool safetyRequirement;
     public int minSafetyCount;

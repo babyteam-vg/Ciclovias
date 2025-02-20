@@ -60,7 +60,6 @@ public class Grid : MonoBehaviour
         List<Cell> adjacentCells = new List<Cell>();
 
         for (int dx = -1; dx <= 1; dx++)
-        {
             for (int dy = -1; dy <= 1; dy++)
             { 
                 if (dx == 0 && dy == 0) continue; // Omitir la celda central
@@ -71,7 +70,7 @@ public class Grid : MonoBehaviour
                 if (IsWithinBounds(newX, newY) && gridArray[newX, newY] != null) // Evitar agregar celdas nulas
                     adjacentCells.Add(gridArray[newX, newY]);
             }
-        }
+
         return adjacentCells;
     }
 
@@ -89,5 +88,42 @@ public class Grid : MonoBehaviour
         float centerX = edgePosition.x + cellSize / 2;
         float centerY = edgePosition.y + cellSize / 2;
         return new Vector2(centerX, centerY);
+    }
+
+    // ::::: Get a Group of Adjacent Cells w/the Same Content
+    public List<Cell> GetAdjacentCellsOfContent(Vector2Int gridPosition, CellContent targetContent)
+    {
+        List<Cell> result = new List<Cell>();
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+
+        queue.Enqueue(gridPosition);
+        visited.Add(gridPosition);
+
+        while (queue.Count > 0)
+        {
+            Vector2Int currentPos = queue.Dequeue();
+            Cell currentCell = GetCell(currentPos.x, currentPos.y);
+
+            if (currentCell == null || currentCell.GetContent() != targetContent)
+                continue;
+
+            result.Add(currentCell);
+
+            List<Cell> adjacentCells = GetAdjacentCells(currentPos.x, currentPos.y);
+            foreach (Cell adjacentCell in adjacentCells)
+            {
+                if (adjacentCell == null) continue;
+
+                Vector2Int adjacentPos = new Vector2Int(adjacentCell.x, adjacentCell.y);
+
+                if (!visited.Contains(adjacentPos))
+                {
+                    visited.Add(adjacentPos);
+                    queue.Enqueue(adjacentPos);
+                }
+            }
+        }
+        return result;
     }
 }

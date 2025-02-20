@@ -65,7 +65,7 @@ Shader "UI/GradientTransparent"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return lerp(_ColorBottom, _ColorTop, i.uv.x);
+                return lerp(_ColorBottom, _ColorTop, 1 - i.uv.x);
             }
             ENDCG
         }

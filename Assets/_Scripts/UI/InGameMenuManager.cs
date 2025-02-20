@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuManager : MonoBehaviour
+public class InGameMenuManager : MonoBehaviour
 {
-    public static MenuManager Instance { get; private set; }
+    public static InGameMenuManager Instance { get; private set; }
 
     [Header("Dependencies")]
-    [SerializeField] CameraController cameraController;
+    [SerializeField] private TaskManager taskManager;
+    [SerializeField] private DialogManager dialogManager;
 
     [Header("UI Objects")]
     public GameObject pauseUI;
@@ -31,12 +32,10 @@ public class MenuManager : MonoBehaviour
     public void OnPauseMenuPress()
     {
         pauseUI.SetActive(true);
-        Time.timeScale = 0;
     }
     public void OnContinuePress()
     {
         pauseUI.SetActive(false);
-        Time.timeScale = 1;
     }
     public void OnMainMenuPress()
     {
@@ -49,38 +48,32 @@ public class MenuManager : MonoBehaviour
     {
         TaskDiary.Instance.ShowAvailableTasks();
         tasksDiaryUI.SetActive(true);
-        Time.timeScale = 0;
     }
     public void OnTasksDiaryClose()
     {
         tasksDiaryUI.SetActive(false);
-        Time.timeScale = 1;
     }
 
     // ::::: Receive Task
     public void OnReceiveTaskPress()
     {
         receiveTaskUI.SetActive(true);
-        Time.timeScale = 0;
     }
     public void OnAcceptTaskPress()
     {
-        Time.timeScale = 1;
-        TaskDiary.Instance.AcceptTask(TaskReceiver.Instance.ReceivedTask);
+        taskManager.AcceptTask(TaskReceiver.Instance.ReceivedTask);
         receiveTaskUI.SetActive(false);
     }
 
     // :::::::::: DIALOG MANAGER ::::::::::
     // ::::: Dialog
-    public void OnOpenDialog()
+    public void OnOpenDialog(Task task)
     {
         dialogUI.SetActive(true);
-        cameraController.LockCamera(Vector2Int.zero);
-        DialogManager.Instance.StartDialog();
+        dialogManager.StartDialog(task);
     }
     public void OnCloseDialog()
     {
-        cameraController.UnlockCamera(Vector2Int.zero);
         dialogUI.SetActive(false);
     }
 

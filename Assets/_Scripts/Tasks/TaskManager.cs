@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TaskManager : MonoBehaviour
 {
@@ -13,14 +15,23 @@ public class TaskManager : MonoBehaviour
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
-    // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Construuctor
-    public void Awake()
+    public event Action<Task> TaskUnlocked;
+    public event Action<Task, bool> TaskAccepted;
+    public event Action<Task, bool> TaskActivated;
+    public event Action<Task> TaskCompleted;
+    public event Action<Task> TaskSealed;
+
+    // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
     {
         pathfinder = new Pathfinder(graph);
         cellScoresCalculator = new CellScoresCalculator(grid);
     }
 
+    private void OnEnable() { GameManager.Instance.MapStateAdvanced += SealTasks; }
+    private void OnDisable() { GameManager.Instance.MapStateAdvanced -= SealTasks; }
+
+    // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Active <-> Deactive
     public void UpdateActiveTasks(List<Task> tasks)
     {
@@ -37,21 +48,20 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    // ::::: Unlock & Accept a Task
-    public void UnlockTask(Task task) { ChangeTaskState(1, task); }
+    // ::::: To Accept a Task in the Receive Task UI
     public void AcceptTask(Task task) { ChangeTaskState(2, task); }
 
     // ::::: Lane Relative to Task
-    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.info.from.surroundings); }
-    public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.info.from.surroundings) && graph.ContainsAny(task.info.to.surroundings); }
+    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.from.info.surroundings); }
+    public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.from.info.surroundings) && graph.ContainsAny(task.to.info.surroundings); }
 
     // ::::: Lane Building Feedback
     public void TaskInProgress(Vector2Int gridPosition)
     {
         foreach (var activeTask in TaskDiary.Instance.tasks.Where(t => t.state == 3).ToList()) // Only Active Tasks
         { //                 Does the Lane Passes Through the Start? <¬            Does Not <¬
-            Vector2Int startNode = graph.FindNodeInCells(activeTask.info.from.surroundings) ?? activeTask.info.to.surroundings.FirstOrDefault();
-            Vector2Int destinationNode = graph.FindNodeInCells(activeTask.info.to.surroundings) ?? activeTask.info.to.surroundings.FirstOrDefault();
+            Vector2Int startNode = graph.FindNodeInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault();
+            Vector2Int destinationNode = graph.FindNodeInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault();
             //                       Execute A* <¬
             var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode);
 
@@ -84,18 +94,27 @@ public class TaskManager : MonoBehaviour
             Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.map == map && t.info.number == number);
             if (unlockedTask != null && unlockedTask.state == 0)
             {
-                UnlockTask(unlockedTask);
-                Compound compound = unlockedTask.fromCompound;
-                compound.GetNextAvailableTask(GameStateManager.Instance.CurrentMapState);
+                ChangeTaskState(1, unlockedTask); // Unlock
+                Compound compound = unlockedTask.from;
+                compound.GetNextAvailableTask(GameManager.Instance.MapState);
             }
         }
 
         ChangeTaskState(4, task, path); // Completed
+        InGameMenuManager.Instance.OnOpenDialog(task);
     }
     private void DecompleteTask(Task task)
     {
         GameManager.Instance.ConsumeMaterial(task.info.materialReward);
         ChangeTaskState(2, task); // Completed -> Accepted
+    }
+
+    // :::::
+    private void SealTasks(int newMapState)
+    {
+        int oldMapState = newMapState--;
+        foreach (Task task in TaskDiary.Instance.tasks.Where(t => t.info.map == oldMapState))
+            ChangeTaskState(5, task);
     }
 
     // ::::: Change the State of a Task
@@ -110,33 +129,38 @@ public class TaskManager : MonoBehaviour
 
             case 1: // Unlock
                 if (task.state != 1)
+                {
                     task.state = 1;
-                break;
+                    TaskUnlocked?.Invoke(task); // !
+                } break;
 
             case 2: // Accept
                 if (task.state != 2)
                 {
                     task.state = 2;
-                    if (CurrentTask.Instance != null)
-                        CurrentTask.Instance.PinTask(task); // Pin Task
-                }
-                break;
+                    TaskAccepted?.Invoke(task, false); // !
+                } break;
 
             case 3: // Activate
                 if (task.state != 3)
                 {
                     task.state = 3;
-                    if (CurrentTask.Instance != null)
-                        CurrentTask.Instance.PinTask(task); // Pin Task
+                    TaskActivated?.Invoke(task, false); // !
                 } break;
 
             case 4: // Complete
                 if (task.state != 4)
                 {
                     task.state = 4;
-                    task.SetCompletedLane(path);
-                    CurrentTask.Instance.UnpinTask(task);
+                    TaskCompleted?.Invoke(task); // !
                     audioManager.PlaySFX(audioManager.complete);
+                } break;
+
+            case 5: // Seal
+                if (task.state != 5)
+                {
+                    task.state = 5;
+                    TaskSealed?.Invoke(task); // !
                 } break;
         }
     }

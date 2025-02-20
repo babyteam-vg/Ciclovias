@@ -32,6 +32,13 @@ public class GameManager : MonoBehaviour
     {
         amountText.text = "x" + MaterialAmount.ToString();
         animator = materialCounter.GetComponent<Animator>();
+
+        if (!CurrentTask.Instance.ThereIsPinned() && MapState == 0)
+        {
+            Task firstTask = TaskDiary.Instance.tasks[0];
+            if (firstTask.state == 1)
+                firstTask.from.GetNextAvailableTask(MapState);
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

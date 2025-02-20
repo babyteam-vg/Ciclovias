@@ -5,14 +5,30 @@ using UnityEngine.UI;
 
 public class TaskWaypoint : MonoBehaviour
 {
+    [Header("Dependencies")]
+    [SerializeField] private CurrentTask currentTask;
     [SerializeField] private Camera mainCamera;
+
+    [Header("UI References")]
     [SerializeField] private Image fromImg;
     [SerializeField] private Image toImg;
+    public Vector3Int offset = new Vector3Int(0, 3, 0);
 
     private Transform fromCompoundPos;
     private Transform toCompundPos;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void OnEnable()
+    {
+        currentTask.TaskPinned += UpdateTaskWaypoints;
+        currentTask.TaskUnpinned += HideTaskWaypoints;
+    }
+    private void OnDisable()
+    {
+        currentTask.TaskPinned -= UpdateTaskWaypoints;
+        currentTask.TaskUnpinned -= HideTaskWaypoints;
+    }
+
     public void Update()
     {
         // Get Screen Borders
@@ -25,8 +41,8 @@ public class TaskWaypoint : MonoBehaviour
         if (CurrentTask.Instance.ThereIsPinned())
         {
             // Waypoints Reposition
-            Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position);
-            Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position);
+            Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position + offset);
+            Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position + offset);
 
             // Limit to Borders of the Screen
             fromPos.x = Mathf.Clamp(fromPos.x, minX, maxX);
@@ -42,13 +58,13 @@ public class TaskWaypoint : MonoBehaviour
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: When Pinned
-    public void UpdateTaskWaypoints(Transform fromTaskPos, Transform toTaskPos)
+    public void UpdateTaskWaypoints(Task task)
     {
+        fromCompoundPos = task.from.transform;
+        toCompundPos = task.to.transform;
+
         fromImg.gameObject.SetActive(true);
         toImg.gameObject.SetActive(true);
-
-        fromCompoundPos = fromTaskPos;
-        toCompundPos = toTaskPos;
     }
 
     // ::::: When Unpinned

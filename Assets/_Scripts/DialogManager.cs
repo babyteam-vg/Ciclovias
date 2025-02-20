@@ -6,8 +6,10 @@ using TMPro;
 
 public class DialogManager : MonoBehaviour
 {
-    public static DialogManager Instance { get; private set; }
+    [Header("Dependencies")]
+    [SerializeField] private TaskManager taskManager;
 
+    [Header("Content")]
     public Image portrait;
     public TextMeshProUGUI dialog;
     public string[] dialogs;
@@ -17,13 +19,8 @@ public class DialogManager : MonoBehaviour
     private bool inDialog = false;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
+    private void OnEnable() { taskManager.TaskCompleted += StartDialog; }
+    private void OnDisable() { taskManager.TaskCompleted -= StartDialog; }
 
     private void Start()
     {
@@ -43,12 +40,13 @@ public class DialogManager : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    public void StartDialog()
+    public void StartDialog(Task task)
     {
-        portrait.sprite = TaskReceiver.Instance.ReceivedTask.info.character.portrait;
+        dialog.text = string.Empty;
+        portrait.sprite = task.info.character.portrait;
+        dialogs = task.state == 4 ? task.info.rewardDialogs : task.info.dialogs;
         inDialog = true;
         index = 0;
-        dialogs = TaskReceiver.Instance.ReceivedTask.info.dialogs;
         StartCoroutine(TypeDialog());
     }
 
@@ -63,8 +61,9 @@ public class DialogManager : MonoBehaviour
         else // End Dialog
         {
             inDialog = false;
-            MenuManager.Instance.OnCloseDialog();
-            MenuManager.Instance.OnReceiveTaskPress();
+            InGameMenuManager.Instance.OnCloseDialog();
+            if (TaskReceiver.Instance.ThereIsReceived())
+                InGameMenuManager.Instance.OnReceiveTaskPress();
         }
     }
 

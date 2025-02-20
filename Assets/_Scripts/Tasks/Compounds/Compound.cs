@@ -7,32 +7,38 @@ public class Compound : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private TaskManager taskManager;
+    public CompoundInfo info;
 
     [Header("UI References")]
-    [SerializeField] private Image newTaskImg;
+    [SerializeField] private Image givingTaskImg;
+    public Vector3Int offset = new Vector3Int(0, 3, 0);
 
     private Task givingTask;
 
     // :::::::::: MONO METHODS ::::::::::
-    public void Update()
+    private void OnEnable() { taskManager.TaskAccepted += OnAcceptedTask; }
+    private void OnDisable() { taskManager.TaskAccepted -= OnAcceptedTask; }
+
+    private void Update()
     {
         // Get Screen Borders
-        float minX = newTaskImg.GetPixelAdjustedRect().width / 2;
+        float minX = givingTaskImg.GetPixelAdjustedRect().width / 2;
         float maxX = Screen.width - minX;
 
-        float minY = newTaskImg.GetPixelAdjustedRect().height / 2;
+        float minY = givingTaskImg.GetPixelAdjustedRect().height / 2;
         float maxY = Screen.height - minY;
 
         if (IsGivingTask())
         {
-            newTaskImg.gameObject.SetActive(true);
-            Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position);
+            givingTaskImg.gameObject.SetActive(true);
+            Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             // Limit to Borders of the Screen
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
             newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
 
-            newTaskImg.transform.position = newTaskPos;
+            givingTaskImg.transform.position = newTaskPos;
         }
     }
 
@@ -44,11 +50,21 @@ public class Compound : MonoBehaviour
     public Task GetNextAvailableTask(int currentMapState)
     {
         List<Task> tasks = TaskDiary.Instance.tasks;
-        var currentStateTasks = tasks.Where(t => t.fromCompound == this && t.info.map == currentMapState)
+        var currentStateTasks = tasks.Where(t => t.from == this && t.info.map == currentMapState)
             .OrderBy(t => t.info.number).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == 1);
         return givingTask;
+    }
+
+    public void OnAcceptedTask(Task task, bool isManualAccept)
+    {
+        if (IsGivingTask())
+            if (task == givingTask)
+            {
+                givingTaskImg.gameObject.SetActive(false);
+                givingTask = null;
+            }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -57,12 +73,8 @@ public class Compound : MonoBehaviour
     {
         if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent UI Interference
         {
-            if (!IsGivingTask())
-                return;
-
-            newTaskImg.gameObject.SetActive(false);
+            if (!IsGivingTask()) return;
             TaskReceiver.Instance.ReceiveTask(givingTask);
-            givingTask = null;
         }
     }
 }

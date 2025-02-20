@@ -79,9 +79,9 @@ public class GridRenderer : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class CellContentMesh
-{
-    public CellContent content; // Tipo de contenido
-    public Material material; // Material para este contenido
-}
+//[System.Serializable]
+//public class CellContentMesh
+//{
+//    public CellContent content; // Tipo de contenido
+//    public Material material; // Material para este contenido
+//}

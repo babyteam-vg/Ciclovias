@@ -5,11 +5,10 @@ using UnityEngine;
 public class Task
 {
     [Header("Basic")]
-    [Range(0, 4)] public int state; // 0:Locked 1:Unlocked 2:Accepted 3:Active 4:Completed
+    [Range(0, 4)] public int state; // 0:Locked 1:Unlocked 2:Accepted 3:Active 4:Completed 5:Sealed
     public TaskInfo info;
-    public Compound fromCompound;
-    public Compound toCompound;
-    public List<Vector2Int> completedLane;
+    public Compound from;
+    public Compound to;
 
     [Header("Requirements")]
     public int currentSafetyCount;
@@ -18,10 +17,6 @@ public class Task
     public int usedMaterial;
 
     // :::::::::: METHODS ::::::::::
-    // ::::: Lane
-    public void SetCompletedLane(List<Vector2Int> value) { completedLane = value; }
-    public List<Vector2Int> GetCompletedLane() { return completedLane; }
-
     // ::::: Requirements
     public bool MeetsRequirements()
     {

@@ -7,6 +7,9 @@ public class TaskReceiver : MonoBehaviour
     public static TaskReceiver Instance { get; private set; }
     public Task ReceivedTask { get; private set; }
 
+    [Header("Dependencies")]
+    [SerializeField] private TaskManager taskManager;
+
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI title;
     [SerializeField] private TextMeshProUGUI context;
@@ -26,6 +29,15 @@ public class TaskReceiver : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        taskManager.TaskAccepted += TaskAlreadyReceived;
+    }
+    private void OnDisable()
+    {
+        taskManager.TaskAccepted -= TaskAlreadyReceived;
+    }
+
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Is There a Received Task?
     public bool ThereIsReceived() { return ReceivedTask != null; }
@@ -33,11 +45,10 @@ public class TaskReceiver : MonoBehaviour
     // ::::: Receive a Task
     public void ReceiveTask(Task task)
     {
-        if (ReceivedTask == task)
-            return;
+        if (ReceivedTask == task) return;
 
         ReceivedTask = task;
-        MenuManager.Instance.OnOpenDialog();
+        InGameMenuManager.Instance.OnOpenDialog(ReceivedTask);
         UpdateTaskUI();
     }
 
@@ -47,14 +58,33 @@ public class TaskReceiver : MonoBehaviour
     {
         if (ThereIsReceived())
         {
-            title.text = ReceivedTask.info.title;
-            context.text = ReceivedTask.info.context;
-            safety.text = ReceivedTask.info.safetyRequirement ? ReceivedTask.info.minSafetyCount.ToString() : "No safety requirement";
-            charm.text = ReceivedTask.info.charmRequirement ? ReceivedTask.info.minCharmCount.ToString() : "No charm requirement";
-            flow.text = ReceivedTask.info.flowRequirement ? ReceivedTask.info.minFlowPercentage.ToString() : "No flow requirement";
-            minMat.text = ReceivedTask.info.minMaterialRequirement ? ReceivedTask.info.minMaterial.ToString() : "Min. NO";
-            maxMat.text = ReceivedTask.info.maxMaterialRequirement ? ReceivedTask.info.maxMaterial.ToString() : "Max. NO";
-            portrait.sprite = ReceivedTask.info.character.portrait;
+            Task task = ReceivedTask;
+
+            title.text = task.info.title;
+            context.text = task.info.context;
+            safety.text = task.info.safetyRequirement ? task.info.minSafetyCount.ToString() : "No safety requirement";
+            charm.text = task.info.charmRequirement ? task.info.minCharmCount.ToString() : "No charm requirement";
+            flow.text = task.info.flowRequirement ? task.info.minFlowPercentage.ToString() : "No flow requirement";
+            minMat.text = task.info.minMaterialRequirement ? task.info.minMaterial.ToString() : "Min. NO";
+            maxMat.text = task.info.maxMaterialRequirement ? task.info.maxMaterial.ToString() : "Max. NO";
+            portrait.sprite = task.info.character.portrait;
         }
+        else
+        {
+            title.text = "Task";
+            context.text = "Context";
+            safety.text = "No safety requirement";
+            charm.text =  "No charm requirement";
+            flow.text = "No flow requirement";
+            minMat.text = "Min. NO";
+            maxMat.text = "Max. NO";
+        }
+    }
+
+    // ::::: When a Task is Accepted
+    private void TaskAlreadyReceived(Task task, bool _)
+    {
+        ReceivedTask = null;
+        UpdateTaskUI();
     }
 }

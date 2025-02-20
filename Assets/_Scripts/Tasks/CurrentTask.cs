@@ -9,25 +9,30 @@ public class CurrentTask : MonoBehaviour
     public static CurrentTask Instance { get; private set; }
     public Task PinnedTask { get; private set; }
 
-    [SerializeField] private TaskWaypoint taskWaypoint;
+    [Header("Dependencies")]
+    [SerializeField] private TaskManager taskManager;
 
     [Header("UI References - Texts")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI fromText;
     [SerializeField] private TextMeshProUGUI toText;
 
-    [Header("UI References - Sliders")]
+    [Header("UI References - Scores")]
     [SerializeField] private Image safetyFill;
     [SerializeField] private Image charmFill;
-    [SerializeField] private Image flowFill;
+    [SerializeField] private RectTransform flowBackground;
+    [SerializeField] private RectTransform flowMark;
 
-    [Header("Sliders")]
-    [SerializeField] private GameObject safetySlider;
-    [SerializeField] private GameObject charmSlider;
-    [SerializeField] private GameObject flowSlider;
+    //[Header("Sliders")]
+    //[SerializeField] private GameObject safetySlider;
+    //[SerializeField] private GameObject charmSlider;
+    //[SerializeField] private GameObject flowSlider;
 
     private Animator safetyAnimator, charmAnimator, flowAnimator;
     private float prevSafety, prevCharm, prevFlow = 0f;
+
+    public event Action<Task> TaskPinned;
+    public event Action TaskUnpinned;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -38,84 +43,100 @@ public class CurrentTask : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        taskManager.TaskAccepted += PinTask;
+        taskManager.TaskActivated += PinTask;
+        taskManager.TaskCompleted += UnpinTask;
+    }
+    private void OnDisable()
+    {
+        taskManager.TaskAccepted -= PinTask;
+        taskManager.TaskActivated -= PinTask;
+        taskManager.TaskCompleted -= UnpinTask;
+    }
+
     private void Start()
     {
-        safetyAnimator = safetySlider.GetComponent<Animator>();
-        charmAnimator = charmSlider.GetComponent<Animator>();
-        flowAnimator = flowSlider.GetComponent<Animator>();
+        //safetyAnimator = safetySlider.GetComponent<Animator>();
+        //charmAnimator = charmSlider.GetComponent<Animator>();
+        //flowAnimator = flowSlider.GetComponent<Animator>();
     }
 
-    private void Update()
-    {
-        if (ThereIsPinned())
-        {
-            Task task = PinnedTask;
-
-            // Sliders
-            // Safety
-            float safetyUI = CurrentTask.Instance.PinnedTask.info.safetyRequirement ?
-                (float)task.currentSafetyCount / (float)task.info.minSafetyCount : 0f;
-            safetyFill.fillAmount = Mathf.Clamp(safetyUI, 0f, 1f);
-            if (safetyUI != prevSafety)
-            {
-                if (safetyUI > prevSafety)
-                    SliderAnimation(safetyAnimator, "SliderUp");
-                else
-                    SliderAnimation(safetyAnimator, "SliderDown");
-                prevSafety = safetyUI;
-            }
-
-            // Charm
-            float charmUI = CurrentTask.Instance.PinnedTask.info.charmRequirement ?
-                (float)task.currentCharmCount / (float)task.info.minCharmCount : 0f;
-            charmFill.fillAmount = Mathf.Clamp(charmUI, 0f, 1f);
-            if (charmUI != prevCharm)
-            {
-                if (charmUI > prevCharm)
-                    SliderAnimation(charmAnimator, "SliderUp");
-                else
-                    SliderAnimation(charmAnimator, "SliderDown");
-                prevCharm = charmUI;
-            }
-
-            // Flow
-            float flowUI = CurrentTask.Instance.PinnedTask.info.flowRequirement ?
-                task.currentFlowPercentage / task.info.minFlowPercentage : 0f;
-            flowFill.fillAmount = Mathf.Clamp(flowUI, 0f, 1f);
-            if (flowUI != prevFlow)
-            {
-                if (flowUI > prevFlow)
-                    SliderAnimation(flowAnimator, "SliderUp");
-                else
-                    SliderAnimation(flowAnimator, "SliderDown");
-                prevFlow = flowUI;
-            }
-        }
-    }
+    private void Update() { if (ThereIsPinned()) UpdateScoreUI(); }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Is There a Task Pinned?
     public bool ThereIsPinned() { return PinnedTask != null; }
 
     // ::::: Pin & Unpin a Task
-    public void PinTask(Task task)
+    public void PinTask(Task task, bool isManualPin)
     {
         if (PinnedTask == task) return;
+        if (!isManualPin && ThereIsPinned()) return;
 
         PinnedTask = task;
+        TaskPinned?.Invoke(task);
         UpdateTaskUI();
-        taskWaypoint.UpdateTaskWaypoints(PinnedTask.fromCompound.transform, PinnedTask.toCompound.transform);
     }
     public void UnpinTask(Task task)
     {
         if (!ThereIsPinned()) return;
 
         PinnedTask = null;
+        TaskUnpinned?.Invoke();
         UpdateTaskUI();
-        taskWaypoint.HideTaskWaypoints();
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: 
+    private void UpdateScoreUI()
+    {
+        Task task = PinnedTask;
+
+        // Sliders
+        // Safety
+        float safetyUI = task.info.safetyRequirement
+            ? (float)task.currentSafetyCount / (float)task.info.minSafetyCount
+            : 0f;
+        safetyFill.fillAmount = Mathf.Clamp(safetyUI, 0f, 1f);
+        if (safetyUI != prevSafety)
+        {
+            //if (safetyUI > prevSafety)
+            //    SliderAnimation(safetyAnimator, "SliderUp");
+            //else
+            //    SliderAnimation(safetyAnimator, "SliderDown");
+            prevSafety = safetyUI;
+        }
+
+        // Charm
+        float charmUI = task.info.charmRequirement
+            ? (float)task.currentCharmCount / (float)task.info.minCharmCount
+            : 0f;
+        charmFill.fillAmount = Mathf.Clamp(charmUI, 0f, 1f);
+        if (charmUI != prevCharm)
+        {
+            //if (charmUI > prevCharm)
+            //    SliderAnimation(charmAnimator, "SliderUp");
+            //else
+            //    SliderAnimation(charmAnimator, "SliderDown");
+            prevCharm = charmUI;
+        }
+
+        // Flow
+        float flowUI = task.info.flowRequirement
+            ? task.currentFlowPercentage
+            : 0f;
+        flowUI = Mathf.Clamp(flowUI, 0f, 1f);
+
+        if (flowUI != prevFlow)
+        {
+            prevFlow = flowUI;
+            float newX = flowUI * flowBackground.rect.width;
+            flowMark.anchoredPosition = new Vector2(newX, flowMark.anchoredPosition.y);
+        }
+    }
+
     // ::::: UI Only Affected When Changing the Pinned Task
     private void UpdateTaskUI()
     {
@@ -123,8 +144,8 @@ public class CurrentTask : MonoBehaviour
         if (ThereIsPinned())
         {
             titleText.text = PinnedTask.info.title;
-            fromText.text = PinnedTask.info.from.compoundName;
-            toText.text = PinnedTask.info.to.compoundName;
+            fromText.text = PinnedTask.from.info.compoundName;
+            toText.text = PinnedTask.to.info.compoundName;
         }
         else
         {
@@ -133,12 +154,12 @@ public class CurrentTask : MonoBehaviour
             toText.text = "To";
             safetyFill.fillAmount = 0f;
             charmFill.fillAmount = 0f;
-            flowFill.fillAmount = 0f;
+            flowMark.anchoredPosition = new Vector2(0f, flowMark.anchoredPosition.y);
         }
     }
 
-    public void SliderAnimation(Animator animator, String animation)
-    {
-        animator.Play(animation);
-    }
+    //public void SliderAnimation(Animator animator, String animation)
+    //{
+    //    animator.Play(animation);
+    //}
 }

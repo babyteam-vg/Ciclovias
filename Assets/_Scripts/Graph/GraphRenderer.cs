@@ -8,7 +8,7 @@ public class GraphRenderer : MonoBehaviour
     public Material highlightMaterial; // Material for highlighted nodes and edges
     public float nodeSize = 0.2f;
     public float edgeWidth = 0.1f;
-    public float elevation = 0.1f;
+    public float elevation = 0.11f;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;

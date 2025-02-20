@@ -14,7 +14,7 @@ public class TaskDiary : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Transform contentTransform;
-    [SerializeField] private GameObject availableTaskPrefab;
+    [SerializeField] private GameObject acceptedTaskPrefab;
 
     public List<Task> tasks = new List<Task>();
 
@@ -39,25 +39,6 @@ public class TaskDiary : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Get All Unlocked Tasks Starting Cells
-    public List<Vector2Int> GetTasksStartCells()
-    {
-        List<Vector2Int> tasksStartCells = new List<Vector2Int>();
-
-        foreach (Task task in tasks)
-            if (task.state == 2)
-                foreach (Vector2Int startCell in task.info.from.surroundings)
-                    tasksStartCells.Add(startCell);
-
-        return tasksStartCells;
-    }
-
-    // ::::: Unlock a Task
-    public void UnlockTask(Task task) { taskManager.UnlockTask(task); }
-
-    // ::::: New Task UI
-    public void AcceptTask(Task task) { taskManager.AcceptTask(task); }
-
     // ::::: Tasks Diary UI
     public void ShowAvailableTasks()
     {
@@ -68,7 +49,7 @@ public class TaskDiary : MonoBehaviour
         { //       Accepted <¬          Active <¬
             if (task.state == 2 || task.state == 3)
             {
-                GameObject newItem = Instantiate(availableTaskPrefab, contentTransform);
+                GameObject newItem = Instantiate(acceptedTaskPrefab, contentTransform);
                 newItem.gameObject.SetActive(true);
 
                 // Find Each Element
@@ -84,8 +65,8 @@ public class TaskDiary : MonoBehaviour
 
                 // Set the Values
                 taskTitle.text = task.info.title;
-                taskFrom.text = task.info.from.compoundName;
-                taskTo.text = task.info.to.compoundName;
+                taskFrom.text = task.from.info.compoundName;
+                taskTo.text = task.to.info.compoundName;
 
                 requirementsSafety.text = task.info.minSafetyCount.ToString();
                 requirementsCharm.text = task.info.minCharmCount.ToString();
@@ -94,7 +75,7 @@ public class TaskDiary : MonoBehaviour
                 maximumMaterial.text = "Max. " + task.info.maxMaterial.ToString();
 
                 pinButton.onClick.AddListener(() => {
-                    CurrentTask.Instance.PinTask(task);
+                    CurrentTask.Instance.PinTask(task, true);
                 });
 
                 //taskCharacter.text = task.info.character.characterName;
