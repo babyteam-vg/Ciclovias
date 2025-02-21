@@ -9,16 +9,18 @@ public class IsometricCameraController : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject boundingPlane;
+    [SerializeField] private InGameMenuManager inGameMenuManager;
 
     [Header("Variables - Pan")]
-    public float panSpeed = 25f;
+    public float panSpeed = 30f;
+    public Vector2 edgePanVelocity = new Vector2();
 
     [Header("Variables - Zoom")]
     public float zoomSpeed = 200;
     public float zoomSmoothness = 50;
 
     [Header("Variables - Rotation")]
-    public float rotationDuration = 0.25f;
+    public float rotationDuration = 0.3f;
 
     private bool isLocked = false;
     private bool isRotating = false;
@@ -33,6 +35,17 @@ public class IsometricCameraController : MonoBehaviour
     const float EDGE_THRESHOLD = 5f;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void OnEnable()
+    {
+        inGameMenuManager.MenuOpened += BlockCamera;
+        inGameMenuManager.MenuClosed += UnblockCamera;
+    }
+    private void OnDisable()
+    {
+        inGameMenuManager.MenuOpened -= BlockCamera;
+        inGameMenuManager.MenuClosed -= UnblockCamera;
+    }
+
     private void Start()
     {
         areaBounds = boundingPlane.GetComponent<Renderer>().bounds;
@@ -41,9 +54,10 @@ public class IsometricCameraController : MonoBehaviour
         maxZoom = areaBounds.max.y + 3 * ZOOM_OFFSET;
         currentZoom = (maxZoom + minZoom) / 2;
 
-        panHorLimit = new Vector2(areaBounds.min.x, areaBounds.max.x);
-        panVertLimit = new Vector2(areaBounds.min.z - 10f, areaBounds.max.z);
+        panHorLimit = new Vector2(areaBounds.min.x + 5f, areaBounds.max.x);
+        panVertLimit = new Vector2(areaBounds.min.z, areaBounds.max.z - 5f);
 
+        transform.position = new Vector3((panHorLimit.x + panHorLimit.y) / 2, 0f, (panVertLimit.x + panVertLimit.y) / 2);
         screenSize = new Vector2(Screen.width, Screen.height);
     }
 
@@ -79,29 +93,35 @@ public class IsometricCameraController : MonoBehaviour
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return; // UI
 
-        float edgeThreshold = EDGE_THRESHOLD;
-        Vector3 edgeDirection = Vector3.zero;
+        float acceleration = 5f;
+        float damping = 10f;
+        Vector2 targetEdgeInput = Vector2.zero;
         Vector3 mousePos = Input.mousePosition;
 
-        if (mousePos.y >= screenSize.y - edgeThreshold) // Up
-            edgeDirection += transform.forward;
-        if (mousePos.x <= edgeThreshold)                // Left
-            edgeDirection -= transform.right;
-        if (mousePos.y <= edgeThreshold)                // Down
-            edgeDirection -= transform.forward;
-        if (mousePos.x >= screenSize.x - edgeThreshold) // Right
-            edgeDirection += transform.right;
+        if (mousePos.y >= screenSize.y - EDGE_THRESHOLD) // Up
+            targetEdgeInput.y = 1;
+        if (mousePos.x <= EDGE_THRESHOLD)                // Left
+            targetEdgeInput.x = -1;
+        if (mousePos.y <= EDGE_THRESHOLD)                // Down
+            targetEdgeInput.y = -1;
+        if (mousePos.x >= screenSize.x - EDGE_THRESHOLD) // Right
+            targetEdgeInput.x = 1;
 
-        if (edgeDirection != Vector3.zero)
+        edgePanVelocity = Vector2.Lerp(edgePanVelocity, targetEdgeInput, acceleration * Time.deltaTime);
+
+        if (edgePanVelocity != Vector2.zero)
         {
-            edgeDirection.Normalize();
-            transform.position += edgeDirection * (panSpeed * Time.deltaTime);
+            transform.position += Quaternion.Euler(0f, mainCamera.transform.eulerAngles.y, 0f)
+                * new Vector3(edgePanVelocity.x, 0f, edgePanVelocity.y) * (panSpeed * Time.deltaTime);
 
             transform.position = new Vector3(
                 Mathf.Clamp(transform.position.x, panHorLimit.x, panHorLimit.y),
                 transform.position.y, Mathf.Clamp(transform.position.z, panVertLimit.x, panVertLimit.y)
             );
         }
+
+        if (targetEdgeInput == Vector2.zero)
+            edgePanVelocity = Vector2.Lerp(edgePanVelocity, Vector2.zero, damping * Time.deltaTime);
     }
 
     // ::::: Zoom
@@ -115,9 +135,9 @@ public class IsometricCameraController : MonoBehaviour
     private void CameraRotation()
     {
         if (!isRotating)
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (Input.GetKey(KeyCode.Q))
                 StartCoroutine(SmoothRotate(45f));
-            else if (Input.GetKeyDown(KeyCode.E))
+            else if (Input.GetKey(KeyCode.E))
                 StartCoroutine(SmoothRotate(-45f));
     }
 
@@ -139,4 +159,8 @@ public class IsometricCameraController : MonoBehaviour
         transform.rotation = endRotation;
         isRotating = false;
     }
+
+    // ::::: Menu? Blocking
+    private void BlockCamera() { isLocked = true; }
+    private void UnblockCamera() { isLocked = false; }
 }

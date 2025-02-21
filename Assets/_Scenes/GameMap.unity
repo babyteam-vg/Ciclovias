@@ -4197,11 +4197,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0
+  near clip plane: -20
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4225,13 +4225,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460224048}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.49572244, y: -0.11303904, z: 0.06526312, w: 0.8586165}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 935698754}
-  m_LocalEulerAnglesHint: {x: 60, y: -15, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &460224052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7122,7 +7122,7 @@ Transform:
   m_GameObject: {fileID: 935698753}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -7143,10 +7143,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 460224050}
   boundingPlane: {fileID: 445937665}
-  panSpeed: 25
+  inGameMenuManager: {fileID: 293209384}
+  panSpeed: 30
+  edgePanVelocity: {x: 0, y: 0}
   zoomSpeed: 200
   zoomSmoothness: 50
-  rotationDuration: 0.25
+  rotationDuration: 0.3
 --- !u!1001 &962196161
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10836,10 +10838,10 @@ RectTransform:
   - {fileID: 766254694}
   m_Father: {fileID: 1492665447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -270}
+  m_SizeDelta: {x: 960, y: 540}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1542990094
 GameObject:
@@ -11938,7 +11940,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e7eb885896de7d44f83d4ce5848e1776,
         type: 3}
       propertyPath: m_Name
-      value: Blocking_V04_Ciclovia
+      value: Blocking 0
       objectReference: {fileID: 0}
     - target: {fileID: 3038998985925410985, guid: e7eb885896de7d44f83d4ce5848e1776,
         type: 3}

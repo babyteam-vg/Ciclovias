@@ -6,8 +6,6 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject boundingPlane;
-    [SerializeField] private LaneConstructor laneConstructor;
-    [SerializeField] private LaneDestructor laneDestructor;
 
     public bool lockCamera = false;
 
@@ -42,23 +40,6 @@ public class CameraController : MonoBehaviour
     private float maxZoomHeight;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void OnEnable()
-    {
-        laneConstructor.OnBuildStarted += LockCamera;
-        laneConstructor.OnBuildFinished += UnlockCamera;
-
-        laneDestructor.OnDestroyStarted += LockCamera;
-        laneDestructor.OnDestroyFinished += UnlockCamera;
-    }
-    private void OnDisable()
-    {
-        laneConstructor.OnBuildStarted -= LockCamera;
-        laneConstructor.OnBuildFinished -= UnlockCamera;
-
-        laneDestructor.OnDestroyStarted -= LockCamera;
-        laneDestructor.OnDestroyFinished -= UnlockCamera;
-    }
-
     private void Start()
     {
         movementSpeed = BASE_MOV_SPEED;
