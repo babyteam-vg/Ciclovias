@@ -13,7 +13,6 @@ public class IsometricCameraController : MonoBehaviour
 
     [Header("Variables - Pan")]
     public float panSpeed = 30f;
-    public Vector2 edgePanVelocity = new Vector2();
 
     [Header("Variables - Zoom")]
     public float zoomSpeed = 200;
@@ -27,6 +26,7 @@ public class IsometricCameraController : MonoBehaviour
     private Bounds areaBounds;
     private float currentZoom;
     private float minZoom, maxZoom;
+    private Vector2 edgePanVelocity;
     private Vector2 panHorLimit, panVertLimit;
     private Vector2 screenSize;
 
@@ -75,6 +75,17 @@ public class IsometricCameraController : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Menu? Blocking
+    public void BlockCamera() { isLocked = true; }
+    public void UnblockCamera() { isLocked = false; }
+
+    // ::::: Get & Set Zoom
+    public float GetCurrentZoom() { return currentZoom; }
+    public void SetZoom(float zoom)
+    {
+        currentZoom = Mathf.Clamp(zoom, minZoom, maxZoom);
+        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, currentZoom, zoomSmoothness * Time.deltaTime);
+    }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Pan
@@ -159,8 +170,4 @@ public class IsometricCameraController : MonoBehaviour
         transform.rotation = endRotation;
         isRotating = false;
     }
-
-    // ::::: Menu? Blocking
-    private void BlockCamera() { isLocked = true; }
-    private void UnblockCamera() { isLocked = false; }
 }

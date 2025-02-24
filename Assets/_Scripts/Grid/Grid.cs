@@ -20,12 +20,21 @@ public class Grid : MonoBehaviour
     public float GetCellSize() { return cellSize; }
 
     // ::::: Get a Cell
-    public Cell GetCell(int x, int y) { return gridArray[x, y]; }
+    public Cell GetCell(int x, int y)
+    {
+        return IsWithinBounds(x, y) ? gridArray[x, y] : null;
+    }
+
+    // ::::: Set a Cell (NEW)
+    public void SetCell(int x, int y, Cell cell)
+    {
+        if (IsWithinBounds(x, y))
+            gridArray[x, y] = cell;
+    }
 
     // ::::: Grid (x, y) to World (i, j, k)
     public Vector3 GetWorldPositionFromCell(int x, int y) { return new Vector3(x, 0, y) * cellSize; }
     public Vector3 GetWorldPositionFromCellCentered(float x, float y) { return new Vector3((x + 0.5f) * cellSize, 0, (y + 0.5f) * cellSize); }
-
 
     // ::::: World (i, j, k) to Grid (x, y)
     public Vector2Int? GetCellFromWorldPosition(Vector3 worldPosition)
@@ -41,12 +50,13 @@ public class Grid : MonoBehaviour
     // ::::: Set and Get Content
     public void SetCellContent(int x, int y, CellContent content)
     {
-        if (IsWithinBounds(x, y))
+        if (IsWithinBounds(x, y) && gridArray[x, y] != null)
             gridArray[x, y].SetContent(content);
     }
+
     public CellContent GetCellContent(int x, int y)
     {
-        if (IsWithinBounds(x, y))
+        if (IsWithinBounds(x, y) && gridArray[x, y] != null)
             return gridArray[x, y].GetContent();
         return CellContent.None;
     }
@@ -61,13 +71,13 @@ public class Grid : MonoBehaviour
 
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++)
-            { 
-                if (dx == 0 && dy == 0) continue; // Omitir la celda central
+            {
+                if (dx == 0 && dy == 0) continue;
 
                 int newX = x + dx;
                 int newY = y + dy;
 
-                if (IsWithinBounds(newX, newY) && gridArray[newX, newY] != null) // Evitar agregar celdas nulas
+                if (IsWithinBounds(newX, newY) && gridArray[newX, newY] != null)
                     adjacentCells.Add(gridArray[newX, newY]);
             }
 

@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Task", menuName = "Task", order = 1)]
+[CreateAssetMenu(fileName = "Task", menuName = "Scriptable Object/Task", order = 1)]
 public class TaskInfo : ScriptableObject
 {
-    [Header("ID")]
-    public int map;
-    public int number;
-
     [Header("Basic")]
+    public Vector2Int id;
     public string title;
     public Character character;
     public string[] dialogs;
-    [TextArea(3, 6)]
-    public string context;
+    [TextArea(3, 6)] public string context;
 
     [Header("Requirements")]
     public bool safetyRequirement;

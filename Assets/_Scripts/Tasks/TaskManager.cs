@@ -93,7 +93,7 @@ public class TaskManager : MonoBehaviour
             int map = taskId.x;
             int number = taskId.y;
 
-            Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.map == map && t.info.number == number);
+            Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.id.x == map && t.info.id.y == number);
             if (unlockedTask != null && unlockedTask.state == 0)
             {
                 ChangeTaskState(1, unlockedTask); // Unlock
@@ -115,7 +115,7 @@ public class TaskManager : MonoBehaviour
     private void SealTasks(int newMapState)
     {
         int oldMapState = newMapState--;
-        foreach (Task task in TaskDiary.Instance.tasks.Where(t => t.info.map == oldMapState))
+        foreach (Task task in TaskDiary.Instance.tasks.Where(t => t.info.id.x == oldMapState))
             ChangeTaskState(5, task);
     }
 

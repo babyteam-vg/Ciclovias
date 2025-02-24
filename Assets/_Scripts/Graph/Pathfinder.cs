@@ -7,11 +7,11 @@ public class Pathfinder
 {
     private Graph graph;
 
-    // === Methods ===
-    // Constructor
+    // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Constructor
     public Pathfinder(Graph graph) { this.graph = graph; }
 
-    // A* Algorythm                                                         Player Input <¬
+    // ::::: A* Algorythm                                                 Player Input <¬
     public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int midPoint, Vector2Int end)
     {
         // Start and End Nodes
@@ -100,7 +100,8 @@ public class Pathfinder
             return (false, RetracePath(startPathNode, closestNodeToEnd));
     }
 
-    // End to Start (Fittest Path)
+    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: End to Start (Fittest Path)
     private List<Vector2Int> RetracePath(PathNode startNode, PathNode endNode)
     {
         List<Vector2Int> path = new List<Vector2Int>();
@@ -117,7 +118,7 @@ public class Pathfinder
     }
 }
 
-// Comparer for PathNode
+// ::::: Comparer for PathNode
 class PathNodeComparer : IComparer<PathNode>
 {
     public int Compare(PathNode x, PathNode y)

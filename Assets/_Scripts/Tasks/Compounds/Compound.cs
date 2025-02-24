@@ -50,8 +50,8 @@ public class Compound : MonoBehaviour
     public Task GetNextAvailableTask(int currentMapState)
     {
         List<Task> tasks = TaskDiary.Instance.tasks;
-        var currentStateTasks = tasks.Where(t => t.from == this && t.info.map == currentMapState)
-            .OrderBy(t => t.info.number).ToList();
+        var currentStateTasks = tasks.Where(t => t.from == this && t.info.id.x == currentMapState)
+            .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == 1);
         return givingTask;

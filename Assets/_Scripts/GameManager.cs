@@ -41,6 +41,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space)) TutorialManager.Instance.PlayTutorial(new Vector2Int(0, 1));
+    }
+
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Map
     public void AdvanceMapState() {

@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
   m_Name: 0-1 Welcome to the City
   m_EditorClassIdentifier: 
-  map: 0
-  number: 1
+  id: {x: 0, y: 1}
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:

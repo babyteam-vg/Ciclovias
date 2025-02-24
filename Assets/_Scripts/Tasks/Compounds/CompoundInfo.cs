@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Compound", menuName = "Compound", order = 1)]
+[CreateAssetMenu(fileName = "Compound", menuName = "Scriptable Object/Compound", order = 1)]
 public class CompoundInfo : ScriptableObject
 {
     [Header("Basic")]

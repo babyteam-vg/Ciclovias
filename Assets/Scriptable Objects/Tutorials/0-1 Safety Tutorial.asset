@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e5ae0383579114f92f2ad51d9c5614, type: 3}
+  m_Name: 0-1 Safety Tutorial
+  m_EditorClassIdentifier: 
+  id: {x: 0, y: 1}
+  title: Safety Tutorial
+  sections:
+  - text: Every bike lane you build increases the safety as long as you don't cross
+      the street
+    start: {x: 63, y: 15}
+    end: {x: 50, y: 15}
+    checkRequirements: 0
+    tutorialMap:
+      texture: {fileID: 2800000, guid: 38f0ec167ec0b9646b3fe9f8634335a1, type: 3}
+      coordinates: {x: 0, y: 0}
+    keyframes:
+    - position: {x: 56, y: 0, z: 18}
+      rotation: {x: 0, y: 0, z: 0, w: 0}
+      zoom: 5
+      duration: 1.5
+  - text: The best way to keep a high safety is crossing the streets at intersections
+      marked by traffic lights
+    start: {x: 52, y: 15}
+    end: {x: 49, y: 18}
+    checkRequirements: 0
+    tutorialMap:
+      texture: {fileID: 2800000, guid: 72eca0067e4b09149a6286ec48422fd4, type: 3}
+      coordinates: {x: 0, y: 0}
+    keyframes: []
+  - text: Reach the destination without losing safety points
+    start: {x: 49, y: 18}
+    end: {x: 39, y: 15}
+    checkRequirements: 1
+    tutorialMap:
+      texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}
+      coordinates: {x: 0, y: 0}
+    keyframes:
+    - position: {x: 44, y: 0, z: 18}
+      rotation: {x: 0, y: 0, z: 0, w: 0}
+      zoom: 5
+      duration: 1.5
+  safetyRequirement: 1
+  minSafetyCount: 6
+  charmRequirement: 0
+  minCharmCount: 0
+  flowRequirement: 0
+  minFlowPercentage: 0
+  minMaterialRequirement: 0
+  minMaterial: 0
+  maxMaterialRequirement: 0
+  maxMaterial: 0
