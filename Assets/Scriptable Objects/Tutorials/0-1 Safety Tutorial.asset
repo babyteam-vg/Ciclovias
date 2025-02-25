@@ -39,7 +39,7 @@ MonoBehaviour:
     keyframes: []
   - text: Reach the destination without losing safety points
     start: {x: 49, y: 18}
-    end: {x: 39, y: 15}
+    end: {x: 39, y: 10}
     checkRequirements: 1
     tutorialMap:
       texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -79,6 +80,7 @@ public class TutorialManager : MonoBehaviour
         {
             if (currentSection.checkRequirements)
             {
+
                 (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
 
                 int safety = cellScoresCalculator.CalculatePathSafety(path);

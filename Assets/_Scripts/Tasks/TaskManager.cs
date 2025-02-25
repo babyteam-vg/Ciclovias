@@ -53,18 +53,22 @@ public class TaskManager : MonoBehaviour
     public void AcceptTask(Task task) { ChangeTaskState(2, task); }
 
     // ::::: Lane Relative to Task
-    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.from.info.surroundings); }
+    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.from.info.surroundings) || graph.ContainsAny(task.to.info.surroundings); }
     public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.from.info.surroundings) && graph.ContainsAny(task.to.info.surroundings); }
 
     // ::::: Lane Building Feedback
     public void TaskInProgress(Vector2Int gridPosition)
     {
         foreach (var activeTask in TaskDiary.Instance.tasks.Where(t => t.state == 3).ToList()) // Only Active Tasks
-        { //                 Does the Lane Passes Through the Start? <¬            Does Not <¬
-            Vector2Int startNode = graph.FindNodeInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault();
-            Vector2Int destinationNode = graph.FindNodeInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault();
-            //                       Execute A* <¬
-            var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode);
+        {
+            Vector2Int startNode = graph.ContainsAny(activeTask.from.info.surroundings)
+                ? graph.FindNodePosInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault()
+                : graph.FindNodePosInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault();
+            Vector2Int destinationNode = graph.ContainsAny(activeTask.to.info.surroundings)
+                ? graph.FindNodePosInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault()
+                : graph.FindNodePosInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault();
+
+            var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode); // Execute A*
 
             graphRenderer.currentPath = path;
             laneScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;

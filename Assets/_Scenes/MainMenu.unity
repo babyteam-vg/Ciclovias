@@ -181,8 +181,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -553,8 +553,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -926,8 +926,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Cicloways
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1064,9 +1064,9 @@ MonoBehaviour:
 
     Bike Lanes:
 
-    - Right click to build
+    - Left click to build
 
-    - Left click
+    - Right click
     to destroy
 
 
@@ -1079,8 +1079,8 @@ MonoBehaviour:
 
     - QE to rotate'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2158,8 +2158,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Settings
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2293,8 +2293,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Exit
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2620,8 +2620,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Continue
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e8cc69fa7345459419909829c62cc6ac, type: 2}
-  m_sharedMaterial: {fileID: -8235196315628648082, guid: e8cc69fa7345459419909829c62cc6ac,
+  m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
+  m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

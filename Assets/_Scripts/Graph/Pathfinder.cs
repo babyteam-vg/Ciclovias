@@ -12,22 +12,19 @@ public class Pathfinder
     public Pathfinder(Graph graph) { this.graph = graph; }
 
     // ::::: A* Algorythm                                                 Player Input <¬
-    public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int midPoint, Vector2Int end)
+    public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int mid, Vector2Int end)
     {
         // Start and End Nodes
-        Node startNode = graph.GetNode(start);
-        Node midNode = graph.GetNode(midPoint);
+        Node midNode = graph.GetNode(mid);
+        Node startNode = graph.GetNode(start) != null ? graph.GetNode(start) : midNode;
         Node endNode = graph.GetNode(end);
-
-        if (startNode == null || midNode == null)
-            return (false, null);
 
         // Open and Closed Sets
         var openSet = new SortedSet<PathNode>(new PathNodeComparer());
         var closedSet = new HashSet<PathNode>();
 
         // Add Start Node to Open Set
-        PathNode startPathNode = new PathNode(startNode, (start - midPoint).sqrMagnitude);
+        PathNode startPathNode = new PathNode(startNode, (start - mid).sqrMagnitude);
         openSet.Add(startPathNode);
 
         PathNode closestNodeToMid = startPathNode; // 1st Segment
@@ -78,7 +75,7 @@ public class Pathfinder
                     // Set hCost Based on Current Segment
                     if (!midReached)
                         // 1st Segment: Heuristic is Distance to Mid
-                        neighborPathNode.hCost = (neighbor.position - midPoint).sqrMagnitude;
+                        neighborPathNode.hCost = (neighbor.position - mid).sqrMagnitude;
                     else
                         // 2nd Segment: Heuristic is Distance to End
                         neighborPathNode.hCost = (neighbor.position - end).sqrMagnitude;
@@ -146,14 +143,4 @@ public class PathNode
         this.fCost = gCost + hCost;
         this.parentNode = null;
     }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is PathNode other)
-            return node.position == other.node.position;
-
-        return false;
-    }
-
-    public override int GetHashCode() { return node.position.GetHashCode(); }
 }

@@ -105,8 +105,8 @@ public class Graph : MonoBehaviour
         return false;
     }
 
-    // ::::: First Node in Group of Cells
-    public Vector2Int? FindNodeInCells(List<Vector2Int> cells)
+    // ::::: First Node (Coord) in Group of Cells
+    public Vector2Int? FindNodePosInCells(List<Vector2Int> cells)
     {
         foreach (var cell in cells)
             if (nodePositions.Contains(cell))
