@@ -7,29 +7,44 @@ public class LaneHighlighter : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Material highlightMaterial;
     [SerializeField] private GameObject plane;
+    [SerializeField] private InputManager inputManager;
+    [SerializeField] private LaneConstructor laneConstructor;
 
     [Header("Variables")]
-    public float fadeRadius = 2.5f; // Maximum Radius
-    public float softness = 3f; // Opacity's Aggressiveness
+    [SerializeField] private CellContentMesh[] contentMeshes;
 
-    private float elevation = 0.1f;
+    private float outerOffset = 0.55f;
+    private float innerOffset = 0.45f;
+    private float fadeRadius = 2.5f; // Maximum Radius
+    private float softness = 2.5f; // Opacity's Aggressiveness
+    private float elevation = 0.003f;
     private List<GameObject> highlights = new List<GameObject>();
+    private Dictionary<CellContent, Material> contentMaterialMap;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        contentMaterialMap = new Dictionary<CellContent, Material>();
+        foreach (var mesh in contentMeshes)
+            contentMaterialMap[mesh.content] = mesh.material;
+    }
+
+    private void OnEnable() { inputManager.OnCursorMove += HighlightBuildableCells; }
+    private void OnDisable() { inputManager.OnCursorMove -= HighlightBuildableCells; }
+
     private void Start()
     {
         if (plane != null)
         {
             Renderer renderer = plane.GetComponent<Renderer>();
-            elevation = renderer.bounds.max.y;
+            elevation += renderer.bounds.max.y;
         }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: When OnBuildStarted & OnLaneBuilt
     public void HighlightBuildableCells(Vector2Int gridPosition)
     {
-        ClearHighlight();
+        ClearHighlight(gridPosition);
 
         List<Cell> firstLayerCells = grid.GetAdjacentCells(gridPosition.x, gridPosition.y);
         List<Cell> secondLayerCells = new List<Cell>();
@@ -51,13 +66,12 @@ public class LaneHighlighter : MonoBehaviour
             if (cell == null || !cell.GetBuildable()) continue;
 
             Vector3 worldPos = grid.GetWorldPositionFromCell(cell.x, cell.y);
-            GameObject highlight = CreateHighlightBorder(worldPos, centerWorldPos);
+            GameObject highlight = CreateHighlightBorder(worldPos, centerWorldPos, cell.GetContent());
             highlights.Add(highlight);
         }
     }
 
-    // ::::: When OnBuildFinished
-    public void ClearHighlight()
+    public void ClearHighlight(Vector2Int _)
     {
         foreach (GameObject highlight in highlights)
             Destroy(highlight);
@@ -66,8 +80,7 @@ public class LaneHighlighter : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    // ::::: Radial Border Shader
-    private GameObject CreateHighlightBorder(Vector3 position, Vector3 centerWorldPos)
+    private GameObject CreateHighlightBorder(Vector3 position, Vector3 centerWorldPos, CellContent content)
     {
         GameObject highlight = new GameObject("HighlightBorder");
         highlight.transform.position = position + new Vector3(grid.GetCellSize() / 2, elevation, grid.GetCellSize() / 2);
@@ -75,6 +88,10 @@ public class LaneHighlighter : MonoBehaviour
 
         MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
         Material material = new Material(highlightMaterial);
+
+        if (contentMaterialMap.TryGetValue(content, out Material contentMaterial))
+            material.color = contentMaterial.color;
+
         material.SetVector("_Center", centerWorldPos);
         material.SetFloat("_FadeRadius", fadeRadius);
         material.SetFloat("_Softness", softness);
@@ -86,20 +103,19 @@ public class LaneHighlighter : MonoBehaviour
         return highlight;
     }
 
-    // ::::: Border Mesh
     private Mesh CreateBorderMesh()
     {
         Mesh mesh = new Mesh();
-        float innerOffset = 0.48f;
-
         Vector3[] vertices = new Vector3[]
         {
-            new Vector3(-0.5f, 0, -0.5f), // Outer Vertices
-            new Vector3(0.5f, 0, -0.5f),
-            new Vector3(0.5f, 0, 0.5f),
-            new Vector3(-0.5f, 0, 0.5f),
+            // Outer Vertices
+            new Vector3(-outerOffset, 0, -outerOffset),
+            new Vector3(outerOffset, 0, -outerOffset),
+            new Vector3(outerOffset, 0, outerOffset),
+            new Vector3(-outerOffset, 0, outerOffset),
 
-            new Vector3(-innerOffset, 0, -innerOffset), // Inner Vertices
+            // Inner Vertices
+            new Vector3(-innerOffset, 0, -innerOffset),
             new Vector3(innerOffset, 0, -innerOffset),
             new Vector3(innerOffset, 0, innerOffset),
             new Vector3(-innerOffset, 0, innerOffset)
@@ -107,16 +123,20 @@ public class LaneHighlighter : MonoBehaviour
 
         int[] triangles = new int[]
         {
-            0, 4, 1, // Bottom Border
+            // Bottom Border
+            0, 4, 1,
             1, 4, 5,
 
-            1, 5, 2, // Right Border
+            // Right Border
+            1, 5, 2,
             2, 5, 6,
 
-            2, 6, 3, // Top Border
+            // Top Border
+            2, 6, 3,
             3, 6, 7,
 
-            3, 7, 0, // Left Border
+            // Left Border
+            3, 7, 0,
             0, 7, 4
         };
 

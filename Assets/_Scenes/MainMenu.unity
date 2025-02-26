@@ -1059,25 +1059,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Controls:
-
-
-    Bike Lanes:
-
-    - Left click to build
-
-    - Right click
-    to destroy
-
-
-    Camera:
-
-    - Touch the edges of the screen w/mouse to move
-
-    -
-    WASD to pan
-
-    - QE to rotate'
+  m_text: "\t\t\t   BIKE LANES\n\tLeft Click \t\t->\t\tBuild\n\tRight Click\t-> \t\tDestroy\n\tSpace
+    Bar \t-> \t\tHeat Map\n\n\t\t\t     CAMERA\n\tMouse \t\t-> \t\tMove (edges)\n\tWASD
+    \t\t-> \t\tPan\n\tQE \t\t\t-> \t\tRotate"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c0369da070c8e35468925cf312edc868, type: 2}
   m_sharedMaterial: {fileID: -6647360898924087418, guid: c0369da070c8e35468925cf312edc868,

@@ -18,7 +18,7 @@ public class GraphRenderer : MonoBehaviour
     // Public field to store the current path (provided by TasksManager)
     public List<Vector2Int> currentPath = new List<Vector2Int>();
 
-    private float elevation = 0.1f;
+    private float elevation = 0.004f;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -32,7 +32,7 @@ public class GraphRenderer : MonoBehaviour
         if (plane != null)
         {
             Renderer renderer = plane.GetComponent<Renderer>();
-            elevation = renderer.bounds.max.y;
+            elevation += renderer.bounds.max.y;
         }
     }
 

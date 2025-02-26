@@ -4141,6 +4141,55 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -6046324362128432978, guid: e7eb885896de7d44f83d4ce5848e1776, type: 3}
+--- !u!1 &453712412
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 453712413}
+  - component: {fileID: 453712414}
+  m_Layer: 0
+  m_Name: CompoundHighlighter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &453712413
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453712412}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1736919537}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &453712414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453712412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e76673962d208814a96401a78328d483, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 378811413}
+  currentTask: {fileID: 646988111}
+  plane: {fileID: 445937665}
+  fromMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
+  toMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
 --- !u!1 &460224048
 GameObject:
   m_ObjectHideFlags: 0
@@ -6507,21 +6556,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 378811413}
   plane: {fileID: 445937665}
+  inputManager: {fileID: 1679302906}
   contentMeshes:
-  - content: 3
-    material: {fileID: 2100000, guid: 08271586d0611364cbb3255d35b8116e, type: 2}
-  - content: 4
-    material: {fileID: 2100000, guid: 07911dcde4e29124b85dee68a03f8c51, type: 2}
-  - content: 5
-    material: {fileID: 2100000, guid: ab0288716e54b83449c36e98a03d6fdc, type: 2}
-  - content: 6
-    material: {fileID: 2100000, guid: daa0f7c1c5be19c498aaf5869b3c14df, type: 2}
   - content: 7
-    material: {fileID: 2100000, guid: 290abd62f574f1c43993c38537b96a27, type: 2}
+    material: {fileID: 2100000, guid: 6c04f8496966d574cba375549102e255, type: 2}
   - content: 8
-    material: {fileID: 2100000, guid: e0476421ea0f27a41b04cd492c2a5535, type: 2}
+    material: {fileID: 2100000, guid: f51bc7af9c575ae41bcc2a40f36a3ddb, type: 2}
   - content: 9
-    material: {fileID: 2100000, guid: cceea84a1b3e5e74782cc252b29de453, type: 2}
+    material: {fileID: 2100000, guid: 5c6af8b72f028de4eac88b5eeeadd7fd, type: 2}
+  - content: 6
+    material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
+  roundedQuadMaterial: {fileID: 2100000, guid: 3ea5132aa9c619043aed6bb4c71ace7e, type: 2}
 --- !u!1 &825605434
 GameObject:
   m_ObjectHideFlags: 0
@@ -8231,8 +8276,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 378811413}
   graph: {fileID: 1986930194}
-  cellHighlighter: {fileID: 805855975}
-  laneHighlighter: {fileID: 1272195147}
   inputManager: {fileID: 1679302906}
   audioManager: {fileID: 561954987}
   inGameMenuManager: {fileID: 293209384}
@@ -9101,8 +9144,17 @@ MonoBehaviour:
   grid: {fileID: 378811413}
   highlightMaterial: {fileID: 2100000, guid: 99f69e3618a65ff448b1ff042f1085c6, type: 2}
   plane: {fileID: 445937665}
-  fadeRadius: 2.5
-  softness: 3
+  inputManager: {fileID: 1679302906}
+  laneConstructor: {fileID: 1111548992}
+  contentMeshes:
+  - content: 2
+    material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
+  - content: 3
+    material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
+  - content: 4
+    material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
+  - content: 6
+    material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
 --- !u!1 &1285999568
 GameObject:
   m_ObjectHideFlags: 0
@@ -12143,6 +12195,7 @@ Transform:
   - {fileID: 1587697328}
   - {fileID: 2135539323}
   - {fileID: 613110315}
+  - {fileID: 453712413}
   m_Father: {fileID: 28266496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1736919538

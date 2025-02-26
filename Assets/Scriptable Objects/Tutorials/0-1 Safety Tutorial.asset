@@ -45,9 +45,9 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes:
-    - position: {x: 44, y: 0, z: 18}
+    - position: {x: 44, y: 0, z: 16}
       rotation: {x: 0, y: 0, z: 0, w: 0}
-      zoom: 5
+      zoom: 7
       duration: 1.5
   safetyRequirement: 1
   minSafetyCount: 6

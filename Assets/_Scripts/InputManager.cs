@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Grid grid;
 
+    public event Action<Vector2Int> OnCursorMove;
+
     public event Action<Vector2Int> OnLeftClickDown;
     public event Action<Vector2Int> OnLeftClickHold;
     public event Action<Vector2Int> OnLeftClickUp;
@@ -20,18 +22,36 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2Int> OnMiddleClickHold;
     public event Action<Vector2Int> OnMiddleClickUp;
 
+    public event Action OnHighlightToggleDown;
+
     private bool isLeftMouseButtonDown = false;
     private bool isRightMouseButtonDown = false;
     private bool isMiddleMouseButtonDown = false;
 
     private Vector2Int? lastGridPosition = null;
 
-    // :::::::::: Methods ::::::::::
+    // :::::::::: MONO METHODS ::::::::::
     private void Update()
     {
         HandleMouseInput();
+        HandleHighlightInput();
     }
 
+    // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: 2D Cursor to 3D World
+    public Vector3 GetCursorWorldPosition()
+    {
+        if (mainCamera == null) return Vector3.zero;
+
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+            return hit.point;
+        //    Default <¬
+        return Vector3.zero;
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse, RayCast and Events
     private void HandleMouseInput()
     {
@@ -53,7 +73,11 @@ public class InputManager : MonoBehaviour
             if (gridPosition.HasValue)
             {
                 Vector2Int validGridPosition = gridPosition.Value;
-                lastGridPosition = validGridPosition;
+                if (lastGridPosition != validGridPosition)
+                {
+                    OnCursorMove?.Invoke(validGridPosition);
+                    lastGridPosition = validGridPosition;
+                }
 
                 // Left Click
                 if (Input.GetMouseButtonDown(0))
@@ -105,16 +129,10 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    // ::::: 2D Cursor to 3D World
-    public Vector3 GetCursorWorldPosition()
+    // ::::: Highlight the Cells
+    private void HandleHighlightInput()
     {
-        if (mainCamera == null) return Vector3.zero;
-
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-            return hit.point;
-        //    Default <¬
-        return Vector3.zero;
+        if (Input.GetKeyDown(KeyCode.Space))
+            OnHighlightToggleDown?.Invoke();
     }
 }

@@ -8,8 +8,6 @@ public class LaneConstructor : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
-    [SerializeField] private CellHighlighter cellHighlighter;
-    [SerializeField] private LaneHighlighter laneHighlighter;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private InGameMenuManager inGameMenuManager;
@@ -47,9 +45,6 @@ public class LaneConstructor : MonoBehaviour
     {
         if (isAllowed && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
         {
-            laneHighlighter.HighlightBuildableCells(gridPosition);
-            cellHighlighter.HighlightBuildableCells(gridPosition);
-
             if (graph.GetNode(gridPosition) == null)
                 graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
 
@@ -72,9 +67,6 @@ public class LaneConstructor : MonoBehaviour
 
             if (GameManager.Instance.MaterialAmount > 0)
             {
-                laneHighlighter.HighlightBuildableCells(gridPosition);
-                cellHighlighter.HighlightBuildableCells(gridPosition);
-
                 if (graph.GetNode(gridPosition) == null)
                     graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
 
@@ -96,9 +88,6 @@ public class LaneConstructor : MonoBehaviour
     {
         graph.CheckAndRemoveNode(gridPosition);
         isBuilding = false;
-
-        laneHighlighter.ClearHighlight();
-        cellHighlighter.ClearHighlight();
 
         lastCellPosition = null;
         OnBuildFinished?.Invoke(gridPosition);  // !
