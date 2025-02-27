@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaneHighlighter : MonoBehaviour
+public class GridHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;

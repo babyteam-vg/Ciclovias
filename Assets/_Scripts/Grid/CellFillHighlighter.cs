@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellHighlighter : MonoBehaviour
+public class CellFillHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;

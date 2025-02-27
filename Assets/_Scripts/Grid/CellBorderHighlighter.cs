@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CompoundHighlighter : MonoBehaviour
+public class CellBorderHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
@@ -72,57 +72,56 @@ public class CompoundHighlighter : MonoBehaviour
     {
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
         float cellSize = grid.GetCellSize();
-        float cornerSize = cellSize * 0.25f; // Tamaño de las esquinas como un porcentaje de la celda
-        float thickness = cornerSize * 0.5f; // Grosor de las líneas de la "L"
+        float cornerSize = cellSize * 0.25f;
+        float thickness = cornerSize * 0.5f;
 
         Vector3[] cornerOffsets = new Vector3[]
         {
-            new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Esquina inferior izquierda
-            new Vector3(cellSize / 2, elevation, -cellSize / 2),  // Esquina inferior derecha
-            new Vector3(-cellSize / 2, elevation, cellSize / 2),  // Esquina superior izquierda
-            new Vector3(cellSize / 2, elevation, cellSize / 2)    // Esquina superior derecha
+            new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Bottom-Left
+            new Vector3(cellSize / 2, elevation, -cellSize / 2),  // Bottom-Right
+            new Vector3(-cellSize / 2, elevation, cellSize / 2),  // Top-Left
+            new Vector3(cellSize / 2, elevation, cellSize / 2)    // Top-Right
         };
 
         foreach (Vector3 offset in cornerOffsets)
         {
-            // Crear el quad horizontal de la "L"
+            // Horizontal Part of the "L"
             GameObject horizontalQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             horizontalQuad.transform.position = worldPosition + offset;
             horizontalQuad.transform.rotation = Quaternion.Euler(90, 0, 0);
             horizontalQuad.transform.localScale = new Vector3(cornerSize, thickness, 1);
             horizontalQuad.GetComponent<Renderer>().material = material;
 
-            // Crear el quad vertical de la "L"
+            // Vertical Part of the "L"
             GameObject verticalQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             verticalQuad.transform.position = worldPosition + offset;
             verticalQuad.transform.rotation = Quaternion.Euler(90, 0, 0);
             verticalQuad.transform.localScale = new Vector3(thickness, cornerSize, 1);
             verticalQuad.GetComponent<Renderer>().material = material;
 
-            // Crear el cuadradito de la esquina para unir las líneas
+            // Small Square to Unify the "L" Parts
             GameObject cornerQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             cornerQuad.transform.position = worldPosition + offset;
             cornerQuad.transform.rotation = Quaternion.Euler(90, 0, 0);
-            cornerQuad.transform.localScale = new Vector3(thickness, thickness, 1); // Mismo grosor que las líneas
+            cornerQuad.transform.localScale = new Vector3(thickness, thickness, 1);
             cornerQuad.GetComponent<Renderer>().material = material;
 
-            // Ajustar la posición de los quads para formar la "L" y el cuadradito
-            if (offset.x < 0 && offset.z < 0) // Esquina inferior izquierda
+            if (offset.x < 0 && offset.z < 0) // Bottom-Left
             {
                 horizontalQuad.transform.position += new Vector3(cornerSize / 2, 0, 0);
                 verticalQuad.transform.position += new Vector3(0, 0, cornerSize / 2);
             }
-            else if (offset.x > 0 && offset.z < 0) // Esquina inferior derecha
+            else if (offset.x > 0 && offset.z < 0) // Bottom-Right
             {
                 horizontalQuad.transform.position += new Vector3(-cornerSize / 2, 0, 0);
                 verticalQuad.transform.position += new Vector3(0, 0, cornerSize / 2);
             }
-            else if (offset.x < 0 && offset.z > 0) // Esquina superior izquierda
+            else if (offset.x < 0 && offset.z > 0) // Top-Left
             {
                 horizontalQuad.transform.position += new Vector3(cornerSize / 2, 0, 0);
                 verticalQuad.transform.position += new Vector3(0, 0, -cornerSize / 2);
             }
-            else if (offset.x > 0 && offset.z > 0) // Esquina superior derecha
+            else if (offset.x > 0 && offset.z > 0) // Top-Right
             {
                 horizontalQuad.transform.position += new Vector3(-cornerSize / 2, 0, 0);
                 verticalQuad.transform.position += new Vector3(0, 0, -cornerSize / 2);
