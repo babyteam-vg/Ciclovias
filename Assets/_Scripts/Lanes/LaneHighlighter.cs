@@ -17,7 +17,7 @@ public class LaneHighlighter : MonoBehaviour
     private float innerOffset = 0.45f;
     private float fadeRadius = 2.5f; // Maximum Radius
     private float softness = 2.5f; // Opacity's Aggressiveness
-    private float elevation = 0.003f;
+    private float elevation = 0.002f;
     private List<GameObject> highlights = new List<GameObject>();
     private Dictionary<CellContent, Material> contentMaterialMap;
 

@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         if (!CurrentTask.Instance.ThereIsPinned() && MapState == 0)
         {
             Task firstTask = TaskDiary.Instance.tasks[0];
-            if (firstTask.state == 1)
+            if (firstTask.state == TaskState.Unlocked)
                 firstTask.from.GetNextAvailableTask(MapState);
         }
     }

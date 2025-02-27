@@ -38,136 +38,134 @@ public class TaskManager : MonoBehaviour
     {
         foreach (var task in tasks)
         {
-            if (task.state == 4 && !TaskLaneCompleted(task)) // Deactivate Task
-                DecompleteTask(task); // Completed -> Accepted
+            if (task.state == TaskState.Completed) // Deactivate
+                if (!graph.AreConnectedByPath(task.start, task.end))
+                    DecompleteTask(task); // Completed -> Accepted
             
-            if (task.state == 3 && !TaskLaneStarted(task)) // Deactivate Task
-                ChangeTaskState(2, task); // Active -> Accepted
+            if (task.state == TaskState.Active && !TaskLaneStarted(task)) // Deactivate
+                ChangeTaskState(TaskState.Accepted, task); // Active -> Accepted
 
-            if (task.state == 2 && TaskLaneStarted(task)) // Activate Task
-                ChangeTaskState(3, task); // Accepted -> Active
+            if (task.state == TaskState.Accepted && TaskLaneStarted(task)) // Activate
+                ChangeTaskState(TaskState.Active, task); // Accepted -> Active
         }
     }
 
     // ::::: To Accept a Task in the Receive Task UI
-    public void AcceptTask(Task task) { ChangeTaskState(2, task); }
+    public void AcceptTask(Task task) { ChangeTaskState(TaskState.Accepted, task); }
 
     // ::::: Lane Relative to Task
-    public bool TaskLaneStarted(Task task) { return graph.ContainsAny(task.from.info.surroundings) || graph.ContainsAny(task.to.info.surroundings); }
-    public bool TaskLaneCompleted(Task task) { return graph.ContainsAny(task.from.info.surroundings) && graph.ContainsAny(task.to.info.surroundings); }
+    public bool TaskLaneStarted(Task task)
+    {
+        return graph.ContainsAny(task.from.info.surroundings)
+            || graph.ContainsAny(task.to.info.surroundings);
+    }
 
     // ::::: Lane Building Feedback
     public void TaskInProgress(Vector2Int gridPosition)
     {
-        foreach (var activeTask in TaskDiary.Instance.tasks.Where(t => t.state == 3).ToList()) // Only Active Tasks
-        {
-            Vector2Int startNode = graph.ContainsAny(activeTask.from.info.surroundings)
-                ? graph.FindNodePosInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault()
-                : graph.FindNodePosInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault();
-            Vector2Int destinationNode = graph.ContainsAny(activeTask.to.info.surroundings)
-                ? graph.FindNodePosInCells(activeTask.to.info.surroundings) ?? activeTask.to.info.surroundings.FirstOrDefault()
-                : graph.FindNodePosInCells(activeTask.from.info.surroundings) ?? activeTask.from.info.surroundings.FirstOrDefault();
+        List<Task> activeTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Active).ToList();
 
-            var (pathFound, path) = pathfinder.FindPath(startNode, gridPosition, destinationNode); // Execute A*
+        foreach (Task activeTask in activeTasks) // Only Active Tasks
+        {
+            Vector2Int? tentativeStart = graph.FindNodePosInCells(activeTask.from.info.surroundings);
+            Vector2Int? tentativeEnd = graph.FindNodePosInCells(activeTask.to.info.surroundings);
+
+            Vector2Int? start = tentativeStart ?? tentativeEnd;
+
+            Vector2Int startPos = start.Value;
+            Vector2Int endPos = startPos.Equals(tentativeStart.Value)
+                ? tentativeEnd ?? activeTask.to.info.surroundings.FirstOrDefault()
+                : tentativeStart ?? activeTask.from.info.surroundings.FirstOrDefault();
+
+            var (pathFound, path) = pathfinder.FindPath(startPos, gridPosition, endPos); // Execute A*
 
             graphRenderer.currentPath = path;
             laneScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
 
             int safety = cellScoresCalculator.CalculatePathSafety(path);
             int charm = cellScoresCalculator.CalculatePathCharm(path);
-            float flow = cellScoresCalculator.CalculatePathFlow(path, destinationNode);
+            float flow = cellScoresCalculator.CalculatePathFlow(path, endPos);
 
             activeTask.currentSafetyCount = safety;
             activeTask.currentCharmCount = charm;
             activeTask.currentFlowPercentage = flow;
 
-            if (pathFound && activeTask.MeetsRequirements())
-                CompleteTask(activeTask, path); // Complete the Task
+            if (pathFound)
+            {
+                activeTask.start = path.First();
+                activeTask.end = path.Last();
+
+                if (activeTask.MeetsRequirements())
+                    ChangeTaskState(TaskState.Completed, activeTask); // Complete the Task
+            }
         }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    // ::::: Complete & Decomplete a Task
-    private void CompleteTask(Task task, List<Vector2Int> path)
-    {
-        GameManager.Instance.AddMaterial(task.info.materialReward);
-
-        foreach (Vector2Int taskId in task.info.unlockedTasks)
-        {
-            int map = taskId.x;
-            int number = taskId.y;
-
-            Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.id.x == map && t.info.id.y == number);
-            if (unlockedTask != null && unlockedTask.state == 0)
-            {
-                ChangeTaskState(1, unlockedTask); // Unlock
-                Compound compound = unlockedTask.from;
-                compound.GetNextAvailableTask(GameManager.Instance.MapState);
-            }
-        }
-
-        ChangeTaskState(4, task, path); // Completed
-        InGameMenuManager.Instance.OnOpenDialog(task);
-    }
     private void DecompleteTask(Task task)
     {
         GameManager.Instance.ConsumeMaterial(task.info.materialReward);
-        ChangeTaskState(2, task); // Completed -> Accepted
+        ChangeTaskState(TaskState.Accepted, task); // Completed -> Accepted
     }
 
-    // :::::
+    // ::::: Seal All the Tasks From the Old Map State
     private void SealTasks(int newMapState)
     {
         int oldMapState = newMapState--;
         foreach (Task task in TaskDiary.Instance.tasks.Where(t => t.info.id.x == oldMapState))
-            ChangeTaskState(5, task);
+            ChangeTaskState(TaskState.Sealed, task);
     }
 
     // ::::: Change the State of a Task
-    private void ChangeTaskState(int state, Task task, List<Vector2Int> path = null)
+    private void ChangeTaskState(TaskState newState, Task task)
     {
-        switch (state)
+        if (task.state == newState) return;
+
+        task.state = newState;
+
+        switch (newState)
         {
-            case 0: // Lock
-                if (task.state != 0)
-                    task.state = 0;
+             case TaskState.Unlocked:
+                TaskUnlocked?.Invoke(task);
                 break;
 
-            case 1: // Unlock
-                if (task.state != 1)
-                {
-                    task.state = 1;
-                    TaskUnlocked?.Invoke(task); // !
-                } break;
+            case TaskState.Accepted:
+                TaskAccepted?.Invoke(task, false);
+                break;
 
-            case 2: // Accept
-                if (task.state != 2)
-                {
-                    task.state = 2;
-                    TaskAccepted?.Invoke(task, false); // !
-                } break;
+            case TaskState.Active:
+                TaskActivated?.Invoke(task, false);
+                break;
 
-            case 3: // Activate
-                if (task.state != 3)
-                {
-                    task.state = 3;
-                    TaskActivated?.Invoke(task, false); // !
-                } break;
+            case TaskState.Completed:
+                GameManager.Instance.AddMaterial(task.info.materialReward);
+                audioManager.PlaySFX(audioManager.complete);
 
-            case 4: // Complete
-                if (task.state != 4)
+                foreach (Vector2Int taskId in task.info.unlockedTasks)
                 {
-                    task.state = 4;
-                    TaskCompleted?.Invoke(task); // !
-                    audioManager.PlaySFX(audioManager.complete);
-                } break;
+                    int map = taskId.x;
+                    int number = taskId.y;
 
-            case 5: // Seal
-                if (task.state != 5)
-                {
-                    task.state = 5;
-                    TaskSealed?.Invoke(task); // !
-                } break;
+                    Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.id.x == map && t.info.id.y == number);
+                    if (unlockedTask != null && unlockedTask.state == 0)
+                    {
+                        ChangeTaskState(TaskState.Unlocked, unlockedTask); // Unlock
+                        Compound compound = unlockedTask.from;
+                        compound.GetNextAvailableTask(GameManager.Instance.MapState);
+                    }
+                }
+
+                InGameMenuManager.Instance.OnOpenDialog(task);
+                
+                TaskCompleted?.Invoke(task);
+                break;
+
+            case TaskState.Sealed:
+                TaskSealed?.Invoke(task);
+                break;
+
+            default:
+                break;
         }
     }
 }

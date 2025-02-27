@@ -7,6 +7,7 @@ public class InputManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Grid grid;
+    [SerializeField] private InGameMenuManager inGameMenuManager;
 
     public event Action<Vector2Int> OnCursorMove;
 
@@ -28,13 +29,29 @@ public class InputManager : MonoBehaviour
     private bool isRightMouseButtonDown = false;
     private bool isMiddleMouseButtonDown = false;
 
+    private bool isAllowed = true;
     private Vector2Int? lastGridPosition = null;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void OnEnable()
+    {
+        inGameMenuManager.MenuOpened += BlockBuilding;
+        inGameMenuManager.MenuClosed += UnblockBuilding;
+    }
+
+    private void OnDisable()
+    {
+        inGameMenuManager.MenuOpened -= BlockBuilding;
+        inGameMenuManager.MenuClosed -= UnblockBuilding;
+    }
+
     private void Update()
     {
-        HandleMouseInput();
-        HandleHighlightInput();
+        if (isAllowed)
+        {
+            HandleMouseInput();
+            HandleHighlightInput();
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -135,4 +152,8 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             OnHighlightToggleDown?.Invoke();
     }
+
+    // ::::: Menu? Allowing
+    private void BlockBuilding() { isAllowed = false; }
+    private void UnblockBuilding() { isAllowed = true; }
 }

@@ -102,7 +102,7 @@ public class InGameMenuManager : MonoBehaviour
     // ::::: To End the Builds
     public void EndBuild(Task task)
     {
-        if (TaskDiary.Instance.tasks.Last().state == 4)
+        if (TaskDiary.Instance.tasks.Last().state == TaskState.Completed)
             endBuildUI.SetActive(true);
     }
 }

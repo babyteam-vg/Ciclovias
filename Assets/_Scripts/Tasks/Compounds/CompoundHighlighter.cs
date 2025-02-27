@@ -13,7 +13,7 @@ public class CompoundHighlighter : MonoBehaviour
     [SerializeField] private Material fromMaterial;
     [SerializeField] private Material toMaterial;
 
-    private float elevation = 0.002f;
+    private float elevation = 0.003f;
     private List<GameObject> highlights = new List<GameObject>();
 
     // :::::::::: MONO METHODS ::::::::::
@@ -73,14 +73,14 @@ public class CompoundHighlighter : MonoBehaviour
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
         float cellSize = grid.GetCellSize();
         float cornerSize = cellSize * 0.25f; // Tamaño de las esquinas como un porcentaje de la celda
-        float thickness = cornerSize * 0.25f; // Grosor de las líneas de la "L"
+        float thickness = cornerSize * 0.5f; // Grosor de las líneas de la "L"
 
         Vector3[] cornerOffsets = new Vector3[]
         {
-        new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Esquina inferior izquierda
-        new Vector3(cellSize / 2, elevation, -cellSize / 2),  // Esquina inferior derecha
-        new Vector3(-cellSize / 2, elevation, cellSize / 2),  // Esquina superior izquierda
-        new Vector3(cellSize / 2, elevation, cellSize / 2)    // Esquina superior derecha
+            new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Esquina inferior izquierda
+            new Vector3(cellSize / 2, elevation, -cellSize / 2),  // Esquina inferior derecha
+            new Vector3(-cellSize / 2, elevation, cellSize / 2),  // Esquina superior izquierda
+            new Vector3(cellSize / 2, elevation, cellSize / 2)    // Esquina superior derecha
         };
 
         foreach (Vector3 offset in cornerOffsets)

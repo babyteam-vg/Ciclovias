@@ -53,7 +53,7 @@ public class Compound : MonoBehaviour
         var currentStateTasks = tasks.Where(t => t.from == this && t.info.id.x == currentMapState)
             .OrderBy(t => t.info.id.y).ToList();
 
-        givingTask = currentStateTasks.FirstOrDefault(t => t.state == 1);
+        givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
         return givingTask;
     }
 

@@ -7,6 +7,7 @@ public class LaneScores : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
+    [SerializeField] private Graph graph;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private LaneConstructor laneConstructor;
@@ -68,16 +69,16 @@ public class LaneScores : MonoBehaviour
 
             UpdateScoreUI(task);
 
-            if (taskManager.TaskLaneCompleted(task))
-            {
-                if (!task.MeetsSafetyRequirement()) safetyWarning.gameObject.SetActive(true);
-                if (!task.MeetsCharmRequirement()) charmWarning.gameObject.SetActive(true);
-            }
-            else
-            {
-                safetyWarning.gameObject.SetActive(false);
-                charmWarning.gameObject.SetActive(false);
-            }
+            //if (task.state == TaskState.Active && graph.AreConnectedByPath(task.start, task.end))
+            //{
+            //    if (!task.MeetsSafetyRequirement()) safetyWarning.gameObject.SetActive(true);
+            //    if (!task.MeetsCharmRequirement()) charmWarning.gameObject.SetActive(true);
+            //}
+            //else
+            //{
+            //    safetyWarning.gameObject.SetActive(false);
+            //    charmWarning.gameObject.SetActive(false);
+            //}
         }
 
         Vector3 worldPos = grid.GetWorldPositionFromCell(lastCellPosition.x, lastCellPosition.y) + offset;

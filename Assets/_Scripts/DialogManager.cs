@@ -44,7 +44,7 @@ public class DialogManager : MonoBehaviour
     {
         dialog.text = string.Empty;
         portrait.sprite = task.info.character.portrait;
-        dialogs = task.state == 4 ? task.info.rewardDialogs : task.info.dialogs;
+        dialogs = task.state == TaskState.Completed ? task.info.rewardDialogs : task.info.dialogs;
         inDialog = true;
         index = 0;
         StartCoroutine(TypeDialog());

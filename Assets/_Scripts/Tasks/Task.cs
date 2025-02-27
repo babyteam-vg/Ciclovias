@@ -5,10 +5,14 @@ using UnityEngine;
 public class Task
 {
     [Header("Basic")]
-    [Range(0, 4)] public int state; // 0:Locked 1:Unlocked 2:Accepted 3:Active 4:Completed 5:Sealed
+    public TaskState state;
     public TaskInfo info;
     public Compound from;
     public Compound to;
+
+    [Header("Path")]
+    public Vector2Int start;
+    public Vector2Int end;
 
     [Header("Requirements")]
     public int currentSafetyCount;
@@ -32,4 +36,14 @@ public class Task
     public bool MeetsFlowRequirement() { return !info.flowRequirement || currentFlowPercentage >= info.minFlowPercentage; }
     public bool MeetsMinMaterialRequirement() { return !info.minMaterialRequirement || usedMaterial >= info.minMaterial; }
     public bool MeetsMaxMaterialRequirement() { return !info.maxMaterialRequirement || usedMaterial <= info.maxMaterial; }
+}
+
+public enum TaskState
+{
+    Locked,
+    Unlocked,
+    Accepted,
+    Active,
+    Completed,
+    Sealed
 }

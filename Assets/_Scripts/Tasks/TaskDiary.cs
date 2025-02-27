@@ -47,7 +47,7 @@ public class TaskDiary : MonoBehaviour
 
         foreach (Task task in tasks)
         { //       Accepted <¬          Active <¬
-            if (task.state == 2 || task.state == 3)
+            if (task.state == TaskState.Accepted || task.state == TaskState.Active)
             {
                 GameObject newItem = Instantiate(acceptedTaskPrefab, contentTransform);
                 newItem.gameObject.SetActive(true);

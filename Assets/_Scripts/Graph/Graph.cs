@@ -38,7 +38,7 @@ public class Graph : MonoBehaviour
         {
             nodes[position] = new Node(position, worldPosition);
             nodePositions.Add(position);
-            OnNodeAdded?.Invoke(position); // !
+            OnNodeAdded?.Invoke(position);
         }
     }
 
@@ -50,12 +50,12 @@ public class Graph : MonoBehaviour
             foreach (Node neighbor in node.neighbors)
             {
                 neighbor.neighbors.Remove(node);
-                OnEdgeRemoved?.Invoke(position, neighbor.position); // !
+                OnEdgeRemoved?.Invoke(position, neighbor.position);
             }
 
             nodes.Remove(position);
             nodePositions.Remove(position);
-            OnNodeRemoved?.Invoke(position); // !
+            OnNodeRemoved?.Invoke(position);
         }
     }
 
@@ -67,7 +67,7 @@ public class Graph : MonoBehaviour
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
             nodeA.AddNeighbor(nodeB);
-            OnEdgeAdded?.Invoke(positionA, positionB); // !
+            OnEdgeAdded?.Invoke(positionA, positionB);
         }
     }
 
@@ -79,11 +79,11 @@ public class Graph : MonoBehaviour
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
             nodeA.RemoveNeighbor(nodeB);
-            OnEdgeRemoved?.Invoke(positionA, positionB); // !
+            OnEdgeRemoved?.Invoke(positionA, positionB);
         }
     }
 
-    // ::::: Check Connection
+    // ::::: Check Direct Connection Between 2 Nodes
     public bool AreConnected(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
@@ -110,7 +110,7 @@ public class Graph : MonoBehaviour
     {
         foreach (var cell in cells)
             if (nodePositions.Contains(cell))
-                return cell; // First Valid Node in the Group
+                return cell;
 
         return null;
     }
@@ -123,7 +123,39 @@ public class Graph : MonoBehaviour
         if (node != null && node.neighbors.Count == 0)
         {
             RemoveNode(position);
-            OnLonelyNodeRemoved?.Invoke(position); // !
+            OnLonelyNodeRemoved?.Invoke(position);
         }
+    }
+
+    // ::::: Check if 2 Nodes are Connected
+    public bool AreConnectedByPath(Vector2Int positionA, Vector2Int positionB)
+    {
+        if (!nodes.ContainsKey(positionA) || !nodes.ContainsKey(positionB))
+            return false;
+
+        Node nodeA = nodes[positionA];
+        Node nodeB = nodes[positionB];
+
+        if (nodeA == null || nodeB == null)
+            return false;
+
+        var visited = new HashSet<Node>();
+        var stack = new Stack<Node>();
+        stack.Push(nodeA);
+
+        while (stack.Count > 0)
+        {
+            Node current = stack.Pop();
+            if (current == nodeB) return true;
+
+            if (!visited.Contains(current))
+            {
+                visited.Add(current);
+                foreach (Node neighbor in current.neighbors)
+                    stack.Push(neighbor);
+            }
+        }
+
+        return false;
     }
 }

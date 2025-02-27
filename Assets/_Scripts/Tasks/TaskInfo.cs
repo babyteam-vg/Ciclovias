@@ -29,6 +29,5 @@ public class TaskInfo : ScriptableObject
     public int materialReward;
     public Vector2Int[] unlockedTasks;
     public string[] rewardDialogs;
-    // Character's Dialog
     // Social Network Comments
 }

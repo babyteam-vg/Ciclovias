@@ -14,17 +14,31 @@ public class Pathfinder
     // ::::: A* Algorythm                                                 Player Input <¬
     public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int mid, Vector2Int end)
     {
-        // Start and End Nodes
         Node midNode = graph.GetNode(mid);
-        Node startNode = graph.GetNode(start) != null ? graph.GetNode(start) : midNode;
-        Node endNode = graph.GetNode(end);
+        if (midNode == null)
+            return (false, new List<Vector2Int>());
+
+        Node fromNode = null;
+        Node toNode = null;
+
+        if (graph.AreConnectedByPath(start, mid))
+        {
+            fromNode = graph.GetNode(start);
+            toNode = graph.GetNode(end);
+        }
+        else if (graph.AreConnectedByPath(end, mid))
+        {
+            fromNode = graph.GetNode(end);
+            toNode = graph.GetNode(start);
+        }
+        else return (false, new List<Vector2Int>());
 
         // Open and Closed Sets
         var openSet = new SortedSet<PathNode>(new PathNodeComparer());
         var closedSet = new HashSet<PathNode>();
 
         // Add Start Node to Open Set
-        PathNode startPathNode = new PathNode(startNode, (start - mid).sqrMagnitude);
+        PathNode startPathNode = new PathNode(fromNode, (fromNode.position - mid).sqrMagnitude);
         openSet.Add(startPathNode);
 
         PathNode closestNodeToMid = startPathNode; // 1st Segment
@@ -47,7 +61,7 @@ public class Pathfinder
             }
 
             // End Found (Passing Through Mid)
-            if (midReached && currentNode.node == endNode)
+            if (midReached && currentNode.node == toNode)
                 return (true, RetracePath(startPathNode, currentNode));
 
             // Update Closest Nodes for Negative Cases
@@ -90,7 +104,7 @@ public class Pathfinder
         }
 
         if (!midReached)
-            // Could Not Rach Mid
+            // Could Not Reach Mid
             return (false, RetracePath(startPathNode, closestNodeToMid));
         else
             // Mid Reached, But Not End
@@ -142,5 +156,18 @@ public class PathNode
         this.hCost = hCost;
         this.fCost = gCost + hCost;
         this.parentNode = null;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is PathNode other)
+            return node.position == other.node.position;
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return node.position.GetHashCode();
     }
 }
