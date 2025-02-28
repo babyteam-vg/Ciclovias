@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Splines.ExtrusionShapes;
 using UnityEngine.UI;
 
 public class Compound : MonoBehaviour
@@ -11,34 +12,40 @@ public class Compound : MonoBehaviour
     public CompoundInfo info;
 
     [Header("UI References")]
-    [SerializeField] private Image givingTaskImg;
-    public Vector3Int offset = new Vector3Int(0, 3, 0);
+    [SerializeField] private GameObject givingTaskUI;
+    public Vector3 offset = new Vector3(0, 3, 0);
 
     private Task givingTask;
+    private Image exclamation;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable() { taskManager.TaskAccepted += OnAcceptedTask; }
     private void OnDisable() { taskManager.TaskAccepted -= OnAcceptedTask; }
 
+    private void Start()
+    {
+        exclamation = givingTaskUI.GetComponentInChildren<Image>(true);
+    }
+
     private void Update()
     {
         // Get Screen Borders
-        float minX = givingTaskImg.GetPixelAdjustedRect().width / 2;
+        float minX = exclamation.GetPixelAdjustedRect().width / 2;
         float maxX = Screen.width - minX;
 
-        float minY = givingTaskImg.GetPixelAdjustedRect().height / 2;
-        float maxY = Screen.height - minY;
+        float minY = 0f;
+        float maxY = Screen.height - exclamation.GetPixelAdjustedRect().height;
 
         if (IsGivingTask())
         {
-            givingTaskImg.gameObject.SetActive(true);
+            givingTaskUI.SetActive(true);
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             // Limit to Borders of the Screen
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
             newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
 
-            givingTaskImg.transform.position = newTaskPos;
+            givingTaskUI.transform.position = newTaskPos;
         }
     }
 
@@ -62,7 +69,7 @@ public class Compound : MonoBehaviour
         if (IsGivingTask())
             if (task == givingTask)
             {
-                givingTaskImg.gameObject.SetActive(false);
+                givingTaskUI.SetActive(false);
                 givingTask = null;
             }
     }

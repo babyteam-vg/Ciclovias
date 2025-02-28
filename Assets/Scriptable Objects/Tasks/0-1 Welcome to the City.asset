@@ -28,7 +28,7 @@ MonoBehaviour:
   safetyRequirement: 0
   minSafetyCount: 0
   charmRequirement: 1
-  minCharmCount: 20
+  minCharmCount: 25
   flowRequirement: 0
   minFlowPercentage: 0
   minMaterialRequirement: 0

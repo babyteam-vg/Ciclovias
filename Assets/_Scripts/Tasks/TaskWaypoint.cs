@@ -10,12 +10,12 @@ public class TaskWaypoint : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     [Header("UI References")]
-    [SerializeField] private Image fromImg;
-    [SerializeField] private Image toImg;
-    public Vector3Int offset = new Vector3Int(0, 3, 0);
+    [SerializeField] private GameObject from;
+    [SerializeField] private GameObject to;
 
-    private Transform fromCompoundPos;
-    private Transform toCompundPos;
+    private Vector3 fromOffset, toOffset;
+    private Transform fromCompoundPos, toCompundPos;
+    private Image fromFull, toFull, fromCircleBorder;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -29,20 +29,28 @@ public class TaskWaypoint : MonoBehaviour
         currentTask.TaskUnpinned -= HideTaskWaypoints;
     }
 
+    private void Start()
+    {
+        fromFull = from.GetComponentInChildren<Image>(true);
+        fromCircleBorder = from.GetComponentsInChildren<Image>(true)[2];
+
+        toFull = to.GetComponentInChildren<Image>(true);
+    }
+
     public void Update()
     {
         // Get Screen Borders
-        float minX = fromImg.GetPixelAdjustedRect().width / 2;
+        float minX = fromCircleBorder.GetPixelAdjustedRect().width / 2;
         float maxX = Screen.width - minX;
 
-        float minY = fromImg.GetPixelAdjustedRect().height / 2;
-        float maxY = Screen.height - minY;
+        float minY = fromCircleBorder.GetPixelAdjustedRect().height - fromFull.GetPixelAdjustedRect().height;
+        float maxY = Screen.height - fromFull.GetPixelAdjustedRect().height;
 
         if (CurrentTask.Instance.ThereIsPinned())
         {
             // Waypoints Reposition
-            Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position + offset);
-            Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position + offset);
+            Vector2 fromPos = mainCamera.WorldToScreenPoint(fromCompoundPos.position + fromOffset);
+            Vector2 toPos = mainCamera.WorldToScreenPoint(toCompundPos.position + toOffset);
 
             // Limit to Borders of the Screen
             fromPos.x = Mathf.Clamp(fromPos.x, minX, maxX);
@@ -51,26 +59,36 @@ public class TaskWaypoint : MonoBehaviour
             toPos.x = Mathf.Clamp(toPos.x, minX, maxX);
             toPos.y = Mathf.Clamp(toPos.y, minY, maxY);
 
-            fromImg.transform.position = fromPos;
-            toImg.transform.position = toPos;
+            // Update positions
+            from.transform.position = fromPos;
+            to.transform.position = toPos;
+
+            bool isFromOutOfBounds = fromPos.x <= minX || fromPos.x >= maxX || fromPos.y <= minY || fromPos.y >= maxY;
+            fromFull.gameObject.SetActive(!isFromOutOfBounds); // Deactivate 'Full' if Out of Bounds
+
+            bool isToOutOfBounds = toPos.x <= minX || toPos.x >= maxX || toPos.y <= minY || toPos.y >= maxY;
+            toFull.gameObject.SetActive(!isToOutOfBounds); // Deactivate 'Full' if Out of Bounds
         }
     }
 
-    // :::::::::: PUBLIC METHODS ::::::::::
+    // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: When Pinned
-    public void UpdateTaskWaypoints(Task task)
+    private void UpdateTaskWaypoints(Task task)
     {
         fromCompoundPos = task.from.transform;
         toCompundPos = task.to.transform;
 
-        fromImg.gameObject.SetActive(true);
-        toImg.gameObject.SetActive(true);
+        fromOffset = task.from.offset;
+        toOffset = task.to.offset;
+
+        from.gameObject.SetActive(true);
+        to.gameObject.SetActive(true);
     }
 
     // ::::: When Unpinned
-    public void HideTaskWaypoints()
+    private void HideTaskWaypoints()
     {
-        fromImg.gameObject.SetActive(false);
-        toImg.gameObject.SetActive(false);
+        from.gameObject.SetActive(false);
+        to.gameObject.SetActive(false);
     }
 }

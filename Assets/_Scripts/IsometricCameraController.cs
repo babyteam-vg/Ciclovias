@@ -63,6 +63,9 @@ public class IsometricCameraController : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.Tab)) // Debug Purposes
+            isLocked = !isLocked;
+
         if (!isLocked)
         {
             panSpeed = currentZoom * ZOOM_PAN_RATIO;
