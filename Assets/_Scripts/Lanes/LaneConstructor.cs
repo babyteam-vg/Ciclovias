@@ -10,7 +10,10 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private InGameMenuManager inGameMenuManager;
 
+    private bool isAllowed = true;
     private bool isBuilding = false;
     private Vector2Int? lastCellPosition = null;
 
@@ -24,6 +27,12 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickDown += StartBuilding;
         inputManager.OnLeftClickHold += ContinueBuilding;
         inputManager.OnLeftClickUp += StopBuilding;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockDestroying;
+        tutorialManager.TutorialSectionPresentationDone += UnblockDestroying;
+
+        inGameMenuManager.MenuOpened += BlockDestroying;
+        inGameMenuManager.MenuClosed += UnblockDestroying;
     }
 
     private void OnDisable()
@@ -31,13 +40,19 @@ public class LaneConstructor : MonoBehaviour
         inputManager.OnLeftClickDown -= StartBuilding;
         inputManager.OnLeftClickHold -= ContinueBuilding;
         inputManager.OnLeftClickUp -= StopBuilding;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockDestroying;
+        tutorialManager.TutorialSectionPresentationDone += UnblockDestroying;
+
+        inGameMenuManager.MenuOpened += BlockDestroying;
+        inGameMenuManager.MenuClosed += UnblockDestroying;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
+        if (isAllowed && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
         {
             if (graph.GetNode(gridPosition) == null)
                 graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
@@ -51,7 +66,7 @@ public class LaneConstructor : MonoBehaviour
     // ::::: Mouse Input: Hold
     private void ContinueBuilding(Vector2Int gridPosition)
     {
-        if (isBuilding &&
+        if (isAllowed && isBuilding &&
             grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
             grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable() &&
             IsInCriticalArea(gridPosition))
@@ -145,4 +160,8 @@ public class LaneConstructor : MonoBehaviour
             return isInside;
         }
     }
+
+    // ::::: Menu? Allowing
+    private void BlockDestroying() { isAllowed = false; }
+    private void UnblockDestroying() { isAllowed = true; }
 }

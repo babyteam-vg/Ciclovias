@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class CellBorderHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
-    [SerializeField] private CurrentTask currentTask;
     [SerializeField] private GameObject plane;
+    [SerializeField] private CurrentTask currentTask;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("Varibles")]
     [SerializeField] private Material fromMaterial;
@@ -21,11 +23,16 @@ public class CellBorderHighlighter : MonoBehaviour
     {
         currentTask.TaskPinned += HighlightCompoundCells;
         currentTask.TaskUnpinned += ClearHighlight;
+
+        tutorialManager.TutorialSectionStarted += HighlightTutorialCells;
+        tutorialManager.TutorialCompleted += ClearHighlight;
     }
     private void OnDisable()
     {
         currentTask.TaskPinned -= HighlightCompoundCells;
         currentTask.TaskUnpinned -= ClearHighlight;
+        tutorialManager.TutorialSectionStarted -= HighlightTutorialCells;
+        tutorialManager.TutorialCompleted -= ClearHighlight;
     }
 
     private void Start()
@@ -56,6 +63,19 @@ public class CellBorderHighlighter : MonoBehaviour
             if (cell == null || !cell.GetBuildable()) continue;
             CreateHighlightCorners(new Vector2Int(cell.x, cell.y), toMaterial);
         }
+    }
+
+    public void HighlightTutorialCells(TutorialSection section)
+    {
+        ClearHighlight();
+
+        Cell start = grid.GetCell(section.start.x, section.start.y);
+        if (start == null || !start.GetBuildable()) return;
+        CreateHighlightCorners(new Vector2Int(start.x, start.y), fromMaterial);
+
+        Cell end = grid.GetCell(section.end.x, section.end.y);
+        if (end == null || !end.GetBuildable()) return;
+        CreateHighlightCorners(new Vector2Int(end.x, end.y), toMaterial);
     }
 
     // ::::: Clear All teh Highlights

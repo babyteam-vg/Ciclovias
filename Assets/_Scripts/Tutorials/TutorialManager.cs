@@ -14,6 +14,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private IsometricCameraController cameraController;
     [SerializeField] private LaneConstructor laneConstructor;
+    [SerializeField] private LaneDestructor laneDestructor;
     [SerializeField] private List<TutorialData> tutorialDataList;
 
     private Pathfinder pathfinder;
@@ -21,6 +22,7 @@ public class TutorialManager : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private GameObject tutorialCanvas;
+    [SerializeField] private TextMeshProUGUI tutorialTitle;
     [SerializeField] private TextMeshProUGUI tutorialText;
 
     private Dictionary<Vector2Int, TutorialData> tutorialDictionary;
@@ -28,6 +30,12 @@ public class TutorialManager : MonoBehaviour
     private int currentSectionIndex;
     private bool isTutorialActive = false;
     private MapData originalMapData;
+
+    public event Action<TutorialData> TutorialStarted;
+    public event Action<TutorialSection> TutorialSectionStarted;
+    public event Action TutorialSectionPresentationStarted;
+    public event Action TutorialSectionPresentationDone;
+    public event Action TutorialCompleted;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -45,14 +53,17 @@ public class TutorialManager : MonoBehaviour
     private void OnEnable()
     {
         laneConstructor.OnLaneBuilt += CheckSectionProgress;
+        laneDestructor.OnLaneDestroyed += CheckSectionProgress;
     }
 
     private void OnDisable()
     {
         laneConstructor.OnLaneBuilt -= CheckSectionProgress;
+        laneDestructor.OnLaneDestroyed -= CheckSectionProgress;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Start a Tutorial
     public void PlayTutorial(Vector2Int tutorialID)
     {
         if (isTutorialActive) return;
@@ -67,28 +78,53 @@ public class TutorialManager : MonoBehaviour
             StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
 
             if (tutorialCanvas != null)
+            {
                 tutorialCanvas.SetActive(true);
+                tutorialTitle.text = activeTutorial.title;
+            }
+
+            TutorialStarted?.Invoke(activeTutorial); // !
         }
     }
 
+    // ::::: 
     public void CheckSectionProgress(Vector2Int gridPosition)
     {
         if (!isTutorialActive || activeTutorial == null) return;
 
         TutorialSection currentSection = activeTutorial.sections[currentSectionIndex];
-        if (gridPosition == currentSection.end)
+        if (currentSection.destroyRequirement)
         {
-            if (currentSection.checkRequirements)
+            if (graph.GetNode(currentSection.start) == null && graph.GetNode(currentSection.end) == null)
             {
+                currentSectionIndex++;
+                if (currentSectionIndex < activeTutorial.sections.Length)
+                    StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+                else StopTutorial();
+            }
+        }   
+        else
+        {
+            if (graph.AreConnectedByPath(currentSection.start, currentSection.end))
+            {
+                if (currentSection.checkRequirements)
+                {
+                    (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
 
-                (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
+                    int safety = cellScoresCalculator.CalculatePathSafety(path);
+                    int charm = cellScoresCalculator.CalculatePathCharm(path);
+                    float flow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
+                    int usedMaterial = path.Count;
 
-                int safety = cellScoresCalculator.CalculatePathSafety(path);
-                int charm = cellScoresCalculator.CalculatePathCharm(path);
-                float flow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
-                int usedMaterial = path.Count;
-
-                if (activeTutorial.MeetsRequirements(safety, charm, flow, usedMaterial))
+                    if (activeTutorial.MeetsRequirements(safety, charm, flow, usedMaterial))
+                    {
+                        currentSectionIndex++;
+                        if (currentSectionIndex < activeTutorial.sections.Length)
+                            StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+                        else StopTutorial();
+                    }
+                }
+                else
                 {
                     currentSectionIndex++;
                     if (currentSectionIndex < activeTutorial.sections.Length)
@@ -96,16 +132,10 @@ public class TutorialManager : MonoBehaviour
                     else StopTutorial();
                 }
             }
-            else
-            {
-                currentSectionIndex++;
-                if (currentSectionIndex < activeTutorial.sections.Length)
-                    StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
-                else StopTutorial();
-            }
         }
     }
 
+    // ::::: End a Tutorial
     public void StopTutorial()
     {
         if (!isTutorialActive) return;
@@ -117,6 +147,7 @@ public class TutorialManager : MonoBehaviour
         tutorialCanvas.SetActive(false);
 
         gridGenerator.GenerateGridPortion(originalMapData);
+        TutorialCompleted?.Invoke(); // !
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -128,6 +159,7 @@ public class TutorialManager : MonoBehaviour
             tutorialDictionary[tutorialData.id] = tutorialData;
     }
 
+    // ::::: Start a Section of the Tuutorial
     private IEnumerator ExecuteSection(TutorialSection section)
     {
         isTutorialActive = true;
@@ -138,6 +170,9 @@ public class TutorialManager : MonoBehaviour
         gridGenerator.ClearGridPortion(section.tutorialMap.coordinates);
         gridGenerator.GenerateGridPortion(section.tutorialMap);
 
+        TutorialSectionStarted?.Invoke(section); // !
+
+        TutorialSectionPresentationStarted?.Invoke(); // !
         foreach (var keyframe in section.keyframes)
         {
             float elapsedTime = 0f;
@@ -156,6 +191,7 @@ public class TutorialManager : MonoBehaviour
 
                 yield return null;
             }
-        }
+        }   
+        TutorialSectionPresentationDone?.Invoke(); // !
     }
 }

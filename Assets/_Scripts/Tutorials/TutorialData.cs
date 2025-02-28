@@ -44,6 +44,7 @@ public class TutorialData : ScriptableObject
 public struct TutorialSection
 {
     [TextArea(3, 6)] public string text;
+    public bool destroyRequirement;
     public Vector2Int start;
     public Vector2Int end;
     public bool checkRequirements;

@@ -9,6 +9,7 @@ public class Compound : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private TutorialManager tutorialManager;
     public CompoundInfo info;
 
     [Header("UI References")]
@@ -19,8 +20,20 @@ public class Compound : MonoBehaviour
     private Image exclamation;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void OnEnable() { taskManager.TaskAccepted += OnAcceptedTask; }
-    private void OnDisable() { taskManager.TaskAccepted -= OnAcceptedTask; }
+    private void OnEnable()
+    {
+        taskManager.TaskAccepted += OnAcceptedTask;
+
+        tutorialManager.TutorialStarted += HideGivingTask;
+        tutorialManager.TutorialCompleted += RecoverGivingTask;
+    }
+    private void OnDisable()
+    {
+        taskManager.TaskAccepted -= OnAcceptedTask;
+
+        tutorialManager.TutorialStarted -= HideGivingTask;
+        tutorialManager.TutorialCompleted -= RecoverGivingTask;
+    }
 
     private void Start()
     {
@@ -38,7 +51,6 @@ public class Compound : MonoBehaviour
 
         if (IsGivingTask())
         {
-            givingTaskUI.SetActive(true);
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             // Limit to Borders of the Screen
@@ -61,6 +73,7 @@ public class Compound : MonoBehaviour
             .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
+        givingTaskUI.SetActive(true);
         return givingTask;
     }
 
@@ -83,5 +96,16 @@ public class Compound : MonoBehaviour
             if (!IsGivingTask()) return;
             TaskReceiver.Instance.ReceiveTask(givingTask);
         }
+    }
+
+    // ::::: When a Tutorial is Started or Completed
+    private void RecoverGivingTask()
+    {
+        if (IsGivingTask())
+            givingTaskUI.SetActive(true);
+    }
+    private void HideGivingTask(TutorialData _)
+    {
+        givingTaskUI.SetActive(false);
     }
 }

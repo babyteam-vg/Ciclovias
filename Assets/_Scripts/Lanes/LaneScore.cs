@@ -11,6 +11,7 @@ public class LaneScore : MonoBehaviour
     [SerializeField] private CurrentTask currentTask;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References - Safety")]
     [SerializeField] private TextMeshProUGUI currentSafety;
@@ -24,20 +25,30 @@ public class LaneScore : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentFlow;
     [SerializeField] private TextMeshProUGUI reqFlow;
 
+    private String tutorialSafetyScore, tutorialCharmScore, tutorialFlowScore;
+
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
         laneConstructor.OnLaneBuilt += HandleLaneUpdated;
-        taskManager.TaskCompleted += ClearScoreRequirements;
-        currentTask.TaskPinned += UpdateScoreRequirements;
         laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
+
+        taskManager.TaskCompleted += ClearTaskScoresRequirements;
+        currentTask.TaskPinned += UpdateTaskScoresRequirements;
+
+        tutorialManager.TutorialSectionStarted += UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialCompleted += ClearScoresRequirements;
     }
     private void OnDisable()
     {
         laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
-        taskManager.TaskCompleted -= ClearScoreRequirements;
-        currentTask.TaskPinned -= UpdateScoreRequirements;
         laneDestructor.OnLaneDestroyed -= HandleLaneUpdated;
+
+        taskManager.TaskCompleted -= ClearTaskScoresRequirements;
+        currentTask.TaskPinned -= UpdateTaskScoresRequirements;
+
+        tutorialManager.TutorialStarted -= UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialCompleted -= ClearScoresRequirements;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -54,14 +65,33 @@ public class LaneScore : MonoBehaviour
         }
     }
 
-    // ::::: Requirements and Current UI
-    private void UpdateScoreRequirements(Task task)
+    // ::::: Tasks
+    private void UpdateTaskScoresRequirements(Task task)
     {
         if (task.info.safetyRequirement) reqSafety.text = task.info.minSafetyCount.ToString();
         if (task.info.charmRequirement) reqCharm.text = task.info.minCharmCount.ToString();
         if (task.info.flowRequirement) reqFlow.text = task.info.minFlowPercentage.ToString();
     }
-    private void ClearScoreRequirements(Task task)
+    private void ClearTaskScoresRequirements(Task task) { ClearScoresRequirements(); }
+
+    // ::::: Tutorials
+    private void UpdateTutorialScoresRequirements(TutorialData tutorial)
+    {
+        tutorialSafetyScore = tutorial.safetyRequirement ? tutorial.minSafetyCount.ToString() : "-";
+        tutorialCharmScore = tutorial.charmRequirement ? tutorial.minCharmCount.ToString() : "-";
+        tutorialFlowScore = tutorial.flowRequirement ? tutorial.minFlowPercentage.ToString() : "-";
+    }
+    private void UpdateTutorialScoresRequirements(TutorialSection section)
+    {
+        if (section.checkRequirements)
+        {
+            currentSafety.text = "WiP";
+            currentCharm.text = "WiP";
+            currentFlow.text = "WiP";
+        }
+    }
+
+    private void ClearScoresRequirements()
     {
         currentSafety.text = "-";
         currentCharm.text = "-";

@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class TaskWaypoint : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private CurrentTask currentTask;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private CurrentTask currentTask;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References")]
     [SerializeField] private GameObject from;
@@ -21,12 +22,18 @@ public class TaskWaypoint : MonoBehaviour
     private void OnEnable()
     {
         currentTask.TaskPinned += UpdateTaskWaypoints;
-        currentTask.TaskUnpinned += HideTaskWaypoints;
+        currentTask.TaskUnpinned += HideWaypoints;
+
+        tutorialManager.TutorialStarted += HideTutorialWaypoints;
+        tutorialManager.TutorialCompleted += RecoverWaypoints;
     }
     private void OnDisable()
     {
         currentTask.TaskPinned -= UpdateTaskWaypoints;
-        currentTask.TaskUnpinned -= HideTaskWaypoints;
+        currentTask.TaskUnpinned -= HideWaypoints;
+
+        tutorialManager.TutorialStarted -= HideTutorialWaypoints;
+        tutorialManager.TutorialCompleted -= RecoverWaypoints;
     }
 
     private void Start()
@@ -85,8 +92,20 @@ public class TaskWaypoint : MonoBehaviour
         to.gameObject.SetActive(true);
     }
 
-    // ::::: When Unpinned
-    private void HideTaskWaypoints()
+    // ::::: When a Tutorial is Completed
+    private void RecoverWaypoints()
+    {
+        if (CurrentTask.Instance.ThereIsPinned())
+        {
+            from.gameObject.SetActive(true);
+            to.gameObject.SetActive(true);
+        }
+    }
+
+    // ::::: When Unpinned or Tutorial Started
+    private void HideTutorialWaypoints(TutorialData tutorial) { HideWaypoints(); }
+
+    private void HideWaypoints()
     {
         from.gameObject.SetActive(false);
         to.gameObject.SetActive(false);

@@ -11,6 +11,7 @@ public class LaneDestructor : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private InGameMenuManager inGameMenuManager;
 
     private bool isAllowed = true;
@@ -27,6 +28,10 @@ public class LaneDestructor : MonoBehaviour
         inputManager.OnRightClickDown += StartDestroying;
         inputManager.OnRightClickHold += ContinueDestroying;
         inputManager.OnRightClickUp += StopDestroying;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockDestroying;
+        tutorialManager.TutorialSectionPresentationDone += UnblockDestroying;
+
         inGameMenuManager.MenuOpened += BlockDestroying;
         inGameMenuManager.MenuClosed += UnblockDestroying;
     }
@@ -35,6 +40,10 @@ public class LaneDestructor : MonoBehaviour
         inputManager.OnRightClickDown -= StartDestroying;
         inputManager.OnRightClickHold -= ContinueDestroying;
         inputManager.OnRightClickUp -= StopDestroying;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockDestroying;
+        tutorialManager.TutorialSectionPresentationDone += UnblockDestroying;
+
         inGameMenuManager.MenuOpened += BlockDestroying;
         inGameMenuManager.MenuClosed += UnblockDestroying;
     }
@@ -56,7 +65,7 @@ public class LaneDestructor : MonoBehaviour
     // ::::: Mouse Input: Hold
     private void ContinueDestroying(Vector2Int gridPosition)
     {
-        if (isDestroying &&
+        if (isAllowed && isDestroying &&
             grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
             IsInCriticalArea(gridPosition))
         {
@@ -85,10 +94,10 @@ public class LaneDestructor : MonoBehaviour
         {
             int edgeCount = node.neighbors.Count;
             GameManager.Instance.AddMaterial(edgeCount); // Add material for each removed edge
-            OnLaneDestroyed?.Invoke(gridPosition);
         }
 
         graph.RemoveNode(gridPosition);
+        OnLaneDestroyed?.Invoke(gridPosition);
     }
 
     // ::::: Critical Areas
