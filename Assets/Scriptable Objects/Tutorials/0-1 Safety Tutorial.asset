@@ -63,7 +63,7 @@ MonoBehaviour:
       zoom: 7
       duration: 1.5
   safetyRequirement: 1
-  minSafetyCount: 6
+  minSafetyCount: 12
   charmRequirement: 0
   minCharmCount: 0
   flowRequirement: 0

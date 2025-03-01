@@ -25,6 +25,11 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tutorialTitle;
     [SerializeField] private TextMeshProUGUI tutorialText;
 
+    [Header("Requirements")]
+    public int currentSafety;
+    public float currentFlow; 
+    public int currentCharm, usedMaterial;
+
     private Dictionary<Vector2Int, TutorialData> tutorialDictionary;
     private TutorialData activeTutorial;
     private int currentSectionIndex;
@@ -93,6 +98,14 @@ public class TutorialManager : MonoBehaviour
         if (!isTutorialActive || activeTutorial == null) return;
 
         TutorialSection currentSection = activeTutorial.sections[currentSectionIndex];
+
+        (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
+
+        currentSafety = cellScoresCalculator.CalculatePathSafety(path);
+        currentCharm = cellScoresCalculator.CalculatePathCharm(path);
+        currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
+        usedMaterial = path.Count;
+
         if (currentSection.destroyRequirement)
         {
             if (graph.GetNode(currentSection.start) == null && graph.GetNode(currentSection.end) == null)
@@ -109,14 +122,7 @@ public class TutorialManager : MonoBehaviour
             {
                 if (currentSection.checkRequirements)
                 {
-                    (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
-
-                    int safety = cellScoresCalculator.CalculatePathSafety(path);
-                    int charm = cellScoresCalculator.CalculatePathCharm(path);
-                    float flow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
-                    int usedMaterial = path.Count;
-
-                    if (activeTutorial.MeetsRequirements(safety, charm, flow, usedMaterial))
+                    if (activeTutorial.MeetsRequirements(currentSafety, currentCharm, currentFlow, usedMaterial))
                     {
                         currentSectionIndex++;
                         if (currentSectionIndex < activeTutorial.sections.Length)

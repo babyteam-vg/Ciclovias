@@ -25,6 +25,7 @@ public class LaneScore : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentFlow;
     [SerializeField] private TextMeshProUGUI reqFlow;
 
+    private bool inTutorial = false;
     private String tutorialSafetyScore, tutorialCharmScore, tutorialFlowScore;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -36,6 +37,7 @@ public class LaneScore : MonoBehaviour
         taskManager.TaskCompleted += ClearTaskScoresRequirements;
         currentTask.TaskPinned += UpdateTaskScoresRequirements;
 
+        tutorialManager.TutorialStarted += UpdateTutorialScoresRequirements;
         tutorialManager.TutorialSectionStarted += UpdateTutorialScoresRequirements;
         tutorialManager.TutorialCompleted += ClearScoresRequirements;
     }
@@ -48,6 +50,7 @@ public class LaneScore : MonoBehaviour
         currentTask.TaskPinned -= UpdateTaskScoresRequirements;
 
         tutorialManager.TutorialStarted -= UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialSectionStarted -= UpdateTutorialScoresRequirements;
         tutorialManager.TutorialCompleted -= ClearScoresRequirements;
     }
 
@@ -55,13 +58,22 @@ public class LaneScore : MonoBehaviour
     // ::::: Whenever a Lane is Built or Destroyed
     private void HandleLaneUpdated(Vector2Int gridPosition)
     {
-        if (CurrentTask.Instance.ThereIsPinned())
+        if (inTutorial)
         {
-            Task task = CurrentTask.Instance.PinnedTask;
+            if (reqSafety.text != "-") currentSafety.text = tutorialManager.currentSafety.ToString();
+            if (reqCharm.text != "-") currentCharm.text = tutorialManager.currentSafety.ToString();
+            if (reqFlow.text != "-") currentFlow.text = tutorialManager.currentSafety.ToString();
+        }
+        else
+        {
+            if (CurrentTask.Instance.ThereIsPinned())
+            {
+                Task task = CurrentTask.Instance.PinnedTask;
 
-            if (task.info.safetyRequirement) currentSafety.text = task.currentSafetyCount.ToString();
-            if (task.info.charmRequirement) currentCharm.text = task.currentCharmCount.ToString();
-            if (task.info.flowRequirement) currentFlow.text = task.currentCharmCount.ToString();
+                if (task.info.safetyRequirement) currentSafety.text = task.currentSafetyCount.ToString();
+                if (task.info.charmRequirement) currentCharm.text = task.currentCharmCount.ToString();
+                if (task.info.flowRequirement) currentFlow.text = task.currentFlowPercentage.ToString();
+            }
         }
     }
 
@@ -77,6 +89,8 @@ public class LaneScore : MonoBehaviour
     // ::::: Tutorials
     private void UpdateTutorialScoresRequirements(TutorialData tutorial)
     {
+        inTutorial = true;
+
         tutorialSafetyScore = tutorial.safetyRequirement ? tutorial.minSafetyCount.ToString() : "-";
         tutorialCharmScore = tutorial.charmRequirement ? tutorial.minCharmCount.ToString() : "-";
         tutorialFlowScore = tutorial.flowRequirement ? tutorial.minFlowPercentage.ToString() : "-";
@@ -85,14 +99,16 @@ public class LaneScore : MonoBehaviour
     {
         if (section.checkRequirements)
         {
-            currentSafety.text = "WiP";
-            currentCharm.text = "WiP";
-            currentFlow.text = "WiP";
+            reqSafety.text = tutorialSafetyScore;
+            reqCharm.text = tutorialCharmScore;
+            reqFlow.text = tutorialFlowScore;
         }
     }
 
     private void ClearScoresRequirements()
     {
+        inTutorial = false;
+
         currentSafety.text = "-";
         currentCharm.text = "-";
         currentFlow.text = "-";
