@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -19,6 +20,9 @@ public class Task
     public int currentCharmCount;
     public float currentFlowPercentage;
     public int usedMaterial;
+
+    [Header("Flavour")]
+    public int currentToCross;
 
     // :::::::::: METHODS ::::::::::
     // ::::: Requirements

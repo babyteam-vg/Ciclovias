@@ -35,6 +35,11 @@ MonoBehaviour:
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
+  flavourDetails:
+    flavourType: 0
+    compound: {fileID: 0}
+    toCross: 0
+    numberToCross: 0
   materialReward: 60
   unlockedTasks:
   - {x: 0, y: 2}

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -92,6 +93,8 @@ public class TaskManager : MonoBehaviour
             activeTask.currentFlowPercentage = flow;
             activeTask.usedMaterial = usedMaterial;
 
+            MeetsFlavour(activeTask, path);
+
             ActiveTaskScoresUpdated?.Invoke();
 
             if (pathFound)
@@ -171,5 +174,34 @@ public class TaskManager : MonoBehaviour
             default:
                 break;
         }
+    }
+
+
+    // ::::: Meets the Flavour?
+    public bool MeetsFlavour(Task task, List<Vector2Int> path)
+    {
+        FlavourType type = task.info.flavourDetails.flavourType;
+        switch (type)
+        {
+            case FlavourType.Visit:
+                return graph.FindNodePosInCells(path) != null;
+            case FlavourType.Avoid:
+                return graph.FindNodePosInCells(path) != null;
+            case FlavourType.Cross:
+                if (path.Count > 1)
+                {
+                    int index = path.Count - 1;
+
+                    Cell lastCell = grid.GetCell(path[index - 1].x, path[index - 1].y);
+                    Cell currentCell = grid.GetCell(path[index].x, path[index].y);
+
+                    if (currentCell.GetContent() == task.info.flavourDetails.toCross
+                        && lastCell.GetContent() != currentCell.GetContent())
+                        task.currentToCross++;
+                }
+                if (task.currentToCross >= task.info.flavourDetails.numberToCross) return true;
+                break;
+        }
+        return false;
     }
 }
