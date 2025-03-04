@@ -25,8 +25,8 @@ public class TaskInfo : ScriptableObject
     public bool maxMaterialRequirement;
     public int maxMaterial;
 
-    [Header("Flavour")]
-    public Flavour flavourDetails;
+    [Header("Flavor")]
+    public Flavor flavourDetails;
 
     [Header("Rewards")]
     public int materialReward;
@@ -36,15 +36,15 @@ public class TaskInfo : ScriptableObject
 }
 
 [System.Serializable]
-public class Flavour
+public class Flavor
 {
-    public FlavourType flavourType;
+    public FlavorType flavorType;
     public Compound compound;
     public CellContent toCross;
     public int numberToCross;
 }
 
-public enum FlavourType
+public enum FlavorType
 {
     None,
     Visit,

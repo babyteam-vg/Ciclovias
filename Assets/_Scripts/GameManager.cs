@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -14,7 +15,8 @@ public class GameManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
-    private StorageManager _storageManager = new StorageManager();
+    [SerializeField] private TaskDiary taskDiary;
+    private StorageManager storageManager = new StorageManager();
 
     [Header("UI References")]
     [SerializeField] private GameObject materialCounter;
@@ -45,15 +47,14 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        ApplyLoadedGameData(GameStateManager.Instance.LoadedGameData);
+
         amountText.text = "x" + MaterialAmount.ToString();
         animator = materialCounter.GetComponent<Animator>();
 
-        if (!CurrentTask.Instance.ThereIsPinned() && MapState == 0)
-        {
-            Task firstTask = TaskDiary.Instance.tasks[0];
-            if (firstTask.state == TaskState.Unlocked)
-                firstTask.from.GetNextAvailableTask(MapState);
-        }
+        List<Task> unlockedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Unlocked).ToList();
+        foreach (Task acceptedTask in unlockedTasks)
+            acceptedTask.from.GetNextAvailableTask(MapState);
     }
 
     private void Update()
@@ -112,10 +113,11 @@ public class GameManager : MonoBehaviour
     {
         GameData gameData = new GameData
         {
-            graphData = graph.SaveGraphData(),
+            graph = graph.SaveGraph(),
+            tasks = TaskDiary.Instance.SaveTasks()
         };
 
-        bool success = _storageManager.SaveGame(gameData);
+        bool success = storageManager.SaveGame(gameData);
 
         if (success) Debug.Log("Game Successfully Saved!");
         else Debug.LogError("Error Saving the Game :(");
@@ -124,7 +126,8 @@ public class GameManager : MonoBehaviour
     // ::::: Load
     private void ApplyLoadedGameData(GameData gameData)
     {
-        graph.LoadGraphData(gameData.graphData);
+        graph.LoadGraph(gameData.graph);
+        taskDiary.LoadTasks(gameData.tasks);
 
         Debug.Log("Partida cargada correctamente.");
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class GameData
 {
     //public string playerName;
-    public GraphData graphData;
-    public List<Task> tasks;
+    public GraphData graph;
+    public List<TaskData> tasks;
     // ...
 }

@@ -21,7 +21,7 @@ public class Task
     public float currentFlowPercentage;
     public int usedMaterial;
 
-    [Header("Flavour")]
+    [Header("Flavor")]
     public int currentToCross;
 
     // :::::::::: METHODS ::::::::::
@@ -40,6 +40,46 @@ public class Task
     public bool MeetsFlowRequirement() { return !info.flowRequirement || currentFlowPercentage >= info.minFlowPercentage; }
     public bool MeetsMinMaterialRequirement() { return !info.minMaterialRequirement || usedMaterial >= info.minMaterial; }
     public bool MeetsMaxMaterialRequirement() { return !info.maxMaterialRequirement || usedMaterial <= info.maxMaterial; }
+
+    // :::::::::: STORAGE ::::::::::
+    // ::::: Task -> TaskData
+    public TaskData SaveTask()
+    {
+        return new TaskData
+        {
+            state = this.state,
+
+            start = this.start,
+            end = this.end,
+
+            currentSafetyCount = this.currentSafetyCount,
+            currentCharmCount = this.currentCharmCount,
+            currentFlowPercentage = this.currentFlowPercentage,
+            usedMaterial = this.usedMaterial,
+
+            currentToCross = this.currentToCross
+        };
+    }
+
+    // ::::: TaskData -> Task
+    public void LoadTask(TaskData serializableTask, TaskInfo info, Compound from, Compound to)
+    {
+        this.state = serializableTask.state;
+
+        this.start = serializableTask.start;
+        this.end = serializableTask.end;
+
+        this.currentSafetyCount = serializableTask.currentSafetyCount;
+        this.currentCharmCount = serializableTask.currentCharmCount;
+        this.currentFlowPercentage = serializableTask.currentFlowPercentage;
+        this.usedMaterial = serializableTask.usedMaterial;
+
+        this.currentToCross = serializableTask.currentToCross;
+
+        this.info = info;
+        this.from = from;
+        this.to = to;
+    }
 }
 
 public enum TaskState

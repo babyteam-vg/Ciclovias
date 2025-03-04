@@ -180,14 +180,14 @@ public class TaskManager : MonoBehaviour
     // ::::: Meets the Flavour?
     public bool MeetsFlavour(Task task, List<Vector2Int> path)
     {
-        FlavourType type = task.info.flavourDetails.flavourType;
+        FlavorType type = task.info.flavourDetails.flavorType;
         switch (type)
         {
-            case FlavourType.Visit:
+            case FlavorType.Visit:
                 return graph.FindNodePosInCells(path) != null;
-            case FlavourType.Avoid:
+            case FlavorType.Avoid:
                 return graph.FindNodePosInCells(path) != null;
-            case FlavourType.Cross:
+            case FlavorType.Cross:
                 if (path.Count > 1)
                 {
                     int index = path.Count - 1;

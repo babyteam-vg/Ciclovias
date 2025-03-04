@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TaskData : MonoBehaviour
+[System.Serializable]
+public class TaskData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public TaskState state;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Vector2Int start;
+    public Vector2Int end;
+
+    public int currentSafetyCount;
+    public int currentCharmCount;
+    public float currentFlowPercentage;
+    public int usedMaterial;
+
+    public int currentToCross;
 }

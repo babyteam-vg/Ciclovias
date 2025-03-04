@@ -91,4 +91,43 @@ public class TaskDiary : MonoBehaviour
         taskManager.UpdateActiveTasks(tasks);
         taskManager.TaskInProgress(newNode);
     }
+
+    // :::::::::: STORAGE ::::::::::
+    // ::::: Tasks -> TasksData
+    public List<TaskData> SaveTasks()
+    {
+        List<TaskData> tasksData = new List<TaskData>();
+        foreach (Task task in tasks)
+            tasksData.Add(task.SaveTask());
+        return tasksData;
+    }
+
+    // ::::: TasksData -> Tasks
+    public void LoadTasks(List<TaskData> tasksData)
+    {
+        if (tasksData.Count != tasks.Count)
+        {
+            Debug.LogError($"#TasksData ({tasksData.Count}) =/= #Tasks ({tasks.Count})");
+            return;
+        }
+
+
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            Task task = tasks[i];
+            TaskData serializableTask = tasksData[i];
+
+            task.state = serializableTask.state;
+
+            task.start = serializableTask.start;
+            task.end = serializableTask.end;
+
+            task.currentSafetyCount = serializableTask.currentSafetyCount;
+            task.currentCharmCount = serializableTask.currentCharmCount;
+            task.currentFlowPercentage = serializableTask.currentFlowPercentage;
+            task.usedMaterial = serializableTask.usedMaterial;
+
+            task.currentToCross = serializableTask.currentToCross;
+        }
+    }
 }

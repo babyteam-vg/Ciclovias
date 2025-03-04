@@ -161,7 +161,7 @@ public class Graph : MonoBehaviour
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Graph -> GraphData
-    public GraphData SaveGraphData()
+    public GraphData SaveGraph()
     {
         GraphData graphData = new GraphData();
 
@@ -196,7 +196,7 @@ public class Graph : MonoBehaviour
     }
 
     // ::::: GraphData -> Graph
-    public void LoadGraphData(GraphData graphData)
+    public void LoadGraph(GraphData graphData)
     {
         nodes.Clear();
         nodePositions.Clear();
