@@ -7,8 +7,8 @@ public class Node
     public Vector2 worldPosition;
     public List<Node> neighbors;
 
-    // === Methods ===
-    // Constructor
+    // :::::::::: METHODS ::::::::::
+    // ::::: Constructor
     public Node(Vector2Int position, Vector2 worldPosition)
     {
         this.position = position;
@@ -16,7 +16,7 @@ public class Node
         this.neighbors = new List<Node>();
     }
 
-    // O- + -O
+    // ::::: O- + -O
     public void AddNeighbor(Node neighbor)
     {
         if (!neighbors.Contains(neighbor))
@@ -26,7 +26,7 @@ public class Node
         }
     }
 
-    // O- X -O
+    // ::::: O- X -O
     public void RemoveNeighbor(Node neighbor)
     {
         if (neighbors.Contains(neighbor))

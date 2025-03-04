@@ -11,11 +11,11 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private GraphRenderer graphRenderer;
-    [SerializeField] private LaneScores laneScores;
 
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
+    public event Action ActiveTaskScoresUpdated;
     public event Action<Task> TaskUnlocked;
     public event Action<Task, bool> TaskAccepted;
     public event Action<Task, bool> TaskActivated;
@@ -80,7 +80,7 @@ public class TaskManager : MonoBehaviour
             var (pathFound, path) = pathfinder.FindPath(startPos, gridPosition, endPos); // Execute A*
 
             graphRenderer.currentPath = path;
-            laneScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
+            //laneRoundScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
 
             int safety = cellScoresCalculator.CalculatePathSafety(path);
             int charm = cellScoresCalculator.CalculatePathCharm(path);
@@ -91,6 +91,8 @@ public class TaskManager : MonoBehaviour
             activeTask.currentCharmCount = charm;
             activeTask.currentFlowPercentage = flow;
             activeTask.usedMaterial = usedMaterial;
+
+            ActiveTaskScoresUpdated?.Invoke();
 
             if (pathFound)
             {

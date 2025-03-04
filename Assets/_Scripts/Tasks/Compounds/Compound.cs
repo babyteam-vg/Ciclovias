@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Splines.ExtrusionShapes;
 using UnityEngine.UI;
 
 public class Compound : MonoBehaviour
@@ -14,10 +14,10 @@ public class Compound : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private GameObject givingTaskUI;
-    public Vector3 offset = new Vector3(0, 3, 0);
+    public Vector3 offset = new Vector3(0, 2, 0);
 
     private Task givingTask;
-    private Image exclamation;
+    private Image full, portrait, circleBorder;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -37,27 +37,37 @@ public class Compound : MonoBehaviour
 
     private void Start()
     {
-        exclamation = givingTaskUI.GetComponentInChildren<Image>(true);
+        full = givingTaskUI.GetComponentInChildren<Image>(true);
+        portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
+        circleBorder = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
     }
 
     private void Update()
     {
         // Get Screen Borders
-        float minX = exclamation.GetPixelAdjustedRect().width / 2;
+        float minX = full.GetPixelAdjustedRect().width / 2;
         float maxX = Screen.width - minX;
 
-        float minY = 0f;
-        float maxY = Screen.height - exclamation.GetPixelAdjustedRect().height;
+        float minY = circleBorder.GetPixelAdjustedRect().height - full.GetPixelAdjustedRect().height;
+        float maxY = Screen.height - full.GetPixelAdjustedRect().height;
 
         if (IsGivingTask())
         {
+            portrait.sprite = givingTask.info.character.portrait;
+
+            // Calculate the position of the UI element in screen space
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             // Limit to Borders of the Screen
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
             newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
 
+            // Update the position of the UI element
             givingTaskUI.transform.position = newTaskPos;
+
+            // Check if the UI element is out of bounds
+            bool isOutOfBounds = newTaskPos.x <= minX || newTaskPos.x >= maxX || newTaskPos.y <= minY || newTaskPos.y >= maxY;
+            full.gameObject.SetActive(!isOutOfBounds); // Deactivate if Out of Bounds
         }
     }
 

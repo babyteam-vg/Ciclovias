@@ -29,5 +29,5 @@ public class TaskInfo : ScriptableObject
     public int materialReward;
     public Vector2Int[] unlockedTasks;
     public string[] rewardDialogs;
-    // Social Network Comments
+    public PostInfo[] posts;
 }

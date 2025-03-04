@@ -42,3 +42,6 @@ MonoBehaviour:
   - "Sab\xEDa que tus habilidades eran lo que necesit\xE1bamos para devolver la vida
     a esta apagada ciudad."
   - "\xA1Siempre que te necesite te lo har\xE9 saber!"
+  posts:
+  - {fileID: 11400000, guid: 8c83df947b897fd45b44c5ef636d1c93, type: 2}
+  - {fileID: 11400000, guid: 4138f0ec5edb0184092b86ddc8dbcb23, type: 2}

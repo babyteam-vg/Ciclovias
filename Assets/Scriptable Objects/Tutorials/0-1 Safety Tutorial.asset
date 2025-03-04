@@ -15,11 +15,13 @@ MonoBehaviour:
   id: {x: 0, y: 1}
   title: Safety Tutorial
   sections:
-  - text: Every bike lane you build increases the safety as long as you don't cross
-      the street
+  - text: 'All routes must have a minimum level of <b><color=#62B4E8>safety</color></b>,
+      determined by each task. Safety is increased in <b><color=#62B4E8>low-risk
+      areas</color></b>: sidewalks are the ideal place! Use the <b><color=#F4C542>left
+      click</color></b> to start building.'
     destroyRequirement: 0
     start: {x: 63, y: 15}
-    end: {x: 50, y: 15}
+    end: {x: 52, y: 15}
     checkRequirements: 0
     tutorialMap:
       texture: {fileID: 2800000, guid: 38f0ec167ec0b9646b3fe9f8634335a1, type: 3}
@@ -29,33 +31,45 @@ MonoBehaviour:
       rotation: {x: 0, y: -0.9238795, z: 0, w: 0.38268343}
       zoom: 5
       duration: 1.5
-  - text: You can destroy destroy any active lane with the Mouse's Rght Button. Destroy
-      some of the lane
-    destroyRequirement: 1
-    start: {x: 50, y: 15}
-    end: {x: 51, y: 15}
+  - text: Unmarked crossings are <b><color=#F4C542>medium-risk areas</color></b>,
+      crossing through them will penalize the <b><color=#62B4E8>safety</color></b>
+      of the route.
+    destroyRequirement: 0
+    start: {x: 52, y: 15}
+    end: {x: 50, y: 15}
     checkRequirements: 0
     tutorialMap:
       texture: {fileID: 2800000, guid: c165b1e3b9d96574482cf671d6b2d6da, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: The best way to keep a high safety is crossing the streets at intersections
-      marked by traffic lights
-    destroyRequirement: 0
-    start: {x: 52, y: 15}
-    end: {x: 49, y: 18}
+  - text: You can delete part of the route with <b><color=#F4C542>right click</color></b>
+      to recover <b><color=#F4C542>construction material</color></b>.
+    destroyRequirement: 1
+    start: {x: 50, y: 15}
+    end: {x: 51, y: 15}
     checkRequirements: 0
     tutorialMap:
       texture: {fileID: 2800000, guid: 72eca0067e4b09149a6286ec48422fd4, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: Reach the destination without losing safety points
+  - text: The best way to mantain a high <b><color=#62B4E8>safety</color></b> level
+      is to cross the streets at intersections marked by traffic lights.
+    destroyRequirement: 0
+    start: {x: 52, y: 15}
+    end: {x: 49, y: 18}
+    checkRequirements: 0
+    tutorialMap:
+      texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}
+      coordinates: {x: 0, y: 0}
+    keyframes: []
+  - text: 'Now, get to the Bike Store without reducing the <b><color=#62B4E8>safety</color></b>
+      of the route! '
     destroyRequirement: 0
     start: {x: 49, y: 18}
     end: {x: 39, y: 10}
     checkRequirements: 1
     tutorialMap:
-      texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}
+      texture: {fileID: 2800000, guid: dfbbc949f8c754848976015d0ae873d7, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes:
     - position: {x: 44, y: 0, z: 16}

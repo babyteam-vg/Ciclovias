@@ -11,6 +11,12 @@ public class GameManager : MonoBehaviour
     public int SmokeState { get; private set; } = 0;
     public int MaterialAmount { get; private set; } = 80;
 
+    [Header("Dependencies")]
+    [SerializeField] private Graph graph;
+    [SerializeField] private TaskManager taskManager;
+    private StorageManager _storageManager = new StorageManager();
+
+    [Header("UI References")]
     [SerializeField] private GameObject materialCounter;
     [SerializeField] private TextMeshProUGUI amountText;
 
@@ -26,6 +32,15 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        taskManager.TaskCompleted += OnTaskCompleted;
+    }
+    private void OnDisable()
+    {
+        taskManager.TaskCompleted -= OnTaskCompleted;
     }
 
     private void Start()
@@ -84,5 +99,33 @@ public class GameManager : MonoBehaviour
     private void MaterialCounterAnimation()
     {
         animator.Play("MaterialCounter");
+    }
+
+    private void OnTaskCompleted(Task task)
+    {
+        SaveGame();
+    }
+
+    // :::::::::: STORAGE METHODS ::::::::::
+    // ::::: Save
+    public void SaveGame()
+    {
+        GameData gameData = new GameData
+        {
+            graphData = graph.SaveGraphData(),
+        };
+
+        bool success = _storageManager.SaveGame(gameData);
+
+        if (success) Debug.Log("Game Successfully Saved!");
+        else Debug.LogError("Error Saving the Game :(");
+    }
+
+    // ::::: Load
+    private void ApplyLoadedGameData(GameData gameData)
+    {
+        graph.LoadGraphData(gameData.graphData);
+
+        Debug.Log("Partida cargada correctamente.");
     }
 }

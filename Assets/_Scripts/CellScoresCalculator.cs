@@ -108,17 +108,18 @@ public class CellScoresCalculator
 
         return charm;
     }
-    public float CalculatePathFlow(List<Vector2Int> path, Vector2Int destinationCell)
+    public float CalculatePathFlow(List<Vector2Int> path, Vector2Int destinationPos)
     {
         float totalFlow = 0f;
 
         for (int i = 0; i < path.Count; i++)
         {
+            Cell previousCell = i > 0 ? grid.GetCell(path[i - 1].x, path[i - 1].y) : null;
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
             totalFlow += CalculateFlow(currentCell);
 
             // Detour
-            if (IsGettingCloser(currentCell, i < path.Count - 1 ? grid.GetCell(path[i + 1].x, path[i + 1].y) : null, destinationCell))
+            if (IsGettingCloser(previousCell, currentCell, destinationPos))
                 totalFlow += 1; // +Flow
             else totalFlow -= 1; // -Flow
         }
@@ -126,17 +127,31 @@ public class CellScoresCalculator
         return path.Count > 0 ? Mathf.Clamp(totalFlow / path.Count, 0f, 1f) : 0f;
     }
 
-    private bool IsGettingCloser(Cell currentCell, Cell nextCell, Vector2Int destinationCell)
+    private bool IsGettingCloser(Cell previousCell, Cell currentCell, Vector2Int destinationPos)
     {
-        if (currentCell == null || nextCell == null || destinationCell == null)
+        if (previousCell == null || currentCell == null || destinationPos == null)
             return false;
 
-        float currentDistanceSq = Mathf.Pow(currentCell.x - destinationCell.x, 2) +
-                                  Mathf.Pow(currentCell.y - destinationCell.y, 2);
+        float previousDistanceSq = Mathf.Pow(previousCell.x - destinationPos.x, 2) +
+                                   Mathf.Pow(previousCell.y - destinationPos.y, 2);
 
-        float nextDistanceSq = Mathf.Pow(nextCell.x - destinationCell.x, 2) +
-                               Mathf.Pow(nextCell.y - destinationCell.y, 2);
+        float currentDistanceSq = Mathf.Pow(currentCell.x - destinationPos.x, 2) +
+                                  Mathf.Pow(currentCell.y - destinationPos.y, 2);
 
-        return nextDistanceSq < currentDistanceSq;
+        Vector2Int previousToCurrent = new Vector2Int(
+            currentCell.x - previousCell.x,
+            currentCell.y - previousCell.y);
+        Vector2Int currentToDestination = new Vector2Int(
+            destinationPos.x - currentCell.x,
+            destinationPos.y - currentCell.y);
+        float angle = Vector2.Angle(previousToCurrent, currentToDestination);
+
+        if (angle >= 90f)
+            return false;
+
+        if (currentDistanceSq < previousDistanceSq)
+            return true;
+
+        return false;
     }
 }

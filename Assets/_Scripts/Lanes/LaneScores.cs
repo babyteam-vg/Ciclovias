@@ -1,156 +1,122 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LaneScores : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private Grid grid;
-    [SerializeField] private Graph graph;
-    [SerializeField] private Camera mainCamera;
     [SerializeField] private TaskManager taskManager;
-    [SerializeField] private LaneConstructor laneConstructor;
-    [SerializeField] private LaneDestructor laneDestructor;
-
-    [Header("UI References")]
-    [SerializeField] private Canvas canvas;
-    [SerializeField] private RectTransform scoresContainer;
-    public Vector3Int offset = new Vector3Int(1, 1, 1);
+    [SerializeField] private CurrentTask currentTask;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References - Safety")]
-    [SerializeField] private Image safetyFill;
-    [SerializeField] private Image safetyWarning;
+    [SerializeField] private TextMeshProUGUI currentSafety;
+    [SerializeField] private TextMeshProUGUI reqSafety;
 
     [Header("UI References - Charm")]
-    [SerializeField] private Image charmFill;
-    [SerializeField] private Image charmWarning;
+    [SerializeField] private TextMeshProUGUI currentCharm;
+    [SerializeField] private TextMeshProUGUI reqCharm;
 
     [Header("UI References - Flow")]
-    [SerializeField] private Image flowFill;
-    [SerializeField] private Image flowWarning;
+    [SerializeField] private TextMeshProUGUI currentFlow;
+    [SerializeField] private TextMeshProUGUI reqFlow;
 
-    public Vector2Int lastCellPosition = new Vector2Int();
+    [Header("UI References - Material")]
+    //[SerializeField] private TextMeshProUGUI minMaterial;
+    [SerializeField] private TextMeshProUGUI usedMaterial;
+    [SerializeField] private TextMeshProUGUI maxMaterial;
 
-    private Coroutine deactivateCoroutine;
+    private String tutorialSafetyScore, tutorialCharmScore, tutorialFlowScore, tutorialUsedMaterial;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
-        laneConstructor.OnBuildStarted += HandleLaneStarted;
-        laneConstructor.OnLaneBuilt += HandleLaneUpdated;
-        laneConstructor.OnBuildFinished += HandleLaneFinished;
+        taskManager.ActiveTaskScoresUpdated += HandleTaskLaneUpdated;
+        taskManager.TaskCompleted += ClearTaskScoresRequirements;
 
-        taskManager.TaskCompleted += HandleTaskCompleted;
+        currentTask.TaskPinned += UpdateTaskScoresRequirements;
 
-        laneDestructor.OnDestroyStarted += HandleLaneStarted;
-        laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
-        laneDestructor.OnDestroyFinished += HandleLaneFinished;
-
+        tutorialManager.ActiveTutorialScoresUpdated += HandleTutorialLaneUpdated;
+        tutorialManager.TutorialStarted += UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialSectionStarted += UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialCompleted += ClearScoresRequirements;
     }
     private void OnDisable()
     {
-        laneConstructor.OnBuildStarted -= HandleLaneStarted;
-        laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
-        laneConstructor.OnBuildFinished -= HandleLaneFinished;
+        taskManager.ActiveTaskScoresUpdated -= HandleTaskLaneUpdated;
+        taskManager.TaskCompleted -= ClearTaskScoresRequirements;
 
-        taskManager.TaskCompleted -= HandleTaskCompleted;
+        currentTask.TaskPinned -= UpdateTaskScoresRequirements;
 
-        laneDestructor.OnDestroyStarted -= HandleLaneStarted;
-        laneDestructor.OnLaneDestroyed -= HandleLaneUpdated;
-        laneDestructor.OnDestroyFinished -= HandleLaneFinished;
+        tutorialManager.TutorialStarted -= UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialSectionStarted -= UpdateTutorialScoresRequirements;
+        tutorialManager.TutorialCompleted -= ClearScoresRequirements;
     }
 
-    public void Update()
+    // :::::::::: TASK METHODS ::::::::::
+    private void HandleTaskLaneUpdated()
     {
         if (CurrentTask.Instance.ThereIsPinned())
         {
             Task task = CurrentTask.Instance.PinnedTask;
 
-            UpdateScoreUI(task);
-
-            //if (task.state == TaskState.Active && graph.AreConnectedByPath(task.start, task.end))
-            //{
-            //    if (!task.MeetsSafetyRequirement()) safetyWarning.gameObject.SetActive(true);
-            //    if (!task.MeetsCharmRequirement()) charmWarning.gameObject.SetActive(true);
-            //}
-            //else
-            //{
-            //    safetyWarning.gameObject.SetActive(false);
-            //    charmWarning.gameObject.SetActive(false);
-            //}
+            if (task.info.safetyRequirement) currentSafety.text = task.currentSafetyCount.ToString();
+            if (task.info.charmRequirement) currentCharm.text = task.currentCharmCount.ToString();
+            if (task.info.flowRequirement) currentFlow.text = ((int)(task.currentFlowPercentage * 100)).ToString();
+            if (task.info.maxMaterialRequirement || task.info.minMaterialRequirement) usedMaterial.text = task.usedMaterial.ToString();
         }
+    }
 
-        Vector3 worldPos = grid.GetWorldPositionFromCell(lastCellPosition.x, lastCellPosition.y) + offset;
-        Vector2 newPos = mainCamera.WorldToScreenPoint(worldPos);
-        scoresContainer.transform.position = newPos;
+    private void UpdateTaskScoresRequirements(Task task)
+    {
+        if (task.info.safetyRequirement) reqSafety.text = task.info.minSafetyCount.ToString();
+        if (task.info.charmRequirement) reqCharm.text = task.info.minCharmCount.ToString();
+        if (task.info.flowRequirement) reqFlow.text = ((int)(task.info.minFlowPercentage * 100)).ToString();
+        if (task.info.maxMaterialRequirement) maxMaterial.text = task.info.maxMaterial.ToString();
+    }
+
+    private void ClearTaskScoresRequirements(Task task) { ClearScoresRequirements(); }
+
+    // :::::::::: TUTORIAL METHODS ::::::::::
+    private void HandleTutorialLaneUpdated()
+    {
+        if (reqSafety.text != "-") currentSafety.text = tutorialManager.currentSafety.ToString();
+        if (reqCharm.text != "-") currentCharm.text = tutorialManager.currentCharm.ToString();
+        if (reqFlow.text != "-") currentFlow.text = ((int)(tutorialManager.currentFlow * 100)).ToString();
+        if (maxMaterial.text != "-") usedMaterial.text = tutorialManager.usedMaterial.ToString();
+    }
+
+    private void UpdateTutorialScoresRequirements(TutorialData tutorial)
+    {
+        tutorialSafetyScore = tutorial.safetyRequirement ? tutorial.minSafetyCount.ToString() : "-";
+        tutorialCharmScore = tutorial.charmRequirement ? tutorial.minCharmCount.ToString() : "-";
+        tutorialFlowScore = tutorial.flowRequirement ? ((int)(tutorial.minFlowPercentage * 100)).ToString() : "-";
+        tutorialUsedMaterial = tutorial.maxMaterialRequirement ? tutorial.maxMaterial.ToString() : "-";
+    }
+    private void UpdateTutorialScoresRequirements(TutorialSection section)
+    {
+        if (section.checkRequirements)
+        {
+            reqSafety.text = tutorialSafetyScore;
+            reqCharm.text = tutorialCharmScore;
+            reqFlow.text = tutorialFlowScore;
+            maxMaterial.text = tutorialUsedMaterial;
+        }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    private void HandleLaneStarted(Vector2Int gridPosition)
+    private void ClearScoresRequirements()
     {
-        if (deactivateCoroutine != null)
-        {
-            StopCoroutine(deactivateCoroutine);
-            deactivateCoroutine = null;
-        }
+        currentSafety.text = "-";
+        currentCharm.text = "-";
+        currentFlow.text = "-";
+        usedMaterial.text = "-";
 
-        if (CurrentTask.Instance.ThereIsPinned())
-        {
-            if (CurrentTask.Instance.PinnedTask.info.safetyRequirement) scoresContainer.GetChild(0).gameObject.SetActive(true);
-            if (CurrentTask.Instance.PinnedTask.info.charmRequirement) scoresContainer.GetChild(1).gameObject.SetActive(true);
-        }
-    }
-
-    private void HandleLaneUpdated(Vector2Int gridPosition)
-    {
-        if (CurrentTask.Instance.ThereIsPinned())
-        {
-            Vector3 worldPos = grid.GetWorldPositionFromCell(lastCellPosition.x, lastCellPosition.y) + offset;
-            Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPos);
-            scoresContainer.transform.position = screenPos;
-        }
-    }
-
-    private void HandleLaneFinished(Vector2Int gridPosition)
-    {
-        if (CurrentTask.Instance.ThereIsPinned())
-            deactivateCoroutine = StartCoroutine(DeactivateAfterDelay(5f));
-    }
-
-    private void HandleTaskCompleted(Task task)
-    {
-        if (CurrentTask.Instance.PinnedTask.info.safetyRequirement) scoresContainer.GetChild(0).gameObject.SetActive(false);
-        if (CurrentTask.Instance.PinnedTask.info.charmRequirement) scoresContainer.GetChild(1).gameObject.SetActive(false);
-    }
-
-    private IEnumerator DeactivateAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (CurrentTask.Instance.PinnedTask.info.safetyRequirement) scoresContainer.GetChild(0).gameObject.SetActive(false);
-        if (CurrentTask.Instance.PinnedTask.info.charmRequirement) scoresContainer.GetChild(1).gameObject.SetActive(false);
-        deactivateCoroutine = null;
-    }
-
-    // ::::: 
-    private void UpdateScoreUI(Task task)
-    {
-        // Safety
-        float safetyUI = task.info.safetyRequirement
-            ? (float)task.currentSafetyCount / (float)task.info.minSafetyCount
-            : 0f;
-        safetyFill.fillAmount = Mathf.Clamp(safetyUI, 0f, 1f);
-
-        // Charm
-        float charmUI = task.info.charmRequirement
-            ? (float)task.currentCharmCount / (float)task.info.minCharmCount
-            : 0f;
-        charmFill.fillAmount = Mathf.Clamp(charmUI, 0f, 1f);
-
-        // Flow
-        float flowUI = task.info.flowRequirement
-            ? task.currentFlowPercentage
-            : 0f;
-        flowUI = Mathf.Clamp(flowUI, 0f, 1f);
+        reqSafety.text = "-";
+        reqCharm.text = "-";
+        reqFlow.text = "-";
+        maxMaterial.text = "-";
     }
 }

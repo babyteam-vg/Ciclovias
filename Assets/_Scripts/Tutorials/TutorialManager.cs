@@ -36,6 +36,7 @@ public class TutorialManager : MonoBehaviour
     private bool isTutorialActive = false;
     private MapData originalMapData;
 
+    public event Action ActiveTutorialScoresUpdated;
     public event Action<TutorialData> TutorialStarted;
     public event Action<TutorialSection> TutorialSectionStarted;
     public event Action TutorialSectionPresentationStarted;
@@ -105,6 +106,8 @@ public class TutorialManager : MonoBehaviour
         currentCharm = cellScoresCalculator.CalculatePathCharm(path);
         currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
         usedMaterial = path.Count;
+
+        ActiveTutorialScoresUpdated?.Invoke();
 
         if (currentSection.destroyRequirement)
         {

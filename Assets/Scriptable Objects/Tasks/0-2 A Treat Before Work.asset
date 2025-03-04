@@ -43,3 +43,5 @@ MonoBehaviour:
     bicicleta.
   - "Tienes talento para esto, te llover\xE1n las peticiones de construcci\xF3n,
     \xA1te lo aseguro!"
+  posts:
+  - {fileID: 11400000, guid: ef851d0fa1d96504a8af3d1f703f6bc1, type: 2}

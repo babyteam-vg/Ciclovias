@@ -158,4 +158,53 @@ public class Graph : MonoBehaviour
 
         return false;
     }
+
+    // :::::::::: STORAGE METHODS ::::::::::
+    // ::::: Graph -> GraphData
+    public GraphData SaveGraphData()
+    {
+        GraphData graphData = new GraphData();
+
+        // Nodes
+        foreach (var node in nodes.Values)
+        {
+            graphData.nodes.Add(new GraphData.SerializableNode
+            {
+                position = node.position,
+                worldPosition = node.worldPosition
+            });
+        }
+
+        // Edges
+        foreach (var node in nodes.Values)
+        {
+            foreach (var neighbor in node.neighbors)
+            {
+                if (node.position.x < neighbor.position.x || // Prrevent Duplicates
+                    (node.position.x == neighbor.position.x && node.position.y < neighbor.position.y))
+                {
+                    graphData.edges.Add(new GraphData.SerializableEdge
+                    {
+                        nodeA = node.position,
+                        nodeB = neighbor.position
+                    });
+                }
+            }
+        }
+
+        return graphData;
+    }
+
+    // ::::: GraphData -> Graph
+    public void LoadGraphData(GraphData graphData)
+    {
+        nodes.Clear();
+        nodePositions.Clear();
+
+        foreach (var serializableNode in graphData.nodes) // Nodes
+            AddNode(serializableNode.position, serializableNode.worldPosition);
+
+        foreach (var serializableEdge in graphData.edges) // Edges
+            AddEdge(serializableEdge.nodeA, serializableEdge.nodeB);
+    }
 }
