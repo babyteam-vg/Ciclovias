@@ -105,12 +105,7 @@ public class TaskDiary : MonoBehaviour
     // ::::: TasksData -> Tasks
     public void LoadTasks(List<TaskData> tasksData)
     {
-        if (tasksData.Count != tasks.Count)
-        {
-            Debug.LogError($"#TasksData ({tasksData.Count}) =/= #Tasks ({tasks.Count})");
-            return;
-        }
-
+        if (tasksData.Count != tasks.Count) return;
 
         for (int i = 0; i < tasks.Count; i++)
         {

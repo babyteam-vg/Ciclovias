@@ -13,17 +13,25 @@ public class MainMenuManager : MonoBehaviour
     // ::::: Pause Menu
     public void OnContinuePress()
     {
-        GameData gameData = storageManager.LoadGame();
+        string mostRecentSave = storageManager.GetMostRecentSaveFile();
+        if (mostRecentSave != null)
+        {
+            GameData gameData = storageManager.LoadGame(mostRecentSave);
 
-        if (gameData != null)
-        {
-            GameStateManager.Instance.SetLoadedGameData(gameData);
-            SceneManager.LoadScene("GameMap");
+            if (gameData != null)
+            {
+                GameStateManager.Instance.SetLoadedGameData(gameData);
+                SceneManager.LoadScene("GameMap");
+            }
+            else Debug.LogWarning("Failed to load the most recent savefile.");
         }
-        else
-        {
-            Debug.LogWarning("No savefile found!");
-        }
+        else Debug.LogWarning("No savefile found!");
+    }
+
+    public void OnNewGamePress()
+    {
+        GameStateManager.Instance.ResetLoadedGameData();
+        SceneManager.LoadScene("GameMap");
     }
 
     public void OnExitPress()

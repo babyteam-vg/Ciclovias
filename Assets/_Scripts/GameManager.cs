@@ -104,12 +104,12 @@ public class GameManager : MonoBehaviour
 
     private void OnTaskCompleted(Task task)
     {
-        SaveGame();
+        SaveGame(); // Auto Save
     }
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Save
-    public void SaveGame()
+    public void SaveGame(string fileName = null)
     {
         GameData gameData = new GameData
         {
@@ -117,10 +117,12 @@ public class GameManager : MonoBehaviour
             tasks = TaskDiary.Instance.SaveTasks()
         };
 
-        bool success = storageManager.SaveGame(gameData);
+        bool success = fileName == null
+            ? storageManager.AutoSaveGame(gameData)
+            : storageManager.ManualSaveGame(fileName, gameData);
 
-        if (success) Debug.Log("Game Successfully Saved!");
-        else Debug.LogError("Error Saving the Game :(");
+        if (success) Debug.Log("GAME SAVED");
+        else Debug.LogError("ERROR SAVING");
     }
 
     // ::::: Load
@@ -129,6 +131,6 @@ public class GameManager : MonoBehaviour
         graph.LoadGraph(gameData.graph);
         taskDiary.LoadTasks(gameData.tasks);
 
-        Debug.Log("Partida cargada correctamente.");
+        Debug.Log("GAME LOADED");
     }
 }

@@ -1,13 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
     public GameData LoadedGameData { get; private set; }
-    public bool isLoaded { get; private set; }
 
     private StorageManager storageManager;
 
+    // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         if (Instance == null)
@@ -17,8 +18,43 @@ public class GameStateManager : MonoBehaviour
         } else Destroy(gameObject);
     }
 
+    // :::::::::: PUBLIC METHODS ::::::::::
+    // ::::: Whenever Trying to Load
     public void SetLoadedGameData(GameData gameData)
     {
         LoadedGameData = gameData;
+    }
+
+    // ::::: 
+    public void ResetLoadedGameData()
+    {
+        LoadedGameData = null;
+
+        LoadedGameData = new GameData
+        {
+            graph = new GraphData(),
+            tasks = new List<TaskData>(),
+        };
+
+        Debug.Log("LoadedGameData reseted and ready for a new game.");
+    }
+
+    // ::::: List All Available Saves
+    public void ListSaves()
+    {
+        List<string> saveFiles = storageManager.ListSaveFiles();
+
+        if (saveFiles.Count > 0)
+        {
+            Debug.Log("Guardados disponibles:");
+            foreach (string saveFile in saveFiles)
+            {
+                Debug.Log(saveFile);
+            }
+        }
+        else
+        {
+            Debug.Log("No hay guardados disponibles.");
+        }
     }
 }

@@ -19,18 +19,15 @@ public class JsonDataService
             Formatting = Formatting.None
         };
     }
-
-    // ::::: Save
+    
+    // ::::: Serialize (Save)
     public bool SaveData<T>(string RelativePath, T Data, bool Encrypted)
     {
         string path = Application.persistentDataPath + RelativePath;
 
         try
         {
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            if (File.Exists(path)) File.Delete(path);
 
             using FileStream stream = File.Create(path);
             stream.Close();
@@ -40,20 +37,18 @@ public class JsonDataService
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error al guardar los datos: {e.Message}");
+            Debug.LogError($"Error serializing data: {e.Message}");
             return false;
         }
     }
 
-    // ::::: Load
+    // ::::: Deserialize (Load)
     public T LoadData<T>(string RelativePath, bool Encrypted)
     {
         string path = Application.persistentDataPath + RelativePath;
 
         if (!File.Exists(path))
-        {
             throw new FileNotFoundException($"{path} does not exist!");
-        }
 
         try
         {
@@ -62,7 +57,7 @@ public class JsonDataService
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error al cargar los datos: {e.Message}");
+            Debug.LogError($"Error deserializing data: {e.Message}");
             throw;
         }
     }
