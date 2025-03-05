@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ public class SocialNetworkManager : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void Start()
     {
+        RegeneratePostsFromCompletedTasks();
         StartCoroutine(ShowPostsRoutine());
     }
 
@@ -85,5 +87,24 @@ public class SocialNetworkManager : MonoBehaviour
             DisplayPost(nextPost);
             yield return new WaitForSeconds(timeBetweenPosts);
         }
+    }
+
+    // ::::: When Loading Game
+    private void RegeneratePostsFromCompletedTasks()
+    {
+        repeatablePosts.Clear();
+        uniquePostQueue.Clear();
+
+        List<Task> completedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Completed).ToList();
+
+        foreach (Task task in completedTasks)
+            foreach (PostInfo post in task.info.posts)
+            {
+                if (post.isRepeatable)
+                    repeatablePosts.Add(post);
+                else uniquePostQueue.Enqueue(post);
+            }
+
+        Debug.Log("Posts successfully regenerated.");
     }
 }

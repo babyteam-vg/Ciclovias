@@ -25,13 +25,16 @@ public class GameStateManager : MonoBehaviour
         LoadedGameData = gameData;
     }
 
-    // ::::: 
+    // ::::: When Starting a New Game
     public void ResetLoadedGameData()
     {
         LoadedGameData = null;
 
         LoadedGameData = new GameData
         {
+            MapState = 0,
+            SmokeState = 0,
+            MaterialAmount = 80,
             graph = new GraphData(),
             tasks = new List<TaskData>(),
         };
@@ -48,13 +51,8 @@ public class GameStateManager : MonoBehaviour
         {
             Debug.Log("Guardados disponibles:");
             foreach (string saveFile in saveFiles)
-            {
                 Debug.Log(saveFile);
-            }
         }
-        else
-        {
-            Debug.Log("No hay guardados disponibles.");
-        }
+        else Debug.Log("No hay guardados disponibles.");
     }
 }

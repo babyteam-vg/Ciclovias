@@ -113,6 +113,9 @@ public class GameManager : MonoBehaviour
     {
         GameData gameData = new GameData
         {
+            MapState = MapState,
+            SmokeState = SmokeState,
+            MaterialAmount = MaterialAmount,
             graph = graph.SaveGraph(),
             tasks = TaskDiary.Instance.SaveTasks()
         };
@@ -128,9 +131,18 @@ public class GameManager : MonoBehaviour
     // ::::: Load
     private void ApplyLoadedGameData(GameData gameData)
     {
-        graph.LoadGraph(gameData.graph);
-        taskDiary.LoadTasks(gameData.tasks);
+        if (gameData != null)
+        {
+            MapState = gameData.MapState;
+            SmokeState = gameData.SmokeState;
+            MaterialAmount = gameData.MaterialAmount;
+            graph.LoadGraph(gameData.graph);
+            taskDiary.LoadTasks(gameData.tasks);
 
-        Debug.Log("GAME LOADED");
+            amountText.text = "x" + MaterialAmount.ToString();
+
+            Debug.Log("GAME LOADED");
+        }
+        else Debug.Log("NO GAME DATA");
     }
 }
