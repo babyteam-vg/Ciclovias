@@ -13,7 +13,7 @@ public class InGameMenuManager : MonoBehaviour
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private DialogManager dialogManager;
 
-    [Header("UI Objects")]
+    [Header("UI References")]
     public GameObject pauseUI;
     public GameObject tasksDiaryUI;
     public GameObject receiveTaskUI;
@@ -34,11 +34,11 @@ public class InGameMenuManager : MonoBehaviour
 
     private void OnEnable()
     {
-        taskManager.TaskCompleted += EndBuild;
+        taskManager.TaskSealed += EndBuild;
     }
     private void OnDisable()
     {
-        taskManager.TaskCompleted -= EndBuild;
+        taskManager.TaskSealed -= EndBuild;
     }
 
     // :::::::::: PAUSE MANAGER ::::::::::
@@ -58,7 +58,7 @@ public class InGameMenuManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    // :::::::::: TASK MANAGER ::::::::::
+    // :::::::::: TASKS MANAGER ::::::::::
     // ::::: Tasks Diary
     public void OnTasksDiaryPress()
     {
@@ -83,6 +83,12 @@ public class InGameMenuManager : MonoBehaviour
         taskManager.AcceptTask(TaskReceiver.Instance.ReceivedTask);
         receiveTaskUI.SetActive(false);
         MenuClosed?.Invoke(); // !
+    }
+
+    // ::::: Confirm Task
+    public void OnConfirmTaskPress()
+    {
+        taskManager.ConfirmTask(CurrentTask.Instance.PinnedTask);
     }
 
     // :::::::::: DIALOG MANAGER ::::::::::

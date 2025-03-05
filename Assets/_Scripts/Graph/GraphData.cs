@@ -10,6 +10,7 @@ public class GraphData
     {
         public Vector2Int position;
         public Vector2 worldPosition;
+        public bool indestructible;
     }
 
     [System.Serializable]

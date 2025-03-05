@@ -32,11 +32,11 @@ public class Graph : MonoBehaviour
     }
 
     // ::::: Add a Node
-    public void AddNode(Vector2Int position, Vector2 worldPosition)
+    public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
     {
         if (!nodes.ContainsKey(position))
         {
-            nodes[position] = new Node(position, worldPosition);
+            nodes[position] = new Node(position, worldPosition, indestructible);
             nodePositions.Add(position);
             OnNodeAdded?.Invoke(position);
         }
@@ -159,6 +159,13 @@ public class Graph : MonoBehaviour
         return false;
     }
 
+    // ::::: Seal Nodes
+    public void SealNodes(List<Vector2Int> listOfNodes)
+    {
+        foreach (Vector2Int nodePos in listOfNodes)
+            GetNode(nodePos).indestructible = true;
+    }
+
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Graph -> GraphData
     public GraphData SaveGraph()
@@ -171,7 +178,8 @@ public class Graph : MonoBehaviour
             graphData.nodes.Add(new GraphData.SerializableNode
             {
                 position = node.position,
-                worldPosition = node.worldPosition
+                worldPosition = node.worldPosition,
+                indestructible = node.indestructible,
             });
         }
 
@@ -201,8 +209,8 @@ public class Graph : MonoBehaviour
         nodes.Clear();
         nodePositions.Clear();
 
-        foreach (var serializableNode in graphData.nodes) // Nodes
-            AddNode(serializableNode.position, serializableNode.worldPosition);
+        foreach (var nodeData in graphData.nodes) // Nodes
+            AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible);
 
         foreach (var serializableEdge in graphData.edges) // Edges
             AddEdge(serializableEdge.nodeA, serializableEdge.nodeB);

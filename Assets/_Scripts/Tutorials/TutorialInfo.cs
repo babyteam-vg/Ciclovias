@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "Tutorial", menuName = "Scriptable Object/Tutorial")]
-public class TutorialData : ScriptableObject
+public class TutorialInfo : ScriptableObject
 {
     [Header("Basic")]
     public Vector2Int id;

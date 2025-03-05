@@ -19,8 +19,8 @@ public class DialogManager : MonoBehaviour
     private bool inDialog = false;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void OnEnable() { taskManager.TaskCompleted += StartDialog; }
-    private void OnDisable() { taskManager.TaskCompleted -= StartDialog; }
+    private void OnEnable() { taskManager.TaskSealed += StartDialog; }
+    private void OnDisable() { taskManager.TaskSealed -= StartDialog; }
 
     private void Start()
     {

@@ -114,7 +114,7 @@ public class Compound : MonoBehaviour
         if (IsGivingTask())
             givingTaskUI.SetActive(true);
     }
-    private void HideGivingTask(TutorialData _)
+    private void HideGivingTask(TutorialInfo _)
     {
         givingTaskUI.SetActive(false);
     }

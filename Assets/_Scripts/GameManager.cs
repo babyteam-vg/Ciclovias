@@ -36,11 +36,11 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        taskManager.TaskCompleted += OnTaskCompleted;
+        taskManager.TaskSealed += OnTaskSealed;
     }
     private void OnDisable()
     {
-        taskManager.TaskCompleted -= OnTaskCompleted;
+        taskManager.TaskSealed -= OnTaskSealed;
     }
 
     private void Start()
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
         animator.Play("MaterialCounter");
     }
 
-    private void OnTaskCompleted(Task task)
+    private void OnTaskSealed(Task task)
     {
         SaveGame(); // Auto Save
     }

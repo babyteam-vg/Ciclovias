@@ -110,19 +110,20 @@ public class TaskDiary : MonoBehaviour
         for (int i = 0; i < tasks.Count; i++)
         {
             Task task = tasks[i];
-            TaskData serializableTask = tasksData[i];
+            TaskData taskData = tasksData[i];
 
-            task.state = serializableTask.state;
+            task.state = taskData.state;
 
-            task.start = serializableTask.start;
-            task.end = serializableTask.end;
+            task.path = taskData.path;
+            //task.start = taskData.start;
+            //task.end = taskData.end;
 
-            task.currentSafetyCount = serializableTask.currentSafetyCount;
-            task.currentCharmCount = serializableTask.currentCharmCount;
-            task.currentFlowPercentage = serializableTask.currentFlowPercentage;
-            task.usedMaterial = serializableTask.usedMaterial;
+            task.currentSafetyCount = taskData.currentSafetyCount;
+            task.currentCharmCount = taskData.currentCharmCount;
+            task.currentFlowPercentage = taskData.currentFlowPercentage;
+            task.usedMaterial = taskData.usedMaterial;
 
-            task.currentToCross = serializableTask.currentToCross;
+            task.currentToCross = taskData.currentToCross;
         }
     }
 }

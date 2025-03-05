@@ -12,8 +12,9 @@ public class Task
     public Compound to;
 
     [Header("Path")]
-    public Vector2Int start;
-    public Vector2Int end;
+    public List<Vector2Int> path;
+    //public Vector2Int start;
+    //public Vector2Int end;
 
     [Header("Requirements")]
     public int currentSafetyCount;
@@ -49,8 +50,9 @@ public class Task
         {
             state = this.state,
 
-            start = this.start,
-            end = this.end,
+            path = this.path,
+            //start = this.start,
+            //end = this.end,
 
             currentSafetyCount = this.currentSafetyCount,
             currentCharmCount = this.currentCharmCount,
@@ -62,19 +64,20 @@ public class Task
     }
 
     // ::::: TaskData -> Task
-    public void LoadTask(TaskData serializableTask, TaskInfo info, Compound from, Compound to)
+    public void LoadTask(TaskData taskData, TaskInfo info, Compound from, Compound to)
     {
-        this.state = serializableTask.state;
+        this.state = taskData.state;
 
-        this.start = serializableTask.start;
-        this.end = serializableTask.end;
+        this.path = taskData.path;
+        //this.start = taskData.start;
+        //this.end = taskData.end;
 
-        this.currentSafetyCount = serializableTask.currentSafetyCount;
-        this.currentCharmCount = serializableTask.currentCharmCount;
-        this.currentFlowPercentage = serializableTask.currentFlowPercentage;
-        this.usedMaterial = serializableTask.usedMaterial;
+        this.currentSafetyCount = taskData.currentSafetyCount;
+        this.currentCharmCount = taskData.currentCharmCount;
+        this.currentFlowPercentage = taskData.currentFlowPercentage;
+        this.usedMaterial = taskData.usedMaterial;
 
-        this.currentToCross = serializableTask.currentToCross;
+        this.currentToCross = taskData.currentToCross;
 
         this.info = info;
         this.from = from;

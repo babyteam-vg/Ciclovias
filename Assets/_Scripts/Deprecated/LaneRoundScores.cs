@@ -41,7 +41,7 @@ public class LaneRoundScores : MonoBehaviour
         laneConstructor.OnLaneBuilt += HandleLaneUpdated;
         laneConstructor.OnBuildFinished += HandleLaneFinished;
 
-        taskManager.TaskCompleted += HandleTaskCompleted;
+        taskManager.TaskSealed += HandleTaskCompleted;
 
         laneDestructor.OnDestroyStarted += HandleLaneStarted;
         laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
@@ -54,7 +54,7 @@ public class LaneRoundScores : MonoBehaviour
         laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
         laneConstructor.OnBuildFinished -= HandleLaneFinished;
 
-        taskManager.TaskCompleted -= HandleTaskCompleted;
+        taskManager.TaskSealed -= HandleTaskCompleted;
 
         laneDestructor.OnDestroyStarted -= HandleLaneStarted;
         laneDestructor.OnLaneDestroyed -= HandleLaneUpdated;

@@ -6,14 +6,16 @@ public class Node
     public Vector2Int position;
     public Vector2 worldPosition;
     public List<Node> neighbors;
+    public bool indestructible;
 
     // :::::::::: METHODS ::::::::::
     // ::::: Constructor
-    public Node(Vector2Int position, Vector2 worldPosition)
+    public Node(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
     {
         this.position = position;
         this.worldPosition = worldPosition;
         this.neighbors = new List<Node>();
+        this.indestructible = indestructible;
     }
 
     // ::::: O- + -O

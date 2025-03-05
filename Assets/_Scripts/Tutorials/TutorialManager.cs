@@ -15,7 +15,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private IsometricCameraController cameraController;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
-    [SerializeField] private List<TutorialData> tutorialDataList;
+    [SerializeField] private List<TutorialInfo> tutorialDataList;
 
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
@@ -30,14 +30,14 @@ public class TutorialManager : MonoBehaviour
     public float currentFlow; 
     public int currentCharm, usedMaterial;
 
-    private Dictionary<Vector2Int, TutorialData> tutorialDictionary;
-    private TutorialData activeTutorial;
+    private Dictionary<Vector2Int, TutorialInfo> tutorialDictionary;
+    private TutorialInfo activeTutorial;
     private int currentSectionIndex;
     private bool isTutorialActive = false;
     private MapData originalMapData;
 
     public event Action ActiveTutorialScoresUpdated;
-    public event Action<TutorialData> TutorialStarted;
+    public event Action<TutorialInfo> TutorialStarted;
     public event Action<TutorialSection> TutorialSectionStarted;
     public event Action TutorialSectionPresentationStarted;
     public event Action TutorialSectionPresentationDone;
@@ -74,7 +74,7 @@ public class TutorialManager : MonoBehaviour
     {
         if (isTutorialActive) return;
 
-        if (tutorialDictionary.TryGetValue(tutorialID, out TutorialData tutorialData))
+        if (tutorialDictionary.TryGetValue(tutorialID, out TutorialInfo tutorialData))
         {
             activeTutorial = tutorialData;
             currentSectionIndex = 0;
@@ -162,7 +162,7 @@ public class TutorialManager : MonoBehaviour
     // :::::::::: PRIVATE METHODS ::::::::::
     private void InitializeTutorialDictionary()
     {
-        tutorialDictionary = new Dictionary<Vector2Int, TutorialData>();
+        tutorialDictionary = new Dictionary<Vector2Int, TutorialInfo>();
 
         foreach (var tutorialData in tutorialDataList)
             tutorialDictionary[tutorialData.id] = tutorialData;

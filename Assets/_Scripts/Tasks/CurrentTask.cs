@@ -33,13 +33,13 @@ public class CurrentTask : MonoBehaviour
     {
         taskManager.TaskAccepted += PinTask;
         taskManager.TaskActivated += PinTask;
-        taskManager.TaskCompleted += UnpinTask;
+        taskManager.TaskSealed += UnpinTask;
     }
     private void OnDisable()
     {
         taskManager.TaskAccepted -= PinTask;
         taskManager.TaskActivated -= PinTask;
-        taskManager.TaskCompleted -= UnpinTask;
+        taskManager.TaskSealed -= UnpinTask;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

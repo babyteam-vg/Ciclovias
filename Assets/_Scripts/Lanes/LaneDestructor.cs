@@ -52,7 +52,9 @@ public class LaneDestructor : MonoBehaviour
     // ::::: Mouse Input: Down
     private void StartDestroying(Vector2Int gridPosition)
     {
-        if (isAllowed && graph.GetNode(gridPosition) != null)
+        if (isAllowed
+            && graph.GetNode(gridPosition) != null
+            && !graph.GetNode(gridPosition).indestructible)
         {
             isDestroying = true;
             OnDestroyStarted?.Invoke(gridPosition);
@@ -65,9 +67,10 @@ public class LaneDestructor : MonoBehaviour
     // ::::: Mouse Input: Hold
     private void ContinueDestroying(Vector2Int gridPosition)
     {
-        if (isAllowed && isDestroying &&
-            grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
-            IsInCriticalArea(gridPosition))
+        if (isAllowed && isDestroying
+            && grid.IsAdjacent(lastCellPosition.Value, gridPosition)
+            && IsInCriticalArea(gridPosition)
+            && !graph.GetNode(gridPosition).indestructible)
         {
             if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
@@ -93,7 +96,7 @@ public class LaneDestructor : MonoBehaviour
         if (node != null)
         {
             int edgeCount = node.neighbors.Count;
-            GameManager.Instance.AddMaterial(edgeCount); // Add material for each removed edge
+            GameManager.Instance.AddMaterial(edgeCount);
         }
 
         graph.RemoveNode(gridPosition);

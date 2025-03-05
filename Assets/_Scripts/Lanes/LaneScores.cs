@@ -34,7 +34,7 @@ public class LaneScores : MonoBehaviour
     private void OnEnable()
     {
         taskManager.ActiveTaskScoresUpdated += HandleTaskLaneUpdated;
-        taskManager.TaskCompleted += ClearTaskScoresRequirements;
+        taskManager.TaskSealed += ClearTaskScoresRequirements;
 
         currentTask.TaskPinned += UpdateTaskScoresRequirements;
 
@@ -46,7 +46,7 @@ public class LaneScores : MonoBehaviour
     private void OnDisable()
     {
         taskManager.ActiveTaskScoresUpdated -= HandleTaskLaneUpdated;
-        taskManager.TaskCompleted -= ClearTaskScoresRequirements;
+        taskManager.TaskSealed -= ClearTaskScoresRequirements;
 
         currentTask.TaskPinned -= UpdateTaskScoresRequirements;
 
@@ -88,7 +88,7 @@ public class LaneScores : MonoBehaviour
         if (maxMaterial.text != "-") usedMaterial.text = tutorialManager.usedMaterial.ToString();
     }
 
-    private void UpdateTutorialScoresRequirements(TutorialData tutorial)
+    private void UpdateTutorialScoresRequirements(TutorialInfo tutorial)
     {
         tutorialSafetyScore = tutorial.safetyRequirement ? tutorial.minSafetyCount.ToString() : "-";
         tutorialCharmScore = tutorial.charmRequirement ? tutorial.minCharmCount.ToString() : "-";

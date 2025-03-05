@@ -29,11 +29,11 @@ public class SocialNetworkManager : MonoBehaviour
 
     private void OnEnable()
     {
-        taskManager.TaskCompleted += OnTaskCompleted;
+        taskManager.TaskSealed += OnTaskSealed;
     }
     private void OnDisable()
     {
-        taskManager.TaskCompleted -= OnTaskCompleted;
+        taskManager.TaskSealed -= OnTaskSealed;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -67,7 +67,7 @@ public class SocialNetworkManager : MonoBehaviour
     }
 
     // ::::: When a Task is Completed
-    private void OnTaskCompleted(Task completedTask)
+    private void OnTaskSealed(Task completedTask)
     {
         foreach (PostInfo post in completedTask.info.posts)
         {
