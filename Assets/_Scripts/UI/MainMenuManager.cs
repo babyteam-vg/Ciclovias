@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
+    [SerializeField] private LoadingScene loadingScene;
+
     private StorageManager storageManager = new StorageManager();
 
     // :::::::::: MONO METHODS ::::::::::
@@ -13,6 +15,8 @@ public class MainMenuManager : MonoBehaviour
     // ::::: Pause Menu
     public void OnContinuePress()
     {
+        loadingScene.LoadScene(1); // Loading Screen
+
         string mostRecentSave = storageManager.GetMostRecentSaveFile();
         if (mostRecentSave != null)
         {
@@ -30,6 +34,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnNewGamePress()
     {
+        loadingScene.LoadScene(1); // Loading Screen
+
         GameStateManager.Instance.ResetLoadedGameData();
         SceneManager.LoadScene("GameMap");
     }
