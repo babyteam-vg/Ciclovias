@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Splines;
 
 public class SplinesManager : MonoBehaviour
 {
     [Header("Dependencies")]
+    [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
@@ -13,10 +15,14 @@ public class SplinesManager : MonoBehaviour
     [SerializeField] private Material splineMaterial;
     [SerializeField] private float splineWidth = 0.1f;
 
+    private bool isIntersection = false;
     private float tolerance = 0.9f;
     private SplineContainer splineContainer;
     private Spline spline;
+
+    private Vector3 startWorldPosition;
     private Vector2Int previousNodePosition;
+    private Queue<BezierKnot> knotQueue = new Queue<BezierKnot>(3);
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -30,11 +36,13 @@ public class SplinesManager : MonoBehaviour
 
     private void OnEnable()
     {
+        laneConstructor.OnBuildStarted += UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt += HandleLaneBuilt;
         //laneDestructor.OnLaneDestroyed += HandleLaneDestroyed;
     }
     private void OnDisable()
     {
+        laneConstructor.OnBuildStarted -= UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
         //laneDestructor.OnLaneDestroyed -= HandleLaneDestroyed;
     }
@@ -47,9 +55,13 @@ public class SplinesManager : MonoBehaviour
     // :::::::::: PUBLIC METHODS ::::::::::
 
     // :::::::::: PRIVATE METHODS ::::::::::
+    private void UpdateStartNodePosition(Vector2Int startNodePosition) { startWorldPosition = grid.GetWorldPositionFromCellCentered(startNodePosition.x, startNodePosition.y); }
+
     // ::::: When a Lane is Built
     private void HandleLaneBuilt(Vector2Int addedNodePosition)
     {
+        Vector3 addedWorldPosition = grid.GetWorldPositionFromCellCentered(addedNodePosition.x, addedNodePosition.y);
+
         Node addedNode = graph.GetNode(addedNodePosition);
         if (addedNode == null) return;
 
@@ -59,33 +71,26 @@ public class SplinesManager : MonoBehaviour
         // Edge of the Lane
         if (previousNeighbors.Count < 2) // Current Spline
         {
-            StartNewSpline(addedNode.worldPosition);
-            //Debug.Log("LÍMITE");
+            knotQueue.Clear();
+            StartNewSpline(startWorldPosition);
             previousNodePosition = addedNodePosition;
             return;
         }
 
         // Check Collinearity
-        bool isIntersection = false;
         foreach (var neighbor in previousNeighbors)
             if (!IsCollinear(previousNodePosition, neighbor, addedNodePosition))
             {
                 isIntersection = true;
                 break;
             }
+            else isIntersection = false;
 
-        if (isIntersection)
-        {
-            StartNewSpline(addedNode.worldPosition);
-            Debug.Log("INTERSECCIÓN");
-        }
-        else
-        {
-            AddKnotToCurrentSpline(addedNode.worldPosition);
-            Debug.Log("COLINEALES");
-        }
+        if (isIntersection) StartNewSpline(addedWorldPosition);
+        else AddKnotToCurrentSpline(addedWorldPosition);
 
         previousNodePosition = addedNodePosition;
+        if (knotQueue.Count == 3) knotQueue.Dequeue();
     }
 
     // ::::: Detect Collinearity
@@ -99,44 +104,45 @@ public class SplinesManager : MonoBehaviour
         return crossProduct == 0;
     }
 
-    // ::::: New Spline (Limite or Intersection)
+    // ::::: New Spline (Limit or Intersection)
     private void StartNewSpline(Vector3 position)
     {
-        // Crear una nueva spline
+        if (isIntersection)
+        {
+            spline.Remove(spline.Knots.Last());
+            spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
+        }
+
         Spline newSpline = new Spline();
 
-        // Crear el primer BezierKnot (puedes ajustar las tangentes y rotación si es necesario)
         BezierKnot startKnot = new BezierKnot(position);
-
-        // Añadir el primer knot a la nueva spline
-        newSpline.Insert(0, startKnot, TangentMode.Broken, 0.5f);  // Puedes ajustar el modo de tangente y la tensión
-
-        // Asignar la nueva spline al SplineContainer
+        newSpline.Insert(0, startKnot, TangentMode.Broken, 0.5f);
         splineContainer.AddSpline(newSpline);
-
-        // Debug para verificar que la nueva spline fue añadida
-        Debug.Log("Nueva spline iniciada y añadida al contenedor.");
-
-        // Si lo deseas, también puedes asignar la nueva spline a la variable spline para seguir trabajando con ella
         spline = newSpline;
+
+        knotQueue.Enqueue(startKnot);
     }
 
+    // ::::: Continue Spline (Collinear)
     private void AddKnotToCurrentSpline(Vector3 worldPosition)
     {
-        // Crea un BezierKnot con la posición y sin tangentes por ahora (tú puedes definir las tangentes y rotación luego)
         BezierKnot newKnot = new BezierKnot(worldPosition);
 
-        // Aquí verificamos si la spline ya está inicializada, si no es así, inicializamos el contenedor
         if (spline != null)
         {
-            // Usamos el método Insert para agregar el nuevo knot en la posición deseada
-            spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);  // Puedes ajustar el modo de tangente y la tensión
-            Debug.Log("Nuevo Knot añadido a la spline.");
+            if (spline.Count == 0)
+            {
+                // First Knot
+                spline.Insert(0, newKnot, TangentMode.Broken, 0.5f);
+            }
+            else
+            {
+                // Add Knot
+                if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
+                spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
+            }
         }
-        else
-        {
-            Debug.LogWarning("No se pudo añadir el knot, la spline no está inicializada.");
-        }
-    }
 
+        knotQueue.Enqueue(newKnot);
+    }
 }
