@@ -31,6 +31,21 @@ public class Graph : MonoBehaviour
         return node;
     }
 
+    // ::::: Get Node's Neighbors
+    public List<Node> GetNeighbors(Vector2Int position) { return GetNode(position).neighbors; }
+    public List<Vector2Int> GetNeighborsPos(Vector2Int position)
+    {
+        Node node = GetNode(position);
+        if (node != null)
+        {
+            List<Vector2Int> neighborPositions = new List<Vector2Int>();
+            foreach (Node neighbor in node.neighbors)
+                neighborPositions.Add(neighbor.position);
+            return neighborPositions;
+        }
+        return new List<Vector2Int>();
+    }
+
     // ::::: Add a Node
     public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
     {
@@ -94,6 +109,7 @@ public class Graph : MonoBehaviour
 
     // ::::: Get All Nodes
     public List<Node> GetAllNodes() { return new List<Node>(nodes.Values); }
+    public HashSet<Vector2Int> GetAllNodesPosition() { return nodePositions; }
 
     // ::::: Is Any of These (x, y) in the Graph?
     public bool ContainsAny(IEnumerable<Vector2Int> positions)

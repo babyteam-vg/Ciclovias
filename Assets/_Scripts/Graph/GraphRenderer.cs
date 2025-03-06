@@ -45,7 +45,6 @@ public class GraphRenderer : MonoBehaviour
         graph.OnEdgeRemoved += HandleEdgeRemoved;
         graph.OnLonelyNodeRemoved += HandleLonelyNodeRemoved;
     }
-
     private void OnDisable()
     {
         // Unsubscribe from Graph events
