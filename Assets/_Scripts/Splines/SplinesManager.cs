@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,26 +12,20 @@ public class SplinesManager : MonoBehaviour
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
 
-    [Header("Variables")]
-    [SerializeField] private Material splineMaterial;
-    [SerializeField] private float splineWidth = 0.1f;
-
-    private bool isIntersection = false;
-    private float tolerance = 0.9f;
-    private SplineContainer splineContainer;
+    public SplineContainer splineContainer;
+    
     private Spline spline;
-
+    private bool isIntersection = false;
     private Vector3 startWorldPosition;
     private Vector2Int previousNodePosition;
     private Queue<BezierKnot> knotQueue = new Queue<BezierKnot>(3);
+
+    public event Action SplineChanged;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
         splineContainer = GetComponent<SplineContainer>();
-        if (splineContainer == null)
-            splineContainer = gameObject.AddComponent<SplineContainer>();
-
         spline = splineContainer.Spline;
     }
 
@@ -38,12 +33,14 @@ public class SplinesManager : MonoBehaviour
     {
         laneConstructor.OnBuildStarted += UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt += HandleLaneBuilt;
+
         //laneDestructor.OnLaneDestroyed += HandleLaneDestroyed;
     }
     private void OnDisable()
     {
         laneConstructor.OnBuildStarted -= UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
+
         //laneDestructor.OnLaneDestroyed -= HandleLaneDestroyed;
     }
 
@@ -53,6 +50,8 @@ public class SplinesManager : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
+    public List<Spline> GetSplines() { return splineContainer.Splines.ToList(); }
+    public Spline GetCurrentSpline() { return spline; }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     private void UpdateStartNodePosition(Vector2Int startNodePosition) { startWorldPosition = grid.GetWorldPositionFromCellCentered(startNodePosition.x, startNodePosition.y); }
@@ -91,6 +90,7 @@ public class SplinesManager : MonoBehaviour
 
         previousNodePosition = addedNodePosition;
         if (knotQueue.Count == 3) knotQueue.Dequeue();
+        SplineChanged?.Invoke();
     }
 
     // ::::: Detect Collinearity
@@ -109,8 +109,9 @@ public class SplinesManager : MonoBehaviour
     {
         if (isIntersection)
         {
-            spline.Remove(spline.Knots.Last());
-            spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
+            spline.Remove(spline.Knots.Last()); // ¡¡¡REVISAR MÁS TARDE!!!
+            if (knotQueue.Count > 0)
+                spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
         }
 
         Spline newSpline = new Spline();
@@ -141,8 +142,8 @@ public class SplinesManager : MonoBehaviour
                 if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
                 spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
             }
-        }
 
-        knotQueue.Enqueue(newKnot);
+            knotQueue.Enqueue(newKnot);
+        }
     }
 }
