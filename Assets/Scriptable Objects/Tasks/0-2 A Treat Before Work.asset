@@ -17,25 +17,32 @@ MonoBehaviour:
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
   - "Gracias por venir, te cit\xE9 aqu\xED para... \xBFuh? Dame un momento..."
-  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de Mama Gio, no puedo
-    creerlo\u2026"
-  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la Municipalidad
+  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de <b><color=#F4C542>Mama
+    Gio</color></b, no puedo creerlo\u2026"
+  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la <b><color=#F4C542>Municipalidad</color></b>
     hasta all\xED?"
-  - "A los repartidores siempre les ocurre algo por la mala visibilidad, as\xED que
-    te encargo una buena seguridad para la ruta por favor. \xA1De seguro todos te
-    lo agradecer\xE1n!"
-  context: "Construye una ciclov\xEDa segura para que los repartidores de Mama Gio
-    puedan llegar a la Municipalidad sin perderse a causa del humo."
+  - Los repartidores siempre llegan con mala cara y fatigados, hazles un y construye
+    una ruta <b><color=#62B4E8>segura</color></b> pero <b><color=#5DBB88>encantadora</color></b>
+    por favor.
+  - "De seguro te lo agradecer\xE1n\u2026 \xA1y yo en particular <i>hahaha</i>!"
+  context: "Construye una ciclov\xEDa <b><color=#62B4E8>segura</color></b> y atractiva
+    para que los repartidores de <b><color=#F4C542>Mama Gio</color></b> puedan llegar
+    a la <b><color=#F4C542>Municipalidad</color></b> bien y sin mala cara."
   safetyRequirement: 1
-  minSafetyCount: 30
-  charmRequirement: 0
-  minCharmCount: 0
+  minSafetyCount: 50
+  charmRequirement: 1
+  minCharmCount: 15
   flowRequirement: 0
   minFlowPercentage: 0
   minMaterialRequirement: 0
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
+  flavourDetails:
+    flavorType: 0
+    compound: {fileID: 0}
+    toCross: 0
+    numberToCross: 0
   materialReward: 20
   unlockedTasks: []
   rewardDialogs:

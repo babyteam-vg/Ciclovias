@@ -10551,9 +10551,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splinesManager: {fileID: 1215106551}
-  laneWidth: 0.5
-  segmentsPerUnit: 5
-  laneMaterial: {fileID: 2100000, guid: cceea84a1b3e5e74782cc252b29de453, type: 2}
+  plane: {fileID: 445937665}
+  laneWidth: 0.4
+  segmentsPerUnit: 7
+  laneMaterial: {fileID: 2100000, guid: 028a2b72dfdef03409b41cc4aebeeb8f, type: 2}
 --- !u!23 &1150232505
 MeshRenderer:
   m_ObjectHideFlags: 0

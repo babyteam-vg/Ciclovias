@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public int MapState { get; private set; } = 0;
     public int SmokeState { get; private set; } = 0;
-    public int MaterialAmount { get; private set; } = 80;
+    public int MaterialAmount { get; private set; } = 120;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;

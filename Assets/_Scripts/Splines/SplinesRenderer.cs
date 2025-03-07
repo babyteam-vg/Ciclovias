@@ -11,7 +11,7 @@ public class SplinesRenderer : MonoBehaviour
 
     [Header("Variables")]
     [SerializeField] private float laneWidth = 0.5f;
-    [SerializeField] private int segmentsPerUnit = 5;
+    [SerializeField] private int segmentsPerUnit = 16;
     [SerializeField] private Material laneMaterial;
 
     private float elevation = 0.004f;

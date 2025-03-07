@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -33,20 +34,11 @@ public class SplinesManager : MonoBehaviour
     {
         laneConstructor.OnBuildStarted += UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt += HandleLaneBuilt;
-
-        //laneDestructor.OnLaneDestroyed += HandleLaneDestroyed;
     }
     private void OnDisable()
     {
         laneConstructor.OnBuildStarted -= UpdateStartNodePosition;
         laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
-
-        //laneDestructor.OnLaneDestroyed -= HandleLaneDestroyed;
-    }
-
-    private void Start()
-    {
-        
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -68,7 +60,7 @@ public class SplinesManager : MonoBehaviour
         List<Vector2Int> previousNeighbors = graph.GetNeighborsPos(previousNodePosition);
 
         // Edge of the Lane
-        if (previousNeighbors.Count < 2) // Current Spline
+        if (spline.Closed || previousNeighbors.Count < 2)
         {
             knotQueue.Clear();
             StartNewSpline(startWorldPosition);
@@ -85,12 +77,20 @@ public class SplinesManager : MonoBehaviour
             }
             else isIntersection = false;
 
-        if (isIntersection) StartNewSpline(addedWorldPosition);
+        if (isIntersection) HandleIntersection(addedWorldPosition);
         else AddKnotToCurrentSpline(addedWorldPosition);
+
+        // Closed Lane
+        if (addedWorldPosition == (Vector3)spline.First().Position)
+        {
+            spline.Closed = true;
+            SplineChanged?.Invoke(); // !
+            return;
+        }
 
         previousNodePosition = addedNodePosition;
         if (knotQueue.Count == 3) knotQueue.Dequeue();
-        SplineChanged?.Invoke();
+        SplineChanged?.Invoke(); // !
     }
 
     // ::::: Detect Collinearity
@@ -104,16 +104,9 @@ public class SplinesManager : MonoBehaviour
         return crossProduct == 0;
     }
 
-    // ::::: New Spline (Limit or Intersection)
+    // ::::: New Spline (Limit)
     private void StartNewSpline(Vector3 position)
     {
-        if (isIntersection)
-        {
-            spline.Remove(spline.Knots.Last()); // ¡¡¡REVISAR MÁS TARDE!!!
-            if (knotQueue.Count > 0)
-                spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
-        }
-
         Spline newSpline = new Spline();
 
         BezierKnot startKnot = new BezierKnot(position);
@@ -125,25 +118,39 @@ public class SplinesManager : MonoBehaviour
     }
 
     // ::::: Continue Spline (Collinear)
-    private void AddKnotToCurrentSpline(Vector3 worldPosition)
+    private void AddKnotToCurrentSpline(Vector3 position)
     {
-        BezierKnot newKnot = new BezierKnot(worldPosition);
+        BezierKnot newKnot = new BezierKnot(position);
 
         if (spline != null)
         {
-            if (spline.Count == 0)
-            {
-                // First Knot
-                spline.Insert(0, newKnot, TangentMode.Broken, 0.5f);
-            }
-            else
-            {
-                // Add Knot
-                if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
-                spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
-            }
-
+            if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
+            spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
             knotQueue.Enqueue(newKnot);
         }
+    }
+
+    // ::::: Continue Spline (Intersection)
+    private void HandleIntersection(Vector3 position)
+    {
+        if (spline.Count >= 2) spline.RemoveAt(spline.Count - 1);
+
+        BezierKnot beforeIntersection = new BezierKnot(knotQueue.Last().Position);
+        BezierKnot afterIntersection = new BezierKnot(position);
+
+        // Direction
+        Vector3 beforeDir = (afterIntersection.Position - beforeIntersection.Position);
+        beforeDir = beforeDir.normalized;
+
+        // Tangents
+        float tangentWeight = 1f;
+        beforeIntersection.TangentOut = beforeDir * tangentWeight;
+        afterIntersection.TangentIn = -beforeDir * tangentWeight;
+
+        spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
+        spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
+        spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
+
+        knotQueue.Enqueue(afterIntersection);
     }
 }

@@ -54,6 +54,7 @@ public class LaneDestructor : MonoBehaviour
     {
         if (isAllowed
             && graph.GetNode(gridPosition) != null
+            && graph.GetNode(gridPosition).neighbors.Count < 2
             && !graph.GetNode(gridPosition).indestructible)
         {
             isDestroying = true;
