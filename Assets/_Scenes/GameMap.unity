@@ -11022,8 +11022,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 378811413}
   graph: {fileID: 1986930194}
-  laneConstructor: {fileID: 1111548992}
-  laneDestructor: {fileID: 1585882714}
   splineContainer: {fileID: 1215106552}
 --- !u!114 &1215106552
 MonoBehaviour:
@@ -11467,7 +11465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1285999569
 Transform:
   m_ObjectHideFlags: 0

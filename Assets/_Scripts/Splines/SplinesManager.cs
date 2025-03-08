@@ -4,20 +4,17 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine.UIElements;
 
 public class SplinesManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
-    [SerializeField] private LaneConstructor laneConstructor;
-    [SerializeField] private LaneDestructor laneDestructor;
 
     public SplineContainer splineContainer;
     
     private Spline spline;
-    private bool isIntersection = false;
-    private Vector3 startWorldPosition;
     private Vector2Int previousNodePosition;
     private Queue<BezierKnot> knotQueue = new Queue<BezierKnot>(3);
 
@@ -32,13 +29,17 @@ public class SplinesManager : MonoBehaviour
 
     private void OnEnable()
     {
-        laneConstructor.OnBuildStarted += UpdateStartNodePosition;
-        laneConstructor.OnLaneBuilt += HandleLaneBuilt;
+        //graph.OnNodeAdded += HandleNodeAdded;
+        graph.OnEdgeAdded += HandleEdgeAdded;
+        //graph.OnNodeRemoved += HandleNodeRemoved;
+        graph.OnEdgeRemoved += HandleEdgeRemoved;
     }
     private void OnDisable()
     {
-        laneConstructor.OnBuildStarted -= UpdateStartNodePosition;
-        laneConstructor.OnLaneBuilt -= HandleLaneBuilt;
+        //graph.OnNodeAdded -= HandleNodeAdded;
+        graph.OnEdgeAdded -= HandleEdgeAdded;
+        //graph.OnNodeRemoved -= HandleNodeRemoved;
+        graph.OnEdgeRemoved -= HandleEdgeRemoved;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -46,53 +47,92 @@ public class SplinesManager : MonoBehaviour
     public Spline GetCurrentSpline() { return spline; }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    private void UpdateStartNodePosition(Vector2Int startNodePosition) { startWorldPosition = grid.GetWorldPositionFromCellCentered(startNodePosition.x, startNodePosition.y); }
-
-    // ::::: When a Lane is Built
-    private void HandleLaneBuilt(Vector2Int addedNodePosition)
+    // ::::: Building Lane
+    private void HandleEdgeAdded(Vector2Int firstNodePosition, Vector2Int secondNodePosition)
     {
-        Vector3 addedWorldPosition = grid.GetWorldPositionFromCellCentered(addedNodePosition.x, addedNodePosition.y);
+        Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
+        Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
-        Node addedNode = graph.GetNode(addedNodePosition);
-        if (addedNode == null) return;
-
-        if (previousNodePosition == null) return;
-        List<Vector2Int> previousNeighbors = graph.GetNeighborsPos(previousNodePosition);
+        List<Vector2Int> firstNeighbors = graph.GetNeighborsPos(firstNodePosition);
 
         // Edge of the Lane
-        if (spline.Closed || previousNeighbors.Count < 2)
+        if (spline.Closed || firstNeighbors.Count < 2 || !grid.IsAdjacent(previousNodePosition, firstNodePosition))
         {
             knotQueue.Clear();
-            StartNewSpline(startWorldPosition);
-            previousNodePosition = addedNodePosition;
+            StartNewSpline(firstWorldPosition);
+            previousNodePosition = secondNodePosition;
             return;
         }
 
         // Check Collinearity
-        foreach (var neighbor in previousNeighbors)
-            if (!IsCollinear(previousNodePosition, neighbor, addedNodePosition))
+        bool isIntersection = false;
+        foreach (var neighbor in firstNeighbors)
+            if (!IsCollinear(firstNodePosition, neighbor, secondNodePosition))
             {
                 isIntersection = true;
                 break;
             }
-            else isIntersection = false;
 
-        if (isIntersection) HandleIntersection(addedWorldPosition);
-        else AddKnotToCurrentSpline(addedWorldPosition);
+        if (isIntersection) HandleIntersection(secondWorldPosition);
+        else AddKnotToCurrentSpline(secondWorldPosition);
 
         // Closed Lane
-        if (addedWorldPosition == (Vector3)spline.First().Position)
+        if (secondWorldPosition == (Vector3)spline.First().Position)
         {
             spline.Closed = true;
             SplineChanged?.Invoke(); // !
             return;
         }
 
-        previousNodePosition = addedNodePosition;
+        previousNodePosition = secondNodePosition;
         if (knotQueue.Count == 3) knotQueue.Dequeue();
         SplineChanged?.Invoke(); // !
     }
 
+    // ::::: Destroying Lane
+    private void HandleEdgeRemoved(Vector2Int firstNodePosition, Vector2Int secondNodePosition)
+    {
+        Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
+        Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
+
+        List<Vector2Int> secondNeighbors = graph.GetNeighborsPos(secondNodePosition);
+
+        int knotIndex = -1;
+        for (int i = 0; i < spline.Count; i++)
+            if (spline[i].Position.Equals((float3)firstWorldPosition))
+            {
+                knotIndex = i;
+                break;
+            }
+
+        if (knotIndex == -1) return;
+
+        bool hasBefore = knotIndex > 0;
+        bool hasAfter = knotIndex < spline.Count - 1;
+
+        if (!hasBefore && !hasAfter) // (X)
+        {
+            splineContainer.RemoveSpline(spline);
+            return;
+        }
+
+        spline.RemoveAt(knotIndex);
+
+        // Check Collinearity
+        foreach (var neighbor in secondNeighbors)
+            if (!IsCollinear(firstNodePosition, secondNodePosition, neighbor))
+            {
+                BezierKnot newKnot = new BezierKnot(secondWorldPosition);
+                spline.Insert(knotIndex, newKnot, TangentMode.Broken, 0.5f);
+                break;
+            }
+
+        if (spline.Count == 1) splineContainer.RemoveSpline(spline);
+        SplineChanged?.Invoke();
+    }
+
+
+    // :::::::::: SUPPORT METHODS ::::::::::
     // ::::: Detect Collinearity
     private bool IsCollinear(Vector2Int a, Vector2Int b, Vector2Int c)
     {
@@ -124,7 +164,7 @@ public class SplinesManager : MonoBehaviour
 
         if (spline != null)
         {
-            if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
+            //if (spline.Count > 1) spline.RemoveAt(spline.Count - 1);
             spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
             knotQueue.Enqueue(newKnot);
         }
@@ -147,9 +187,9 @@ public class SplinesManager : MonoBehaviour
         beforeIntersection.TangentOut = beforeDir * tangentWeight;
         afterIntersection.TangentIn = -beforeDir * tangentWeight;
 
-        spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
+        //spline.Insert(spline.Count, knotQueue.Dequeue(), TangentMode.Broken, 0.5f);
         spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
-        spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
+        //spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
 
         knotQueue.Enqueue(afterIntersection);
     }
