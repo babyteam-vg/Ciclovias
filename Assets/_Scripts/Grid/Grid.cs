@@ -35,6 +35,31 @@ public class Grid : MonoBehaviour
     // ::::: Grid (x, y) to World (i, j, k)
     public Vector3 GetWorldPositionFromCell(int x, int y) { return new Vector3(x, 0, y) * cellSize; }
     public Vector3 GetWorldPositionFromCellCentered(float x, float y) { return new Vector3((x + 0.5f) * cellSize, 0, (y + 0.5f) * cellSize); }
+    public Vector3 GetWorldPositionRelativeToRoad(float x, float y)
+    {
+        if (GetCell((int)x, (int)y).GetContent() == CellContent.Sidewalk)
+        {
+            Vector2Int cellPosition = new Vector2Int(Mathf.FloorToInt(x), Mathf.FloorToInt(y));
+            Vector3 worldPosition = GetWorldPositionFromCell(cellPosition.x, cellPosition.y);
+
+            List<Cell> adjacentCells = GetAdjacentCells(cellPosition.x, cellPosition.y);
+
+            foreach (Cell adjacentCell in adjacentCells)
+                if (adjacentCell.GetContent() == CellContent.Road)
+                {
+                    Vector2Int roadPos = new Vector2Int(adjacentCell.x, adjacentCell.y);
+                    Vector2Int direction = roadPos - cellPosition;
+
+                    Vector3 offset = new Vector3(direction.x * cellSize * 0.2f, 0, direction.y * cellSize * 0.2f);
+
+                    return worldPosition - offset;
+                }
+
+            return GetWorldPositionFromCellCentered(x, y);
+        }
+
+        return GetWorldPositionFromCellCentered(x, y);
+    }
 
     // ::::: World (i, j, k) to Grid (x, y)
     public Vector2Int? GetCellFromWorldPosition(Vector3 worldPosition)

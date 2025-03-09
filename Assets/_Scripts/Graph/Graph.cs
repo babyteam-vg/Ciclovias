@@ -62,11 +62,8 @@ public class Graph : MonoBehaviour
     {
         if (nodes.TryGetValue(position, out Node node))
         {
-            foreach (Node neighbor in node.neighbors)
-            {
-                neighbor.neighbors.Remove(node);
-                OnEdgeRemoved?.Invoke(position, neighbor.position);
-            }
+            foreach (Node neighbor in new List<Node>(node.neighbors))
+                RemoveEdge(position, neighbor.position);
 
             nodes.Remove(position);
             nodePositions.Remove(position);
@@ -93,8 +90,25 @@ public class Graph : MonoBehaviour
         {
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
+
             nodeA.RemoveNeighbor(nodeB);
+            nodeB.RemoveNeighbor(nodeA);
+
             OnEdgeRemoved?.Invoke(positionA, positionB);
+
+            if (nodeA.neighbors.Count == 0) // Lonely Node
+            {
+                nodes.Remove(positionA);
+                nodePositions.Remove(positionA);
+                OnLonelyNodeRemoved?.Invoke(positionA);
+            }
+
+            if (nodeB.neighbors.Count == 0)
+            {
+                nodes.Remove(positionB);
+                nodePositions.Remove(positionB);
+                OnLonelyNodeRemoved?.Invoke(positionB);
+            }
         }
     }
 
