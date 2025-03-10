@@ -17,7 +17,7 @@ public class LaneDestructor : MonoBehaviour
     private bool isAllowed = true;
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
-    private List<Vector2Int> lastNeighbors = null;
+    private List<Vector2Int> lastNeighbors = new List<Vector2Int>();
 
     public event Action<Vector2Int> OnDestroyStarted;
     public event Action<Vector2Int> OnLaneDestroyed;
@@ -71,7 +71,7 @@ public class LaneDestructor : MonoBehaviour
     private void ContinueDestroying(Vector2Int gridPosition)
     {
         if (isAllowed && isDestroying
-            && lastNeighbors.Contains(gridPosition)
+            && lastNeighbors != null
             && grid.IsAdjacent(lastCellPosition.Value, gridPosition)
             && IsInCriticalArea(gridPosition)
             && !graph.GetNode(gridPosition).indestructible)
@@ -79,9 +79,12 @@ public class LaneDestructor : MonoBehaviour
             if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
 
-            lastNeighbors = graph.GetNeighborsPos(gridPosition);
-            DestroyNodeAndEdges(gridPosition);
-            lastCellPosition = gridPosition;
+            if (lastNeighbors.Contains(gridPosition))
+            {
+                lastNeighbors = graph.GetNeighborsPos(gridPosition);
+                DestroyNodeAndEdges(gridPosition);
+                lastCellPosition = gridPosition;
+            }
         }
     }
 

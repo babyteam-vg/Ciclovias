@@ -16,6 +16,7 @@ public class SplinesManager : MonoBehaviour
 
     private Spline spline;
     private Queue<BezierKnot> knotQueue = new Queue<BezierKnot>(3);
+    private Dictionary<Vector3, (Spline, int)> intersections = new Dictionary<Vector3, (Spline, int)>();
 
     public event Action SplineChanged;
 
@@ -53,12 +54,31 @@ public class SplinesManager : MonoBehaviour
         Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
         List<Vector2Int> firstNeighbors = graph.GetNeighborsPos(firstNodePosition);
+        List<Vector2Int> secondNeighbors = graph.GetNeighborsPos(secondNodePosition);
 
         // Find Knot and Spline
-        var (foundSpline, knotIndex) = FindKnotAndSpline(firstWorldPosition);
+        var (firstSpline, firstIndex) = FindKnotAndSpline(firstWorldPosition);
+        var (secondSpline, secondIndex) = FindKnotAndSpline(secondWorldPosition);
+
+        // 'T' and 'Y' Intersections
+        if (intersections.ContainsKey(firstWorldPosition))
+        {
+            var (spline, index) = intersections[firstWorldPosition];
+            BezierKnot intersectionKnot = new BezierKnot(firstWorldPosition);
+            spline.Insert(index, intersectionKnot);
+            intersections.Remove(firstWorldPosition);
+        }
+        if (intersections.ContainsKey(secondWorldPosition))
+        {
+            var (spline, index) = intersections[secondWorldPosition];
+            BezierKnot intersectionKnot = new BezierKnot(secondWorldPosition);
+            spline.Insert(index, intersectionKnot);
+            intersections.Remove(secondWorldPosition);
+        }
 
         // New Spline
-        if (foundSpline == null)
+        if (firstSpline == null
+            || (firstSpline != null && firstIndex != firstSpline.Count - 1))
         {
             knotQueue.Clear();
             StartNewSpline(firstWorldPosition, secondWorldPosition);
@@ -67,24 +87,23 @@ public class SplinesManager : MonoBehaviour
         }
 
         // Continue Spline
-        if (foundSpline != null)
-        {
-            if (knotIndex == 0)
-                ReverseSpline(foundSpline);
-            spline = foundSpline;
+        spline = firstSpline;
 
-            // Check Collinearity
-            bool isIntersection = false;
-            foreach (var neighbor in firstNeighbors)
-                if (!IsCollinear(firstNodePosition, neighbor, secondNodePosition))
-                {
-                    isIntersection = true;
-                    break;
-                }
+        // Check Collinearity
+        bool isIntersection = false;
+        foreach (var neighbor in firstNeighbors)
+            if (!IsCollinear(firstNodePosition, neighbor, secondNodePosition))
+            {
+                isIntersection = true;
 
-            if (isIntersection) HandleIntersection(secondWorldPosition);
-            else AddKnotToCurrentSpline(secondWorldPosition);
-        }
+                Vector3 position = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
+                if (!intersections.ContainsKey(position)) intersections.Add(position, (spline, firstIndex));
+
+                break;
+            }
+
+        if (isIntersection) HandleIntersection(secondWorldPosition);
+        else AddKnotToCurrentSpline(secondWorldPosition);
 
         if (knotQueue.Count == 3) knotQueue.Dequeue();
         SplineChanged?.Invoke(); // !
@@ -96,7 +115,11 @@ public class SplinesManager : MonoBehaviour
         Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
         Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
+        List<Vector2Int> firstNeighbors = graph.GetNeighborsPos(firstNodePosition);
         List<Vector2Int> secondNeighbors = graph.GetNeighborsPos(secondNodePosition);
+
+        int firstNeighborsCount = firstNeighbors.Count();
+        int secondNeighborsCount = secondNeighbors.Count();
 
         // Find Knot and Spline
         var (foundSpline, knotIndex) = FindKnotAndSpline(firstWorldPosition);
