@@ -42,21 +42,23 @@ public class LaneDestructor : MonoBehaviour
         inputManager.OnRightClickHold -= ContinueDestroying;
         inputManager.OnRightClickUp -= StopDestroying;
 
-        tutorialManager.TutorialSectionPresentationStarted += BlockDestroying;
-        tutorialManager.TutorialSectionPresentationDone += UnblockDestroying;
+        tutorialManager.TutorialSectionPresentationStarted -= BlockDestroying;
+        tutorialManager.TutorialSectionPresentationDone -= UnblockDestroying;
 
-        inGameMenuManager.MenuOpened += BlockDestroying;
-        inGameMenuManager.MenuClosed += UnblockDestroying;
+        inGameMenuManager.MenuOpened -= BlockDestroying;
+        inGameMenuManager.MenuClosed -= UnblockDestroying;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Mouse Input: Down
     private void StartDestroying(Vector2Int gridPosition)
     {
-        if (isAllowed
-            && graph.GetNode(gridPosition) != null
-            && graph.GetNode(gridPosition).neighbors.Count < 2
-            && !graph.GetNode(gridPosition).indestructible)
+        Node node = graph.GetNode(gridPosition);
+
+        if (isAllowed                   // Not in Menu
+            && node != null             // Node in the Graph
+            && node.neighbors.Count < 2 // Edge of the Graph
+            && !node.indestructible)    // Not Part of a Sealed Task
         {
             isDestroying = true;
             OnDestroyStarted?.Invoke(gridPosition);
@@ -70,20 +72,23 @@ public class LaneDestructor : MonoBehaviour
     // ::::: Mouse Input: Hold
     private void ContinueDestroying(Vector2Int gridPosition)
     {
-        if (isAllowed && isDestroying
-            && lastNeighbors != null
-            && grid.IsAdjacent(lastCellPosition.Value, gridPosition)
-            && IsInCriticalArea(gridPosition)
-            && !graph.GetNode(gridPosition).indestructible)
-        {
-            if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
-                return; // To Prevent Duplicates
+        Node node = graph.GetNode(gridPosition);
 
-            if (lastNeighbors.Contains(gridPosition))
+        if (node != null && !node.indestructible) // Node's Existence
+        {
+            if (isAllowed && isDestroying && lastCellPosition.HasValue) // Flags
             {
-                lastNeighbors = graph.GetNeighborsPos(gridPosition);
-                DestroyNodeAndEdges(gridPosition);
-                lastCellPosition = gridPosition;
+                if (lastCellPosition.Value == gridPosition) return; // Prevent Duplicates
+
+                if (grid.IsAdjacent(lastCellPosition.Value, gridPosition) && IsInCriticalArea(gridPosition)) // Adjacency
+                {
+                    if (lastNeighbors.Contains(gridPosition)) // Continued Destruction w/o Jumps
+                    {
+                        lastNeighbors = graph.GetNeighborsPos(gridPosition);
+                        DestroyNodeAndEdges(gridPosition);
+                        lastCellPosition = gridPosition;
+                    }
+                }
             }
         }
     }
@@ -106,10 +111,9 @@ public class LaneDestructor : MonoBehaviour
         {
             int edgeCount = node.neighbors.Count;
             GameManager.Instance.AddMaterial(edgeCount);
+            graph.RemoveNode(gridPosition);
+            OnLaneDestroyed?.Invoke(gridPosition);
         }
-
-        graph.RemoveNode(gridPosition);
-        OnLaneDestroyed?.Invoke(gridPosition);
     }
 
     // ::::: Critical Areas

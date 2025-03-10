@@ -4,7 +4,6 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
-using UnityEngine.UIElements;
 
 public class SplinesManager : MonoBehaviour
 {
@@ -17,6 +16,7 @@ public class SplinesManager : MonoBehaviour
     private Spline spline;
     private Queue<BezierKnot> knotQueue = new Queue<BezierKnot>(3);
     private Dictionary<Vector3, (Spline, int)> intersections = new Dictionary<Vector3, (Spline, int)>();
+    private bool recentIntersection = false;
 
     public event Action SplineChanged;
 
@@ -58,27 +58,14 @@ public class SplinesManager : MonoBehaviour
 
         // Find Knot and Spline
         var (firstSpline, firstIndex) = FindKnotAndSpline(firstWorldPosition);
-        var (secondSpline, secondIndex) = FindKnotAndSpline(secondWorldPosition);
 
         // 'T' and 'Y' Intersections
-        if (intersections.ContainsKey(firstWorldPosition))
-        {
-            var (spline, index) = intersections[firstWorldPosition];
-            BezierKnot intersectionKnot = new BezierKnot(firstWorldPosition);
-            spline.Insert(index, intersectionKnot);
-            intersections.Remove(firstWorldPosition);
-        }
-        if (intersections.ContainsKey(secondWorldPosition))
-        {
-            var (spline, index) = intersections[secondWorldPosition];
-            BezierKnot intersectionKnot = new BezierKnot(secondWorldPosition);
-            spline.Insert(index, intersectionKnot);
-            intersections.Remove(secondWorldPosition);
-        }
+        HandleTandY(firstWorldPosition);
+        HandleTandY(secondWorldPosition);
 
         // New Spline
         if (firstSpline == null
-            || (firstSpline != null && firstIndex != firstSpline.Count - 1))
+            || (firstSpline != null && firstIndex != firstSpline.Count - 1)) // Mid Spline
         {
             knotQueue.Clear();
             StartNewSpline(firstWorldPosition, secondWorldPosition);
@@ -92,7 +79,7 @@ public class SplinesManager : MonoBehaviour
         // Check Collinearity
         bool isIntersection = false;
         foreach (var neighbor in firstNeighbors)
-            if (!IsCollinear(firstNodePosition, neighbor, secondNodePosition))
+            if (!graph.IsCollinear(firstNodePosition, neighbor, secondNodePosition))
             {
                 isIntersection = true;
 
@@ -102,10 +89,9 @@ public class SplinesManager : MonoBehaviour
                 break;
             }
 
-        if (isIntersection) HandleIntersection(secondWorldPosition);
+        if (isIntersection && !recentIntersection) HandleIntersection(secondWorldPosition);
         else AddKnotToCurrentSpline(secondWorldPosition);
 
-        if (knotQueue.Count == 3) knotQueue.Dequeue();
         SplineChanged?.Invoke(); // !
     }
 
@@ -115,40 +101,27 @@ public class SplinesManager : MonoBehaviour
         Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
         Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
-        List<Vector2Int> firstNeighbors = graph.GetNeighborsPos(firstNodePosition);
         List<Vector2Int> secondNeighbors = graph.GetNeighborsPos(secondNodePosition);
 
-        int firstNeighborsCount = firstNeighbors.Count();
-        int secondNeighborsCount = secondNeighbors.Count();
-
         // Find Knot and Spline
-        var (foundSpline, knotIndex) = FindKnotAndSpline(firstWorldPosition);
-        if (foundSpline == null) return;
+        var (firstSpline, firstIndex) = FindKnotAndSpline(firstWorldPosition);
+        var (secondSpline, secondIndex) = FindKnotAndSpline(secondWorldPosition);
 
-        bool hasBefore = knotIndex > 0;
-        bool hasAfter = knotIndex < foundSpline.Count - 1;
-
-        if (!hasBefore && !hasAfter) // Spline w/o Knots
-        {
-            splineContainer.RemoveSpline(foundSpline);
-            return;
-        }
-
-        foundSpline.RemoveAt(knotIndex);
+        if (firstSpline == null) return;
+        firstSpline.RemoveAt(firstIndex);
 
         // Check Collinearity
         foreach (var neighbor in secondNeighbors)
-        {
-            if (!IsCollinear(firstNodePosition, secondNodePosition, neighbor))
+            if (!graph.IsCollinear(secondNodePosition, firstNodePosition, neighbor)
+                && secondIndex == -1)
             {
                 BezierKnot newKnot = new BezierKnot(secondWorldPosition);
-                foundSpline.Insert(knotIndex, newKnot, TangentMode.Broken, 0.5f);
+                firstSpline.Insert(firstIndex, newKnot, TangentMode.Broken, 0.5f);
                 break;
             }
-        }
 
-        if (foundSpline.Count == 1)
-            splineContainer.RemoveSpline(foundSpline);
+        if (firstSpline.Count == 1)
+            splineContainer.RemoveSpline(firstSpline);
 
         SplineChanged?.Invoke();
     }
@@ -164,6 +137,7 @@ public class SplinesManager : MonoBehaviour
         {
             BezierKnot newKnot = new BezierKnot(pos);
             newSpline.Insert(newSpline.Count, newKnot, TangentMode.Broken, 0.5f);
+            if (knotQueue.Count == 3) knotQueue.Dequeue();
             knotQueue.Enqueue(newKnot);
         }
 
@@ -174,15 +148,22 @@ public class SplinesManager : MonoBehaviour
     // ::::: Continue Spline (Collinear)
     private void AddKnotToCurrentSpline(Vector3 position)
     {
+        recentIntersection = false;
+
         BezierKnot newKnot = new BezierKnot(position);
         spline.Insert(spline.Count, newKnot, TangentMode.Broken, 0.5f);
+        if (knotQueue.Count == 3) knotQueue.Dequeue();
         knotQueue.Enqueue(newKnot);
     }
 
     // ::::: Continue Spline (Intersection)
     private void HandleIntersection(Vector3 position)
     {
-        if (spline.Count >= 2) spline.RemoveAt(spline.Count - 1);
+        recentIntersection = true;
+        Vector3 lastPosition = spline.ElementAt(spline.Count - 1).Position;
+
+        if (spline.Count >= 2)
+            spline.RemoveAt(spline.Count - 1);
 
         BezierKnot beforeIntersection = new BezierKnot(knotQueue.Last().Position);
         BezierKnot afterIntersection = new BezierKnot(position);
@@ -198,21 +179,23 @@ public class SplinesManager : MonoBehaviour
 
         spline.Insert(spline.Count, afterIntersection, TangentMode.Broken, 0.5f);
 
+        if (knotQueue.Count == 3) knotQueue.Dequeue();
         knotQueue.Enqueue(afterIntersection);
     }
 
-    // :::::::::: SUPPORT METHODS ::::::::::
-    // ::::: Detect Collinearity
-    private bool IsCollinear(Vector2Int a, Vector2Int b, Vector2Int c)
+    // ::::: 'T' and 'Y' Intersections
+    private void HandleTandY(Vector3 position)
     {
-        Vector2Int v1 = b - a;
-        Vector2Int v2 = c - a;
-
-        int crossProduct = v1.x * v2.y - v1.y * v2.x;
-
-        return crossProduct == 0;
+        if (intersections.ContainsKey(position))
+        {
+            var (spline, index) = intersections[position];
+            BezierKnot intersectionKnot = new BezierKnot(position);
+            spline.Insert(index, intersectionKnot);
+            intersections.Remove(position);
+        }
     }
 
+    // :::::::::: SUPPORT METHODS ::::::::::
     // ::::: Select the Right Spline at the Right Knot
     private (Spline foundSpline, int knotIndex) FindKnotAndSpline(Vector3 worldPosition)
     {

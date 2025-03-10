@@ -196,6 +196,17 @@ public class Graph : MonoBehaviour
             GetNode(nodePos).indestructible = true;
     }
 
+    // ::::: Detect Collinearity
+    public bool IsCollinear(Vector2Int a, Vector2Int b, Vector2Int c)
+    {
+        Vector2Int v1 = b - a;
+        Vector2Int v2 = c - a;
+
+        int crossProduct = v1.x * v2.y - v1.y * v2.x;
+
+        return crossProduct == 0;
+    }
+
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Graph -> GraphData
     public GraphData SaveGraph()

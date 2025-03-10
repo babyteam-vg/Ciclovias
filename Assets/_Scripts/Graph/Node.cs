@@ -10,7 +10,7 @@ public class Node
 
     // :::::::::: METHODS ::::::::::
     // ::::: Constructor
-    public Node(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
+    public Node(Vector2Int position, Vector2 worldPosition, bool indestructible)
     {
         this.position = position;
         this.worldPosition = worldPosition;

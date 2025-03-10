@@ -109,6 +109,32 @@ public class Grid : MonoBehaviour
         return adjacentCells;
     }
 
+    // ::::: Get Diagonal Cells to [x][y]
+    public List<Cell> GetDiagonalCells(int centerX, int centerY)
+    {
+        List<Cell> diagonalCells = new List<Cell>();
+
+        int[] dx = { -1, -1, 1, 1 };
+        int[] dy = { -1, 1, -1, 1 };
+
+        for (int i = 0; i < 4; i++)
+        {
+            int newX = centerX + dx[i];
+            int newY = centerY + dy[i];
+
+            if (IsWithinBounds(newX, newY))
+            {
+                Cell diagonalCell = GetCell(newX, newY);
+                if (diagonalCell != null)
+                {
+                    diagonalCells.Add(diagonalCell);
+                }
+            }
+        }
+
+        return diagonalCells;
+    }
+
     // ::::: Check Adjacency in 8 Directions
     public bool IsAdjacent(Vector2Int current, Vector2Int target)
     {
