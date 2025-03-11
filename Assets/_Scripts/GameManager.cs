@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private TaskDiary taskDiary;
+    [SerializeField] private InputManager inputManager; // PLACEHOLDER!!!
     private StorageManager storageManager = new StorageManager();
 
     [Header("UI References")]
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI amountText;
 
     private Animator animator;
+    private bool placeholderTutorial = true;
 
     public event Action<int> MapStateAdvanced;
     public event Action<int> SmokeStateReduced;
@@ -37,10 +39,12 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         taskManager.TaskSealed += OnTaskSealed;
+        inputManager.OnCursorMove += PlaceHolderTutorial; // PLACEHOLDER!!!
     }
     private void OnDisable()
     {
         taskManager.TaskSealed -= OnTaskSealed;
+        inputManager.OnCursorMove -= PlaceHolderTutorial; // PLACEHOLDER!!!
     }
 
     private void Start()
@@ -53,11 +57,6 @@ public class GameManager : MonoBehaviour
         List<Task> unlockedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Unlocked).ToList();
         foreach (Task acceptedTask in unlockedTasks)
             acceptedTask.from.GetNextAvailableTask(MapState);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T)) TutorialManager.Instance.PlayTutorial(new Vector2Int(0, 1));
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -75,26 +74,34 @@ public class GameManager : MonoBehaviour
     }
 
     // ::::: Material
-    public void AddMaterial(int cantidad)
+    public void AddMaterial(int amount)
     {
-        MaterialAmount += cantidad;
+        MaterialAmount += amount;
         amountText.text = "x" + MaterialAmount.ToString();
         MaterialCounterAnimation();
     }
-    public bool ConsumeMaterial(int cantidad)
+    public bool ConsumeMaterial(int amount)
     {
-        if (MaterialAmount >= cantidad)
+        if (MaterialAmount >= amount)
         {
-            MaterialAmount -= cantidad;
+            MaterialAmount -= amount;
             amountText.text = "x" + MaterialAmount.ToString();
             MaterialCounterAnimation();
             return true;
         }
-        else
-            return false;
+        else return false;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
+    private void PlaceHolderTutorial(Vector2Int _) // PLACEHOLDER!!!
+    {
+        if (placeholderTutorial && TaskDiary.Instance.tasks[0].state == TaskState.Unlocked)
+        {
+            placeholderTutorial = false;
+            TutorialManager.Instance.PlayTutorial(new Vector2Int(0, 1));
+        }
+    }
+
     private void MaterialCounterAnimation()
     {
         animator.Play("MaterialCounter");

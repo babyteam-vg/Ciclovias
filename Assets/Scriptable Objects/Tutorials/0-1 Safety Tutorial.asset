@@ -15,10 +15,10 @@ MonoBehaviour:
   id: {x: 0, y: 1}
   title: Safety Tutorial
   sections:
-  - text: 'All routes must have a minimum level of <b><color=#62B4E8>safety</color></b>,
-      determined by each task. Safety is increased in <b><color=#62B4E8>low-risk
-      areas</color></b>: sidewalks are the ideal place! Use the <b><color=#F4C542>left
-      click</color></b> to start building.'
+  - text: 'All routes must have a minimum level of <color=#62B4E8>safety</color>,
+      determined by each task. Safety is increased in <color=#62B4E8>low-risk areas</color>:
+      sidewalks are the ideal place! Use the <color=#F4C542>left click</color> to
+      start building.'
     destroyRequirement: 0
     start: {x: 63, y: 15}
     end: {x: 52, y: 15}
@@ -31,9 +31,8 @@ MonoBehaviour:
       rotation: {x: 0, y: -0.9238795, z: 0, w: 0.38268343}
       zoom: 5
       duration: 1.5
-  - text: Unmarked crossings are <b><color=#F4C542>medium-risk areas</color></b>,
-      crossing through them will penalize the <b><color=#62B4E8>safety</color></b>
-      of the route.
+  - text: Unmarked crossings are <color=#F4C542>medium-risk areas</color>, crossing
+      through them will penalize the <color=#62B4E8>safety</color> of the route.
     destroyRequirement: 0
     start: {x: 52, y: 15}
     end: {x: 50, y: 15}
@@ -42,8 +41,8 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: c165b1e3b9d96574482cf671d6b2d6da, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: You can delete part of the route with <b><color=#F4C542>right click</color></b>
-      to recover <b><color=#F4C542>construction material</color></b>.
+  - text: You can delete part of the route with <color=#F4C542>right click</color>
+      to recover <color=#F4C542>construction material</color>.
     destroyRequirement: 1
     start: {x: 50, y: 15}
     end: {x: 51, y: 15}
@@ -52,8 +51,8 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: 72eca0067e4b09149a6286ec48422fd4, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: The best way to mantain a high <b><color=#62B4E8>safety</color></b> level
-      is to cross the streets at intersections marked by traffic lights.
+  - text: The best way to mantain a high <color=#62B4E8>safety</color> level is to
+      cross the streets at intersections marked by traffic lights.
     destroyRequirement: 0
     start: {x: 52, y: 15}
     end: {x: 49, y: 18}
@@ -62,7 +61,7 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: 145d812b775d840439a694223d3a92ba, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: 'Now, get to the Bike Store without reducing the <b><color=#62B4E8>safety</color></b>
+  - text: 'Now, get to the Bike Store without reducing the <color=#62B4E8>safety</color>
       of the route! '
     destroyRequirement: 0
     start: {x: 49, y: 18}

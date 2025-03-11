@@ -16,6 +16,7 @@ public class CurrentTask : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI fromText;
     [SerializeField] private TextMeshProUGUI toText;
+    [SerializeField] private TextMeshProUGUI flavorText;
 
     public event Action<Task> TaskPinned;
     public event Action TaskUnpinned;
@@ -75,12 +76,14 @@ public class CurrentTask : MonoBehaviour
             titleText.text = PinnedTask.info.title;
             fromText.text = PinnedTask.from.info.compoundName;
             toText.text = PinnedTask.to.info.compoundName;
+            flavorText.text = PinnedTask.info.flavourDetails.flavorMessage;
         }
         else
         {
             titleText.text = "Task";
             fromText.text = "From";
             toText.text = "To";
+            flavorText.text = "Flavor";
         }
     }
 }

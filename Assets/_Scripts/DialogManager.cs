@@ -11,6 +11,7 @@ public class DialogManager : MonoBehaviour
 
     [Header("Content")]
     public Image portrait;
+    public TextMeshProUGUI characterName;
     public TextMeshProUGUI dialog;
     public string[] dialogs;
     public float textSpeed = 0.05f;
@@ -42,12 +43,14 @@ public class DialogManager : MonoBehaviour
     // :::::::::: PUBLIC METHODS ::::::::::
     public void StartDialog(Task task)
     {
-        dialog.text = string.Empty;
-        portrait.sprite = task.info.character.portrait;
-        dialogs = task.state == TaskState.Completed ? task.info.rewardDialogs : task.info.dialogs;
-        inDialog = true;
         index = 0;
-        StartCoroutine(TypeDialog());
+        //dialog.text = string.Empty;
+        portrait.sprite = task.info.character.portrait;
+        characterName.text = task.info.character.characterName;
+        dialogs = task.state == TaskState.Sealed ? task.info.rewardDialogs : task.info.dialogs;
+        dialog.text = dialogs[index];
+        inDialog = true;
+        //StartCoroutine(TypeDialog());
     }
 
     public void NextDialog()
@@ -55,8 +58,9 @@ public class DialogManager : MonoBehaviour
         if (index < dialogs.Length - 1)
         {
             index++;
-            dialog.text = string.Empty;
-            StartCoroutine(TypeDialog());
+            dialog.text = dialogs[index];
+            //dialog.text = string.Empty;
+            //StartCoroutine(TypeDialog());
         }
         else // End Dialog
         {

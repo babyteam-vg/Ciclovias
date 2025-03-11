@@ -28,6 +28,9 @@ public class LaneScores : MonoBehaviour
     [SerializeField] private TextMeshProUGUI usedMaterial;
     [SerializeField] private TextMeshProUGUI maxMaterial;
 
+    [Header("UI References - Flavor")]
+    [SerializeField] private GameObject flavorFill;
+
     private String tutorialSafetyScore, tutorialCharmScore, tutorialFlowScore, tutorialUsedMaterial;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -65,7 +68,11 @@ public class LaneScores : MonoBehaviour
             if (task.info.safetyRequirement) currentSafety.text = task.currentSafetyCount.ToString();
             if (task.info.charmRequirement) currentCharm.text = task.currentCharmCount.ToString();
             if (task.info.flowRequirement) currentFlow.text = ((int)(task.currentFlowPercentage * 100)).ToString();
+            
             if (task.info.maxMaterialRequirement || task.info.minMaterialRequirement) usedMaterial.text = task.usedMaterial.ToString();
+            
+            if (task.flavorMet) flavorFill.SetActive(true);
+            else flavorFill.SetActive(false);
         }
     }
 
@@ -118,5 +125,7 @@ public class LaneScores : MonoBehaviour
         reqCharm.text = "-";
         reqFlow.text = "-";
         maxMaterial.text = "-";
+
+        flavorFill.SetActive(false);
     }
 }

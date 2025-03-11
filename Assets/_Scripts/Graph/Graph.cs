@@ -31,6 +31,21 @@ public class Graph : MonoBehaviour
         return node;
     }
 
+    // ::::: Get All Edges
+    public List<(Vector2Int, Vector2Int)> GetAllEdges()
+    {
+        List<(Vector2Int, Vector2Int)> edges = new List<(Vector2Int, Vector2Int)>();
+
+        foreach (var node in nodes.Values)
+            foreach (var neighbor in node.neighbors)
+                if (node.position.x < neighbor.position.x ||
+                    (node.position.x == neighbor.position.x && node.position.y < neighbor.position.y))
+                    edges.Add((node.position, neighbor.position));
+
+        return edges;
+    }
+
+
     // ::::: Get Node's Neighbors
     public List<Node> GetNeighbors(Vector2Int position) { return GetNode(position).neighbors; }
     public List<Vector2Int> GetNeighborsPos(Vector2Int position)

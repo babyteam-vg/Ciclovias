@@ -23,6 +23,7 @@ public class Task
     public int usedMaterial;
 
     [Header("Flavor")]
+    public bool flavorMet;
     public int currentToCross;
 
     // :::::::::: METHODS ::::::::::
@@ -59,6 +60,7 @@ public class Task
             currentFlowPercentage = this.currentFlowPercentage,
             usedMaterial = this.usedMaterial,
 
+            flavorMet = this.flavorMet,
             currentToCross = this.currentToCross
         };
     }
@@ -77,6 +79,7 @@ public class Task
         this.currentFlowPercentage = taskData.currentFlowPercentage;
         this.usedMaterial = taskData.usedMaterial;
 
+        this.flavorMet = taskData.flavorMet;
         this.currentToCross = taskData.currentToCross;
 
         this.info = info;

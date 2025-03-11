@@ -18,7 +18,6 @@ public class InGameMenuManager : MonoBehaviour
     public GameObject tasksDiaryUI;
     public GameObject receiveTaskUI;
     public GameObject dialogUI;
-    public GameObject endBuildUI;
 
     public event Action MenuOpened;
     public event Action MenuClosed;
@@ -109,6 +108,6 @@ public class InGameMenuManager : MonoBehaviour
     public void EndBuild(Task task)
     {
         if (TaskDiary.Instance.tasks.Last().state == TaskState.Completed)
-            endBuildUI.SetActive(true);
+            pauseUI.SetActive(true);
     }
 }

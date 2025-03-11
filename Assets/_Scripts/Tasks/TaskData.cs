@@ -15,5 +15,6 @@ public class TaskData
     public float currentFlowPercentage;
     public int usedMaterial;
 
+    public bool flavorMet;
     public int currentToCross;
 }

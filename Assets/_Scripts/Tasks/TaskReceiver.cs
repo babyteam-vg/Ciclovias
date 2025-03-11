@@ -18,7 +18,6 @@ public class TaskReceiver : MonoBehaviour
     [SerializeField] private TextMeshProUGUI flow;
     [SerializeField] private TextMeshProUGUI minMat;
     [SerializeField] private TextMeshProUGUI maxMat;
-    [SerializeField] private Image portrait;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -62,22 +61,21 @@ public class TaskReceiver : MonoBehaviour
 
             title.text = task.info.title;
             context.text = task.info.context;
-            safety.text = task.info.safetyRequirement ? task.info.minSafetyCount.ToString() : "No safety requirement";
-            charm.text = task.info.charmRequirement ? task.info.minCharmCount.ToString() : "No charm requirement";
-            flow.text = task.info.flowRequirement ? task.info.minFlowPercentage.ToString() : "No flow requirement";
-            minMat.text = task.info.minMaterialRequirement ? task.info.minMaterial.ToString() : "Min. NO";
-            maxMat.text = task.info.maxMaterialRequirement ? task.info.maxMaterial.ToString() : "Max. NO";
-            portrait.sprite = task.info.character.portrait;
+            safety.text = task.info.safetyRequirement ? task.info.minSafetyCount.ToString() : "-";
+            charm.text = task.info.charmRequirement ? task.info.minCharmCount.ToString() : "-";
+            flow.text = task.info.flowRequirement ? task.info.minFlowPercentage.ToString() : "-";
+            minMat.text = task.info.minMaterialRequirement ? task.info.minMaterial.ToString() : "-";
+            maxMat.text = task.info.maxMaterialRequirement ? task.info.maxMaterial.ToString() : "-";
         }
         else
         {
-            title.text = "Task";
-            context.text = "Context";
-            safety.text = "No safety requirement";
-            charm.text =  "No charm requirement";
-            flow.text = "No flow requirement";
-            minMat.text = "Min. NO";
-            maxMat.text = "Max. NO";
+            title.text = "Task Title";
+            context.text = "Task Context";
+            safety.text = "-";
+            charm.text =  "-";
+            flow.text = "-";
+            minMat.text = "-";
+            maxMat.text = "-";
         }
     }
 

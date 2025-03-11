@@ -17,17 +17,17 @@ MonoBehaviour:
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
   - "Gracias por venir, te cit\xE9 aqu\xED para... \xBFuh? Dame un momento..."
-  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de <b><color=#F4C542>Mama
-    Gio</color></b, no puedo creerlo\u2026"
-  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la <b><color=#F4C542>Municipalidad</color></b>
+  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de <color=#F4C542>Mama
+    Gio</color>, no puedo creerlo\u2026"
+  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la <color=#F4C542>Municipalidad</color>
     hasta all\xED?"
   - Los repartidores siempre llegan con mala cara y fatigados, hazles un y construye
-    una ruta <b><color=#62B4E8>segura</color></b> pero <b><color=#5DBB88>encantadora</color></b>
+    una ruta <color=#62B4E8>segura</color> pero <color=#5DBB88>encantadora</color>
     por favor.
   - "De seguro te lo agradecer\xE1n\u2026 \xA1y yo en particular <i>hahaha</i>!"
-  context: "Construye una ciclov\xEDa <b><color=#62B4E8>segura</color></b> y atractiva
-    para que los repartidores de <b><color=#F4C542>Mama Gio</color></b> puedan llegar
-    a la <b><color=#F4C542>Municipalidad</color></b> bien y sin mala cara."
+  context: "Construye una ciclov\xEDa <color=#62B4E8>segura</color> y atractiva para
+    que los repartidores de <color=#F4C542>Mama Gio</color> puedan llegar a la <color=#F4C542>Municipalidad</color>
+    bien y sin mala cara."
   safetyRequirement: 1
   minSafetyCount: 50
   charmRequirement: 1
@@ -43,6 +43,7 @@ MonoBehaviour:
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
+    flavorMessage: 
   materialReward: 20
   unlockedTasks: []
   rewardDialogs:

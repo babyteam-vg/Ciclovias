@@ -6,12 +6,14 @@ public class GraphRenderer : MonoBehaviour
 {
     public Material standardMaterial; // Material for standard nodes and edges
     public Material highlightMaterial; // Material for highlighted nodes and edges
+    public Material sealedMaterial;
     public float nodeSize = 0.2f;
     public float edgeWidth = 0.1f;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private GameObject plane;
+    [SerializeField] private TaskManager taskManager;
     private Dictionary<Vector2Int, GameObject> nodeObjects;
     private Dictionary<(Vector2Int, Vector2Int), LineRenderer> edgeRenderers;
 
@@ -27,15 +29,6 @@ public class GraphRenderer : MonoBehaviour
         edgeRenderers = new Dictionary<(Vector2Int, Vector2Int), LineRenderer>();
     }
 
-    private void Start()
-    {
-        if (plane != null)
-        {
-            Renderer renderer = plane.GetComponent<Renderer>();
-            elevation += renderer.bounds.max.y;
-        }
-    }
-
     private void OnEnable()
     {
         // Subscribe to Graph events
@@ -44,6 +37,8 @@ public class GraphRenderer : MonoBehaviour
         graph.OnNodeRemoved += HandleNodeRemoved;
         graph.OnEdgeRemoved += HandleEdgeRemoved;
         graph.OnLonelyNodeRemoved += HandleLonelyNodeRemoved;
+
+        taskManager.TaskSealed += ResetCurrentPath;
     }
     private void OnDisable()
     {
@@ -53,6 +48,18 @@ public class GraphRenderer : MonoBehaviour
         graph.OnNodeRemoved -= HandleNodeRemoved;
         graph.OnEdgeRemoved -= HandleEdgeRemoved;
         graph.OnLonelyNodeRemoved -= HandleLonelyNodeRemoved;
+
+        taskManager.TaskSealed -= ResetCurrentPath;
+    }
+    private void Start()
+    {
+        if (plane != null)
+        {
+            Renderer renderer = plane.GetComponent<Renderer>();
+            elevation += renderer.bounds.max.y;
+        }
+
+        RenderGraph();
     }
 
     private void Update()
@@ -114,7 +121,7 @@ public class GraphRenderer : MonoBehaviour
     // ::::: Node Drawer
     private void DrawNode(Vector2Int nodePosition, Vector2 worldPosition)
     {
-        if (nodeObjects.ContainsKey(nodePosition)) return; // Avoid duplicate nodes
+        //if (nodeObjects.ContainsKey(nodePosition)) return; // Avoid duplicate nodes
 
         GameObject nodeObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         nodeObject.transform.position = new Vector3(worldPosition.x, elevation, worldPosition.y);
@@ -137,8 +144,8 @@ public class GraphRenderer : MonoBehaviour
     // ::::: Edge Drawer
     private void DrawEdge(Vector2Int positionA, Vector2Int positionB)
     {
-        if (edgeRenderers.ContainsKey((positionA, positionB)) || edgeRenderers.ContainsKey((positionB, positionA)))
-            return; // Avoid duplicate edges
+        //if (edgeRenderers.ContainsKey((positionA, positionB)) || edgeRenderers.ContainsKey((positionB, positionA)))
+        //    return; // Avoid duplicate edges
 
         // Draw an Edge
         GameObject edgeObject = new GameObject("Edge");
@@ -166,41 +173,59 @@ public class GraphRenderer : MonoBehaviour
         }
     }
 
+    // :::::
+    private void RenderGraph()
+    {
+        // nodes
+        foreach (var node in graph.GetAllNodes())
+            DrawNode(node.position, node.worldPosition);
+
+        // Edges
+        foreach (var edge in graph.GetAllEdges())
+            DrawEdge(edge.Item1, edge.Item2);
+    }
+
     // ::::: Material Updater
     private void UpdateMaterials()
     {
-        // Update node materials
+        // Nodes
         foreach (var nodeEntry in nodeObjects)
         {
             Vector2Int nodePosition = nodeEntry.Key;
             GameObject nodeObject = nodeEntry.Value;
+            Node node = graph.GetNode(nodePosition);
 
-            // Check if the node is part of the current path
             if (currentPath.Contains(nodePosition))
-            {
                 nodeObject.GetComponent<Renderer>().material = highlightMaterial;
-            }
             else
             {
-                nodeObject.GetComponent<Renderer>().material = standardMaterial;
+                if (node.indestructible)
+                    nodeObject.GetComponent<Renderer>().material = sealedMaterial;
+                else nodeObject.GetComponent<Renderer>().material = standardMaterial;
             }
         }
 
-        // Update edge materials
+        // Edges
         foreach (var edgeEntry in edgeRenderers)
         {
             (Vector2Int positionA, Vector2Int positionB) = edgeEntry.Key;
             LineRenderer lineRenderer = edgeEntry.Value;
+            Node nodeA = graph.GetNode(positionA);
+            Node nodeB = graph.GetNode(positionB);
 
-            // Check if both nodes of the edge are part of the current path
             if (currentPath.Contains(positionA) && currentPath.Contains(positionB))
-            {
                 lineRenderer.material = highlightMaterial;
-            }
             else
             {
-                lineRenderer.material = standardMaterial;
+                if (nodeA.indestructible && nodeB.indestructible)
+                    lineRenderer.material = sealedMaterial;
+                else lineRenderer.material = standardMaterial;
             }
         }
+    }
+
+    private void ResetCurrentPath(Task _)
+    {
+        currentPath = new List<Vector2Int>();
     }
 }

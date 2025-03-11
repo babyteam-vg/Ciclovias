@@ -96,7 +96,7 @@ public class TaskManager : MonoBehaviour
             activeTask.currentFlowPercentage = flow;
             activeTask.usedMaterial = usedMaterial;
 
-            MeetsFlavour(activeTask, path);
+            activeTask.flavorMet = MeetsFlavour(activeTask, path);
 
             ActiveTaskScoresUpdated?.Invoke();
 
@@ -117,7 +117,6 @@ public class TaskManager : MonoBehaviour
     private void DecompleteTask(Task task)
     {
         confirmButton.SetActive(false);
-        GameManager.Instance.ConsumeMaterial(task.info.materialReward);
         ChangeTaskState(TaskState.Accepted, task); // Completed -> Accepted
     }
 
@@ -186,9 +185,11 @@ public class TaskManager : MonoBehaviour
         switch (type)
         {
             case FlavorType.Visit:
-                return graph.FindNodePosInCells(path) != null;
+                List<Vector2Int> visitSurroundings = task.info.flavourDetails.compound.surroundings;
+                return visitSurroundings.Intersect(path).Any();
             case FlavorType.Avoid:
-                return graph.FindNodePosInCells(path) != null;
+                List<Vector2Int> avoidSurroundings = task.info.flavourDetails.compound.surroundings;
+                return !avoidSurroundings.Intersect(path).Any();
             case FlavorType.Cross:
                 if (path.Count > 1)
                 {
