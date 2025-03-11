@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -9,13 +10,13 @@ public class TutorialManager : MonoBehaviour
     public static TutorialManager Instance { get; private set; }
 
     [Header("Dependencies")]
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private Grid grid;
     [SerializeField] private GridGenerator gridGenerator;
     [SerializeField] private Graph graph;
     [SerializeField] private IsometricCameraController cameraController;
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
-    [SerializeField] private List<TutorialInfo> tutorialDataList;
 
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
@@ -25,19 +26,17 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tutorialTitle;
     [SerializeField] private TextMeshProUGUI tutorialText;
 
-    [Header("Requirements")]
-    public int currentSafety;
-    public float currentFlow; 
-    public int currentCharm, usedMaterial;
+    [Header("Tutorials")]
+    public List<Tutorial> tutorials;
 
-    private Dictionary<Vector2Int, TutorialInfo> tutorialDictionary;
-    private TutorialInfo activeTutorial;
+    private Dictionary<Vector2Int, Tutorial> tutorialDictionary;
+    private Tutorial activeTutorial;
     private int currentSectionIndex;
     private bool isTutorialActive = false;
     private MapData originalMapData;
 
-    public event Action ActiveTutorialScoresUpdated;
-    public event Action<TutorialInfo> TutorialStarted;
+    public event Action<Tutorial> ActiveTutorialScoresUpdated;
+    public event Action<Tutorial> TutorialStarted;
     public event Action<TutorialSection> TutorialSectionStarted;
     public event Action TutorialSectionPresentationStarted;
     public event Action TutorialSectionPresentationDone;
@@ -58,12 +57,15 @@ public class TutorialManager : MonoBehaviour
 
     private void OnEnable()
     {
+        gameManager.MapStateAdvanced += GetNextTutorial;
+
         laneConstructor.OnLaneBuilt += CheckSectionProgress;
         laneDestructor.OnLaneDestroyed += CheckSectionProgress;
     }
-
     private void OnDisable()
     {
+        gameManager.MapStateAdvanced -= GetNextTutorial;
+
         laneConstructor.OnLaneBuilt -= CheckSectionProgress;
         laneDestructor.OnLaneDestroyed -= CheckSectionProgress;
     }
@@ -74,48 +76,48 @@ public class TutorialManager : MonoBehaviour
     {
         if (isTutorialActive) return;
 
-        if (tutorialDictionary.TryGetValue(tutorialID, out TutorialInfo tutorialData))
+        if (tutorialDictionary.TryGetValue(tutorialID, out Tutorial tutorial))
         {
-            activeTutorial = tutorialData;
+            activeTutorial = tutorial;
             currentSectionIndex = 0;
 
-            originalMapData = gridGenerator.GetMapDataForCoordinates(tutorialData.sections[currentSectionIndex].tutorialMap.coordinates);
+            originalMapData = gridGenerator.GetMapDataForCoordinates(tutorial.info.sections[currentSectionIndex].tutorialMap.coordinates);
 
-            StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
 
             if (tutorialCanvas != null)
             {
                 tutorialCanvas.SetActive(true);
-                tutorialTitle.text = activeTutorial.title;
+                tutorialTitle.text = activeTutorial.info.title;
             }
 
             TutorialStarted?.Invoke(activeTutorial); // !
         }
     }
 
-    // ::::: 
+    // ::::: Manage Section of a Tutorial
     public void CheckSectionProgress(Vector2Int gridPosition)
     {
         if (!isTutorialActive || activeTutorial == null) return;
 
-        TutorialSection currentSection = activeTutorial.sections[currentSectionIndex];
+        TutorialSection currentSection = activeTutorial.info.sections[currentSectionIndex];
 
         (bool pathFound, List<Vector2Int> path) = pathfinder.FindPath(currentSection.start, gridPosition, currentSection.end);
 
-        currentSafety = cellScoresCalculator.CalculatePathSafety(path);
-        currentCharm = cellScoresCalculator.CalculatePathCharm(path);
-        currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
-        usedMaterial = path.Count;
+        activeTutorial.currentSafety = cellScoresCalculator.CalculatePathSafety(path);
+        activeTutorial.currentCharm = cellScoresCalculator.CalculatePathCharm(path);
+        activeTutorial.currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
+        activeTutorial.usedMaterial = path.Count;
 
-        ActiveTutorialScoresUpdated?.Invoke();
+        ActiveTutorialScoresUpdated?.Invoke(activeTutorial);
 
         if (currentSection.destroyRequirement)
         {
             if (graph.GetNode(currentSection.start) == null && graph.GetNode(currentSection.end) == null)
             {
                 currentSectionIndex++;
-                if (currentSectionIndex < activeTutorial.sections.Length)
-                    StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+                if (currentSectionIndex < activeTutorial.info.sections.Length)
+                    StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
                 else StopTutorial();
             }
         }   
@@ -125,19 +127,19 @@ public class TutorialManager : MonoBehaviour
             {
                 if (currentSection.checkRequirements)
                 {
-                    if (activeTutorial.MeetsRequirements(currentSafety, currentCharm, currentFlow, usedMaterial))
+                    if (activeTutorial.MeetsRequirements(activeTutorial.currentSafety, activeTutorial.currentCharm, activeTutorial.currentFlow, activeTutorial.usedMaterial))
                     {
                         currentSectionIndex++;
-                        if (currentSectionIndex < activeTutorial.sections.Length)
-                            StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+                        if (currentSectionIndex < activeTutorial.info.sections.Length)
+                            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
                         else StopTutorial();
                     }
                 }
                 else
                 {
                     currentSectionIndex++;
-                    if (currentSectionIndex < activeTutorial.sections.Length)
-                        StartCoroutine(ExecuteSection(activeTutorial.sections[currentSectionIndex]));
+                    if (currentSectionIndex < activeTutorial.info.sections.Length)
+                        StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
                     else StopTutorial();
                 }
             }
@@ -149,6 +151,7 @@ public class TutorialManager : MonoBehaviour
     {
         if (!isTutorialActive) return;
 
+        activeTutorial.completed = true;
         StopAllCoroutines();
         isTutorialActive = false;
         cameraController.UnblockCamera();
@@ -162,10 +165,19 @@ public class TutorialManager : MonoBehaviour
     // :::::::::: PRIVATE METHODS ::::::::::
     private void InitializeTutorialDictionary()
     {
-        tutorialDictionary = new Dictionary<Vector2Int, TutorialInfo>();
+        tutorialDictionary = new Dictionary<Vector2Int, Tutorial>();
 
-        foreach (var tutorialData in tutorialDataList)
-            tutorialDictionary[tutorialData.id] = tutorialData;
+        foreach (var tutorial in tutorials)
+            tutorialDictionary[tutorial.info.id] = tutorial;
+    }
+
+    // ::::: Get the Next Tutorial to Play
+    private void GetNextTutorial(int currentMapState)
+    {
+        var nextTutorials = tutorials.Where(t => t.info.id.x == currentMapState && t.completed == false)
+            .OrderBy(t => t.info.id.y).ToList();
+        Tutorial nextTutorial = nextTutorials.FirstOrDefault();
+        PlayTutorial(nextTutorial.info.id);
     }
 
     // ::::: Start a Section of the Tuutorial
@@ -202,5 +214,29 @@ public class TutorialManager : MonoBehaviour
             }
         }   
         TutorialSectionPresentationDone?.Invoke(); // !
+    }
+
+    // :::::::::: STORAGE ::::::::::
+    // ::::: Tutorials -> TutorialsData
+    public List<TutorialData> SaveTutorials()
+    {
+        List<TutorialData> tutorialsData = new List<TutorialData>();
+        foreach (Tutorial tutorial in tutorials)
+            tutorialsData.Add(tutorial.SaveTutorial());
+        return tutorialsData;
+    }
+
+    // ::::: TutorialsData -> Tutorials
+    public void LoadTutorials(List<TutorialData> tutorialsData)
+    {
+        if (tutorialsData.Count != tutorials.Count) return;
+
+        for (int i = 0; i < tutorials.Count; i++)
+        {
+            Tutorial tutorial = tutorials[i];
+            TutorialData tutorialData = tutorialsData[i];
+
+            tutorial.completed = tutorialData.completed;
+        }
     }
 }

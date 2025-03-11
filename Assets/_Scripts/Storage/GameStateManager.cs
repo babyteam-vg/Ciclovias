@@ -32,11 +32,12 @@ public class GameStateManager : MonoBehaviour
 
         LoadedGameData = new GameData
         {
-            MapState = 0,
-            SmokeState = 0,
-            MaterialAmount = 80,
+            MapState = -1,
+            SmokeState = -1,
+            MaterialAmount = -1,
             graph = new GraphData(),
             tasks = new List<TaskData>(),
+            tutorials = new List<TutorialData>(),
         };
 
         Debug.Log("LoadedGameData reseted and ready for a new game.");

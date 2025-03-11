@@ -187,9 +187,11 @@ public class TaskManager : MonoBehaviour
             case FlavorType.Visit:
                 List<Vector2Int> visitSurroundings = task.info.flavourDetails.compound.surroundings;
                 return visitSurroundings.Intersect(path).Any();
+
             case FlavorType.Avoid:
                 List<Vector2Int> avoidSurroundings = task.info.flavourDetails.compound.surroundings;
                 return !avoidSurroundings.Intersect(path).Any();
+
             case FlavorType.Cross:
                 if (path.Count > 1)
                 {
@@ -204,6 +206,12 @@ public class TaskManager : MonoBehaviour
                 }
                 if (task.currentToCross >= task.info.flavourDetails.numberToCross) return true;
                 break;
+
+            case FlavorType.UseLane:
+                return graph.ContainsIndestructibleNode(path);
+
+            case FlavorType.AvoidLane:
+                return !graph.ContainsIndestructibleNode(path);
         }
         return false;
     }

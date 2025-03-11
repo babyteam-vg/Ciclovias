@@ -23,10 +23,7 @@ public class DialogManager : MonoBehaviour
     private void OnEnable() { taskManager.TaskSealed += StartDialog; }
     private void OnDisable() { taskManager.TaskSealed -= StartDialog; }
 
-    private void Start()
-    {
-        dialog.text = string.Empty;
-    }
+    private void Start() { dialog.text = string.Empty; }
 
     private void Update()
     {
@@ -35,7 +32,7 @@ public class DialogManager : MonoBehaviour
                 NextDialog();
             else
             {
-                StopAllCoroutines();
+                //StopAllCoroutines();
                 dialog.text = dialogs[index];
             }
     }
@@ -44,11 +41,14 @@ public class DialogManager : MonoBehaviour
     public void StartDialog(Task task)
     {
         index = 0;
-        //dialog.text = string.Empty;
+
+        dialogs = task.state == TaskState.Sealed
+            ? task.info.rewardDialogs
+            : task.info.dialogs;
         portrait.sprite = task.info.character.portrait;
         characterName.text = task.info.character.characterName;
-        dialogs = task.state == TaskState.Sealed ? task.info.rewardDialogs : task.info.dialogs;
-        dialog.text = dialogs[index];
+
+        dialog.text = dialogs[0];
         inDialog = true;
         //StartCoroutine(TypeDialog());
     }
@@ -65,7 +65,11 @@ public class DialogManager : MonoBehaviour
         else // End Dialog
         {
             inDialog = false;
+            dialog.text = string.Empty;
+            dialogs = new string[0];
+
             InGameMenuManager.Instance.OnCloseDialog();
+
             if (TaskReceiver.Instance.ThereIsReceived())
                 InGameMenuManager.Instance.OnReceiveTaskPress();
         }

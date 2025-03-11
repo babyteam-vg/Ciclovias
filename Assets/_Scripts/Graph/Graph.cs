@@ -222,6 +222,16 @@ public class Graph : MonoBehaviour
         return crossProduct == 0;
     }
 
+    // ::::: Any Indestructible Node in the Path?
+    public bool ContainsIndestructibleNode(List<Vector2Int> positions)
+    {
+        foreach (var position in positions)
+            if (nodes.TryGetValue(position, out Node node) && node.indestructible)
+                return true;
+
+        return false;
+    }
+
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Graph -> GraphData
     public GraphData SaveGraph()

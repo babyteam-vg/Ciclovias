@@ -29,7 +29,7 @@ MonoBehaviour:
     que los repartidores de <color=#F4C542>Mama Gio</color> puedan llegar a la <color=#F4C542>Municipalidad</color>
     bien y sin mala cara."
   safetyRequirement: 1
-  minSafetyCount: 50
+  minSafetyCount: 55
   charmRequirement: 1
   minCharmCount: 15
   flowRequirement: 0
@@ -45,7 +45,8 @@ MonoBehaviour:
     numberToCross: 0
     flavorMessage: 
   materialReward: 20
-  unlockedTasks: []
+  unlockedTasks:
+  - {x: 0, y: 3}
   rewardDialogs:
   - Genial, ahora no hay como perderse e incluso puedo ir a pedirlas en mi propia
     bicicleta.
@@ -53,3 +54,4 @@ MonoBehaviour:
     \xA1te lo aseguro!"
   posts:
   - {fileID: 11400000, guid: ef851d0fa1d96504a8af3d1f703f6bc1, type: 2}
+  - {fileID: 11400000, guid: 0177152e17921894dae46bd2e712982d, type: 2}

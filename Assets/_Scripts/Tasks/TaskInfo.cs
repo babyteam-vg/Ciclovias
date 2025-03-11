@@ -51,4 +51,6 @@ public enum FlavorType
     Visit,
     Avoid,
     Cross,
+    UseLane,
+    AvoidLane,
 }

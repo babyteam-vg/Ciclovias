@@ -87,20 +87,20 @@ public class LaneScores : MonoBehaviour
     private void ClearTaskScoresRequirements(Task task) { ClearScoresRequirements(); }
 
     // :::::::::: TUTORIAL METHODS ::::::::::
-    private void HandleTutorialLaneUpdated()
+    private void HandleTutorialLaneUpdated(Tutorial tutorial)
     {
-        if (reqSafety.text != "-") currentSafety.text = tutorialManager.currentSafety.ToString();
-        if (reqCharm.text != "-") currentCharm.text = tutorialManager.currentCharm.ToString();
-        if (reqFlow.text != "-") currentFlow.text = ((int)(tutorialManager.currentFlow * 100)).ToString();
-        if (maxMaterial.text != "-") usedMaterial.text = tutorialManager.usedMaterial.ToString();
+        if (reqSafety.text != "-") currentSafety.text = tutorial.currentSafety.ToString();
+        if (reqCharm.text != "-") currentCharm.text = tutorial.currentCharm.ToString();
+        if (reqFlow.text != "-") currentFlow.text = ((int)(tutorial.currentFlow * 100)).ToString();
+        if (maxMaterial.text != "-") usedMaterial.text = tutorial.usedMaterial.ToString();
     }
 
-    private void UpdateTutorialScoresRequirements(TutorialInfo tutorial)
+    private void UpdateTutorialScoresRequirements(Tutorial tutorial)
     {
-        tutorialSafetyScore = tutorial.safetyRequirement ? tutorial.minSafetyCount.ToString() : "-";
-        tutorialCharmScore = tutorial.charmRequirement ? tutorial.minCharmCount.ToString() : "-";
-        tutorialFlowScore = tutorial.flowRequirement ? ((int)(tutorial.minFlowPercentage * 100)).ToString() : "-";
-        tutorialUsedMaterial = tutorial.maxMaterialRequirement ? tutorial.maxMaterial.ToString() : "-";
+        tutorialSafetyScore = tutorial.info.safetyRequirement ? tutorial.info.minSafetyCount.ToString() : "-";
+        tutorialCharmScore = tutorial.info.charmRequirement ? tutorial.info.minCharmCount.ToString() : "-";
+        tutorialFlowScore = tutorial.info.flowRequirement ? ((int)(tutorial.info.minFlowPercentage * 100)).ToString() : "-";
+        tutorialUsedMaterial = tutorial.info.maxMaterialRequirement ? tutorial.info.maxMaterial.ToString() : "-";
     }
     private void UpdateTutorialScoresRequirements(TutorialSection section)
     {

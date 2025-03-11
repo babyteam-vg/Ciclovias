@@ -8,15 +8,13 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public int MapState { get; private set; } = 0;
-    public int SmokeState { get; private set; } = 0;
-    public int MaterialAmount { get; private set; } = 120;
+    public int MapState { get; private set; } = -1;
+    public int SmokeState { get; private set; } = -1;
+    public int MaterialAmount { get; private set; } = -1;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
-    [SerializeField] private TaskDiary taskDiary;
-    [SerializeField] private InputManager inputManager; // PLACEHOLDER!!!
     private StorageManager storageManager = new StorageManager();
 
     [Header("UI References")]
@@ -24,7 +22,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI amountText;
 
     private Animator animator;
-    private bool placeholderTutorial = true;
 
     public event Action<int> MapStateAdvanced;
     public event Action<int> SmokeStateReduced;
@@ -39,12 +36,10 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         taskManager.TaskSealed += OnTaskSealed;
-        inputManager.OnCursorMove += PlaceHolderTutorial; // PLACEHOLDER!!!
     }
     private void OnDisable()
     {
         taskManager.TaskSealed -= OnTaskSealed;
-        inputManager.OnCursorMove -= PlaceHolderTutorial; // PLACEHOLDER!!!
     }
 
     private void Start()
@@ -54,9 +49,7 @@ public class GameManager : MonoBehaviour
         amountText.text = "x" + MaterialAmount.ToString();
         animator = materialCounter.GetComponent<Animator>();
 
-        List<Task> unlockedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Unlocked).ToList();
-        foreach (Task acceptedTask in unlockedTasks)
-            acceptedTask.from.GetNextAvailableTask(MapState);
+        StartCoroutine(DelayedInitialize());
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -69,7 +62,7 @@ public class GameManager : MonoBehaviour
     // ::::: Smoke
     public void ReduceSmokeState()
     {
-        SmokeState--;
+        SmokeState++;
         SmokeStateReduced?.Invoke(SmokeState); // !
     }
 
@@ -93,13 +86,21 @@ public class GameManager : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    private void PlaceHolderTutorial(Vector2Int _) // PLACEHOLDER!!!
+    private IEnumerator DelayedInitialize()
     {
-        if (placeholderTutorial && TaskDiary.Instance.tasks[0].state == TaskState.Unlocked)
-        {
-            placeholderTutorial = false;
-            TutorialManager.Instance.PlayTutorial(new Vector2Int(0, 1));
-        }
+        yield return new WaitForEndOfFrame();
+        InitializeState();
+    }
+
+    private void InitializeState()
+    {
+        List<Task> unlockedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Unlocked).ToList();
+        foreach (Task acceptedTask in unlockedTasks)
+            acceptedTask.from.GetNextAvailableTask(MapState);
+
+        if (MapState == -1) AdvanceMapState();
+        if (SmokeState == -1) ReduceSmokeState();
+        if (MaterialAmount == -1) AddMaterial(120);
     }
 
     private void MaterialCounterAnimation()
@@ -114,7 +115,7 @@ public class GameManager : MonoBehaviour
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Save
-    public void SaveGame(string fileName = null)
+    private void SaveGame(string fileName = null)
     {
         GameData gameData = new GameData
         {
@@ -122,7 +123,8 @@ public class GameManager : MonoBehaviour
             SmokeState = SmokeState,
             MaterialAmount = MaterialAmount,
             graph = graph.SaveGraph(),
-            tasks = TaskDiary.Instance.SaveTasks()
+            tasks = TaskDiary.Instance.SaveTasks(),
+            tutorials = TutorialManager.Instance.SaveTutorials()
         };
 
         bool success = fileName == null
@@ -142,7 +144,8 @@ public class GameManager : MonoBehaviour
             SmokeState = gameData.SmokeState;
             MaterialAmount = gameData.MaterialAmount;
             graph.LoadGraph(gameData.graph);
-            taskDiary.LoadTasks(gameData.tasks);
+            TaskDiary.Instance.LoadTasks(gameData.tasks);
+            TutorialManager.Instance.LoadTutorials(gameData.tutorials);
 
             amountText.text = "x" + MaterialAmount.ToString();
 

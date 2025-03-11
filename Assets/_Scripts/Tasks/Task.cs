@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -63,28 +62,6 @@ public class Task
             flavorMet = this.flavorMet,
             currentToCross = this.currentToCross
         };
-    }
-
-    // ::::: TaskData -> Task
-    public void LoadTask(TaskData taskData, TaskInfo info, Compound from, Compound to)
-    {
-        this.state = taskData.state;
-
-        this.path = taskData.path;
-        //this.start = taskData.start;
-        //this.end = taskData.end;
-
-        this.currentSafetyCount = taskData.currentSafetyCount;
-        this.currentCharmCount = taskData.currentCharmCount;
-        this.currentFlowPercentage = taskData.currentFlowPercentage;
-        this.usedMaterial = taskData.usedMaterial;
-
-        this.flavorMet = taskData.flavorMet;
-        this.currentToCross = taskData.currentToCross;
-
-        this.info = info;
-        this.from = from;
-        this.to = to;
     }
 }
 

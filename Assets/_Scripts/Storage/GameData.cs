@@ -8,5 +8,6 @@ public class GameData
     public int MaterialAmount;
     public GraphData graph;
     public List<TaskData> tasks;
+    public List<TutorialData> tutorials;
     // ...
 }

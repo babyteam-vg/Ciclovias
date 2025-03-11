@@ -57,7 +57,7 @@ public class LaneDestructor : MonoBehaviour
 
         if (isAllowed                   // Not in Menu
             && node != null             // Node in the Graph
-            && node.neighbors.Count < 2 // Edge of the Graph
+            //&& node.neighbors.Count < 2 // Edge of the Graph
             && !node.indestructible)    // Not Part of a Sealed Task
         {
             isDestroying = true;

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Compound : MonoBehaviour
 {
     [Header("Dependencies")]
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private TutorialManager tutorialManager;
@@ -22,6 +23,8 @@ public class Compound : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
+        gameManager.MapStateAdvanced += GetNextAvailableTask;
+
         taskManager.TaskAccepted += OnAcceptedTask;
 
         tutorialManager.TutorialStarted += HideGivingTask;
@@ -29,6 +32,8 @@ public class Compound : MonoBehaviour
     }
     private void OnDisable()
     {
+        gameManager.MapStateAdvanced -= GetNextAvailableTask;
+
         taskManager.TaskAccepted -= OnAcceptedTask;
 
         tutorialManager.TutorialStarted -= HideGivingTask;
@@ -76,7 +81,7 @@ public class Compound : MonoBehaviour
     public bool IsGivingTask() { return givingTask != null; }
 
     // ::::: Get Task for the Player to Receive from Compound
-    public Task GetNextAvailableTask(int currentMapState)
+    public void GetNextAvailableTask(int currentMapState)
     {
         List<Task> tasks = TaskDiary.Instance.tasks;
         var currentStateTasks = tasks.Where(t => t.from == this && t.info.id.x == currentMapState)
@@ -84,7 +89,6 @@ public class Compound : MonoBehaviour
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
         givingTaskUI.SetActive(true);
-        return givingTask;
     }
 
     public void OnAcceptedTask(Task task, bool isManualAccept)
@@ -114,7 +118,7 @@ public class Compound : MonoBehaviour
         if (IsGivingTask())
             givingTaskUI.SetActive(true);
     }
-    private void HideGivingTask(TutorialInfo _)
+    private void HideGivingTask(Tutorial _)
     {
         givingTaskUI.SetActive(false);
     }

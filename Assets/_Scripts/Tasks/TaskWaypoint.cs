@@ -103,7 +103,7 @@ public class TaskWaypoint : MonoBehaviour
     }
 
     // ::::: When Unpinned or Tutorial Started
-    private void HideTutorialWaypoints(TutorialInfo tutorial) { HideWaypoints(); }
+    private void HideTutorialWaypoints(Tutorial _) { HideWaypoints(); }
 
     private void HideWaypoints()
     {

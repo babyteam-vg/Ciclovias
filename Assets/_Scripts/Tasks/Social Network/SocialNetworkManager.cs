@@ -95,9 +95,9 @@ public class SocialNetworkManager : MonoBehaviour
         repeatablePosts.Clear();
         uniquePostQueue.Clear();
 
-        List<Task> completedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Completed).ToList();
+        List<Task> sealedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Sealed).ToList();
 
-        foreach (Task task in completedTasks)
+        foreach (Task task in sealedTasks)
             foreach (PostInfo post in task.info.posts)
             {
                 if (post.isRepeatable)

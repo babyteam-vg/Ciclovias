@@ -21,23 +21,6 @@ public class TutorialInfo : ScriptableObject
     public int minMaterial;
     public bool maxMaterialRequirement;
     public int maxMaterial;
-
-    // :::::::::: METHODS ::::::::::
-    // ::::: Requirements
-    public bool MeetsRequirements(int currentSafety, int currentCharm, float currentFlow, int usedMaterial)
-    {
-        return MeetsSafetyRequirement(currentSafety) &&
-               MeetsCharmRequirement(currentCharm) &&
-               MeetsFlowRequirement(currentFlow) &&
-               MeetsMinMaterialRequirement(usedMaterial) &&
-               MeetsMaxMaterialRequirement(usedMaterial);
-    }
-
-    public bool MeetsSafetyRequirement(int currentSafety) { return !safetyRequirement || currentSafety >= minSafetyCount; }
-    public bool MeetsCharmRequirement(int currentCharm) { return !charmRequirement || currentCharm >= minCharmCount; }
-    public bool MeetsFlowRequirement(float currentFlow) { return !flowRequirement || currentFlow >= minFlowPercentage; }
-    public bool MeetsMinMaterialRequirement(int usedMaterial) { return !minMaterialRequirement || usedMaterial >= minMaterial; }
-    public bool MeetsMaxMaterialRequirement(int usedMaterial) { return !maxMaterialRequirement || usedMaterial <= maxMaterial; }
 }
 
 [System.Serializable]
