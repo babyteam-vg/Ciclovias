@@ -15,7 +15,12 @@ public class JsonDataService
     {
         settings = new JsonSerializerSettings
         {
-            Converters = { new Vector2Converter(), new Vector2IntConverter() },
+            Converters = {
+            new Vector2Converter(),
+            new Vector2IntConverter(),
+            new Vector3Converter(),
+            new Vector3IntConverter()
+        },
             Formatting = Formatting.None
         };
     }

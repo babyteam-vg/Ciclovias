@@ -9,5 +9,6 @@ public class GameData
     public GraphData graph;
     public List<TaskData> tasks;
     public List<TutorialData> tutorials;
+    public SplineContainerData splines;
     // ...
 }

@@ -4735,6 +4735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graph: {fileID: 1986930194}
   taskManager: {fileID: 1736919538}
+  splinesManager: {fileID: 1215106551}
   materialCounter: {fileID: 1421969043}
   amountText: {fileID: 148540938}
 --- !u!4 &537187016
@@ -9447,7 +9448,7 @@ MonoBehaviour:
   plane: {fileID: 445937665}
   laneWidth: 0.4
   segmentsPerUnit: 7
-  laneMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
+  laneMaterial: {fileID: 2100000, guid: 488c4f6eabe48c24eb7867171a6d8a31, type: 2}
 --- !u!23 &1150232505
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10173,7 +10174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1285999569
 Transform:
   m_ObjectHideFlags: 0
@@ -10201,9 +10202,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f7c9ad1908595c49b21fa0078c16a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  standardMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
+  standardMaterial: {fileID: 2100000, guid: 518e5a66eae16b141b653f06590e18ef, type: 2}
   highlightMaterial: {fileID: 2100000, guid: ab0288716e54b83449c36e98a03d6fdc, type: 2}
-  sealedMaterial: {fileID: 2100000, guid: fec208a6cc8610946bd1b469d29d7dc7, type: 2}
+  sealedMaterial: {fileID: 2100000, guid: 4aa3180af927ca64095e08c996d635b7, type: 2}
   nodeSize: 0.2
   edgeWidth: 0.1
   graph: {fileID: 1986930194}

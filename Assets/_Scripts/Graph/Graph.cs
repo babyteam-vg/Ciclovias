@@ -238,33 +238,14 @@ public class Graph : MonoBehaviour
     {
         GraphData graphData = new GraphData();
 
-        // Nodes
         foreach (var node in nodes.Values)
-        {
             graphData.nodes.Add(new GraphData.SerializableNode
             {
                 position = node.position,
                 worldPosition = node.worldPosition,
                 indestructible = node.indestructible,
+                neighbors = node.neighbors.ConvertAll(neighbor => neighbor.position)
             });
-        }
-
-        // Edges
-        foreach (var node in nodes.Values)
-        {
-            foreach (var neighbor in node.neighbors)
-            {
-                if (node.position.x < neighbor.position.x || // Prrevent Duplicates
-                    (node.position.x == neighbor.position.x && node.position.y < neighbor.position.y))
-                {
-                    graphData.edges.Add(new GraphData.SerializableEdge
-                    {
-                        nodeA = node.position,
-                        nodeB = neighbor.position
-                    });
-                }
-            }
-        }
 
         return graphData;
     }
@@ -275,10 +256,18 @@ public class Graph : MonoBehaviour
         nodes.Clear();
         nodePositions.Clear();
 
-        foreach (var nodeData in graphData.nodes) // Nodes
+        // Nodes
+        foreach (var nodeData in graphData.nodes)
             AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible);
 
-        foreach (var serializableEdge in graphData.edges) // Edges
-            AddEdge(serializableEdge.nodeA, serializableEdge.nodeB);
+        // Edges
+        foreach (var nodeData in graphData.nodes)
+            if (nodes.TryGetValue(nodeData.position, out Node node))
+                foreach (var neighborPos in nodeData.neighbors)
+                    if (nodes.ContainsKey(neighborPos))
+                    {
+                        Node neighbor = nodes[neighborPos];
+                        node.AddNeighbor(neighbor);
+                    }
     }
 }

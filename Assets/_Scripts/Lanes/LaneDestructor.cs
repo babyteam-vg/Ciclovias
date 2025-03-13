@@ -57,7 +57,7 @@ public class LaneDestructor : MonoBehaviour
 
         if (isAllowed                   // Not in Menu
             && node != null             // Node in the Graph
-            //&& node.neighbors.Count < 2 // Edge of the Graph
+            && node.neighbors.Count < 2 // Edge of the Graph
             && !node.indestructible)    // Not Part of a Sealed Task
         {
             isDestroying = true;
@@ -74,7 +74,7 @@ public class LaneDestructor : MonoBehaviour
     {
         Node node = graph.GetNode(gridPosition);
 
-        if (node != null && !node.indestructible) // Node's Existence
+        if (node != null && !node.indestructible && node.neighbors.Count < 2) // Node's Existence
         {
             if (isAllowed && isDestroying && lastCellPosition.HasValue) // Flags
             {

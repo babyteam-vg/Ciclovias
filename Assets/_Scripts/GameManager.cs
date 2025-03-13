@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private SplinesManager splinesManager;
     private StorageManager storageManager = new StorageManager();
 
     [Header("UI References")]
@@ -124,7 +125,8 @@ public class GameManager : MonoBehaviour
             MaterialAmount = MaterialAmount,
             graph = graph.SaveGraph(),
             tasks = TaskDiary.Instance.SaveTasks(),
-            tutorials = TutorialManager.Instance.SaveTutorials()
+            tutorials = TutorialManager.Instance.SaveTutorials(),
+            splines = splinesManager.SaveSplines(),
         };
 
         bool success = fileName == null
@@ -146,6 +148,7 @@ public class GameManager : MonoBehaviour
             graph.LoadGraph(gameData.graph);
             TaskDiary.Instance.LoadTasks(gameData.tasks);
             TutorialManager.Instance.LoadTutorials(gameData.tutorials);
+            splinesManager.LoadSplines(gameData.splines);
 
             amountText.text = "x" + MaterialAmount.ToString();
 

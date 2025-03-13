@@ -41,6 +41,8 @@ public class SplinesRenderer : MonoBehaviour
             Renderer renderer = plane.GetComponent<Renderer>();
             elevation += renderer.bounds.max.y;
         }
+
+        UpdateMesh();
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -52,6 +54,7 @@ public class SplinesRenderer : MonoBehaviour
             return;
 
         mesh.Clear();
+
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
@@ -73,11 +76,15 @@ public class SplinesRenderer : MonoBehaviour
                 int baseIndex = vertices.Count;
                 vertices.Add(v1);
                 vertices.Add(v2);
-                uvs.Add(new Vector2(0, t));
-                uvs.Add(new Vector2(1, t));
+
+                // Texture Mapping
+                float uvY = t * spline.GetLength(); // Repeat
+                uvs.Add(new Vector2(0, uvY));
+                uvs.Add(new Vector2(1, uvY));
 
                 if (i > 0)
                 {
+                    // Triangles
                     triangles.Add(baseIndex - 2);
                     triangles.Add(baseIndex - 1);
                     triangles.Add(baseIndex + 1);
@@ -92,6 +99,7 @@ public class SplinesRenderer : MonoBehaviour
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
+
         mesh.RecalculateNormals();
     }
 }
