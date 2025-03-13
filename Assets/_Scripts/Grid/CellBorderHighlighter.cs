@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CellBorderHighlighter : MonoBehaviour
 {
@@ -10,14 +11,20 @@ public class CellBorderHighlighter : MonoBehaviour
     [SerializeField] private CurrentTask currentTask;
     [SerializeField] private TutorialManager tutorialManager;
 
+    private RendererUtility rendererUtility;
+
     [Header("Varibles")]
     [SerializeField] private Material fromMaterial;
     [SerializeField] private Material toMaterial;
 
-    private float elevation = 0.003f;
     private List<GameObject> highlights = new List<GameObject>();
 
     // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        rendererUtility = new RendererUtility();
+    }
+
     private void OnEnable()
     {
         currentTask.TaskPinned += HighlightCompoundCells;
@@ -32,15 +39,6 @@ public class CellBorderHighlighter : MonoBehaviour
         currentTask.TaskUnpinned -= ClearHighlight;
         tutorialManager.TutorialSectionStarted -= HighlightTutorialCells;
         tutorialManager.TutorialCompleted -= ClearHighlight;
-    }
-
-    private void Start()
-    {
-        if (plane != null)
-        {
-            Renderer renderer = plane.GetComponent<Renderer>();
-            elevation += renderer.bounds.max.y;
-        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -94,6 +92,7 @@ public class CellBorderHighlighter : MonoBehaviour
         float cornerSize = cellSize * 0.25f;
         float thickness = cornerSize * 0.5f;
 
+        float elevation = rendererUtility.GetMaxElevationAtPoint(worldPosition, plane);
         Vector3[] cornerOffsets = new Vector3[]
         {
             new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Bottom-Left

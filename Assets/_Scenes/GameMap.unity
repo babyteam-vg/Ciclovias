@@ -9447,7 +9447,7 @@ MonoBehaviour:
   splinesManager: {fileID: 1215106551}
   plane: {fileID: 445937665}
   laneWidth: 0.4
-  segmentsPerUnit: 7
+  segmentsPerUnit: 15
   laneMaterial: {fileID: 2100000, guid: 488c4f6eabe48c24eb7867171a6d8a31, type: 2}
 --- !u!23 &1150232505
 MeshRenderer:
@@ -14548,6 +14548,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1633977473}
   m_CullTransparentMesh: 1
+--- !u!1 &1648965551 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2572002336597994851, guid: e7eb885896de7d44f83d4ce5848e1776,
+    type: 3}
+  m_PrefabInstance: {fileID: 1679241346}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1648965555
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648965551}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4358054977007094263, guid: e7eb885896de7d44f83d4ce5848e1776, type: 3}
 --- !u!1 &1667564443
 GameObject:
   m_ObjectHideFlags: 0
@@ -14994,6 +15022,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 445937669}
+    - targetCorrespondingSourceObject: {fileID: 2572002336597994851, guid: e7eb885896de7d44f83d4ce5848e1776,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1648965555}
   m_SourcePrefab: {fileID: 100100000, guid: e7eb885896de7d44f83d4ce5848e1776, type: 3}
 --- !u!1 &1679302904
 GameObject:
@@ -15741,7 +15773,7 @@ MonoBehaviour:
   grid: {fileID: 378811413}
   graph: {fileID: 1986930194}
   audioManager: {fileID: 561954987}
-  graphRenderer: {fileID: 1285999570}
+  splinesRenderer: {fileID: 1150232504}
   confirmButton: {fileID: 117608662}
 --- !u!1 &1743977444
 GameObject:

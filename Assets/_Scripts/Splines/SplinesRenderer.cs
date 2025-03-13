@@ -9,12 +9,13 @@ public class SplinesRenderer : MonoBehaviour
     [SerializeField] private SplinesManager splinesManager;
     [SerializeField] private GameObject plane;
 
+    private RendererUtility rendererUtility;
+
     [Header("Variables")]
-    [SerializeField] private float laneWidth = 0.5f;
-    [SerializeField] private int segmentsPerUnit = 16;
+    [SerializeField] private float laneWidth = 0.4f;
+    [SerializeField] private int segmentsPerUnit = 15;
     [SerializeField] private Material laneMaterial;
 
-    private float elevation = 0.004f;
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     private Mesh mesh;
@@ -22,6 +23,8 @@ public class SplinesRenderer : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
+        rendererUtility = new RendererUtility();
+
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         mesh = new Mesh();
@@ -34,16 +37,7 @@ public class SplinesRenderer : MonoBehaviour
     private void OnEnable() { splinesManager.SplineChanged += UpdateMesh; }
     private void OnDisable() { splinesManager.SplineChanged -= UpdateMesh; }
 
-    private void Start()
-    {
-        if (plane != null)
-        {
-            Renderer renderer = plane.GetComponent<Renderer>();
-            elevation += renderer.bounds.max.y;
-        }
-
-        UpdateMesh();
-    }
+    private void Start() { UpdateMesh(); }
 
     // :::::::::: PUBLIC METHODS ::::::::::
 
@@ -70,6 +64,7 @@ public class SplinesRenderer : MonoBehaviour
                 tangent = tangent.normalized;
                 Vector3 normal = -Vector3.Cross(tangent, Vector3.up).normalized;
 
+                float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane);
                 Vector3 v1 = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
                 Vector3 v2 = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
 

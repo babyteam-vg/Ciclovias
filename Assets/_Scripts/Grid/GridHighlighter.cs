@@ -10,6 +10,8 @@ public class GridHighlighter : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private LaneConstructor laneConstructor;
 
+    private RendererUtility rendererUtility;
+
     [Header("Variables")]
     [SerializeField] private CellContentMesh[] contentMeshes;
 
@@ -17,13 +19,14 @@ public class GridHighlighter : MonoBehaviour
     private float innerOffset = 0.45f;
     private float fadeRadius = 2.5f; // Maximum Radius
     private float softness = 2.5f; // Opacity's Aggressiveness
-    private float elevation = 0.002f;
     private List<GameObject> highlights = new List<GameObject>();
     private Dictionary<CellContent, Material> contentMaterialMap;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
+        rendererUtility = new RendererUtility();
+
         contentMaterialMap = new Dictionary<CellContent, Material>();
         foreach (var mesh in contentMeshes)
             contentMaterialMap[mesh.content] = mesh.material;
@@ -31,15 +34,6 @@ public class GridHighlighter : MonoBehaviour
 
     private void OnEnable() { inputManager.OnCursorMove += HighlightBuildableCells; }
     private void OnDisable() { inputManager.OnCursorMove -= HighlightBuildableCells; }
-
-    private void Start()
-    {
-        if (plane != null)
-        {
-            Renderer renderer = plane.GetComponent<Renderer>();
-            elevation += renderer.bounds.max.y;
-        }
-    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     public void HighlightBuildableCells(Vector2Int gridPosition)
@@ -59,14 +53,15 @@ public class GridHighlighter : MonoBehaviour
         HashSet<Cell> allCells = new HashSet<Cell>(firstLayerCells);
         allCells.UnionWith(secondLayerCells);
 
-        Vector3 centerWorldPos = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
+        Vector3 centralCellWorldPos = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
 
         foreach (Cell cell in allCells)
         {
             if (cell == null || !cell.GetBuildable()) continue;
 
             Vector3 worldPos = grid.GetWorldPositionFromCell(cell.x, cell.y);
-            GameObject highlight = CreateHighlightBorder(worldPos, centerWorldPos, cell.GetContent());
+            Vector3 centeredWorldPos = grid.GetWorldPositionFromCellCentered(cell.x, cell.y);
+            GameObject highlight = CreateHighlightBorder(worldPos, centeredWorldPos, centralCellWorldPos, cell.GetContent());
             highlights.Add(highlight);
         }
     }
@@ -80,9 +75,10 @@ public class GridHighlighter : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    private GameObject CreateHighlightBorder(Vector3 position, Vector3 centerWorldPos, CellContent content)
+    private GameObject CreateHighlightBorder(Vector3 position, Vector3 centeredWorldPos, Vector3 centralCellWorldPos, CellContent content)
     {
         GameObject highlight = new GameObject("HighlightBorder");
+        float elevation = rendererUtility.GetMaxElevationAtPoint(centeredWorldPos, plane);
         highlight.transform.position = position + new Vector3(grid.GetCellSize() / 2, elevation, grid.GetCellSize() / 2);
         highlight.transform.localScale = new Vector3(grid.GetCellSize(), 1, grid.GetCellSize());
 
@@ -92,7 +88,7 @@ public class GridHighlighter : MonoBehaviour
         if (contentMaterialMap.TryGetValue(content, out Material contentMaterial))
             material.color = contentMaterial.color;
 
-        material.SetVector("_Center", centerWorldPos);
+        material.SetVector("_Center", centralCellWorldPos);
         material.SetFloat("_FadeRadius", fadeRadius);
         material.SetFloat("_Softness", softness);
         meshRenderer.material = material;

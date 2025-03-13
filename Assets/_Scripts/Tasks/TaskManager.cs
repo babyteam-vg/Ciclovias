@@ -9,7 +9,7 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private AudioManager audioManager;
-    [SerializeField] private GraphRenderer graphRenderer;
+    [SerializeField] private SplinesRenderer splinesRenderer;
 
     [Header("UI References")]
     public GameObject confirmButton;
@@ -83,7 +83,7 @@ public class TaskManager : MonoBehaviour
 
             var (pathFound, path) = pathfinder.FindPath(startPos, gridPosition, endPos); // Execute A*
 
-            graphRenderer.currentPath = path;
+            //splinesRenderer.currentPath = path;
             //laneRoundScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
 
             int safety = cellScoresCalculator.CalculatePathSafety(path);

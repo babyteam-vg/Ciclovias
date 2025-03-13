@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CellFillHighlighter : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class CellFillHighlighter : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private CellContentMesh[] contentMeshes;
 
-    private float elevation = 0.001f;
+    private RendererUtility rendererUtility;
+
     private float cellScale = 1f;
     private Dictionary<CellContent, Material> contentMaterialMap;
     private List<GameObject> highlights = new List<GameObject>();
@@ -18,6 +20,8 @@ public class CellFillHighlighter : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
+        rendererUtility = new RendererUtility();
+
         contentMaterialMap = new Dictionary<CellContent, Material>();
         foreach (var mesh in contentMeshes)
             contentMaterialMap[mesh.content] = mesh.material;
@@ -26,15 +30,6 @@ public class CellFillHighlighter : MonoBehaviour
     private void OnEnable() { inputManager.OnHighlightToggleDown += ToggleHighlight; }
 
     private void OnDisable() { inputManager.OnHighlightToggleDown -= ToggleHighlight; }
-
-    private void Start()
-    {
-        if (plane != null)
-        {
-            Renderer renderer = plane.GetComponent<Renderer>();
-            elevation += renderer.bounds.max.y;
-        }
-    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     public void ToggleHighlight()
@@ -77,6 +72,7 @@ public class CellFillHighlighter : MonoBehaviour
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
 
         GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        float elevation = rendererUtility.GetMaxElevationAtPoint(worldPosition, plane);
         quad.transform.position = worldPosition + new Vector3(0, elevation, 0);
         quad.transform.rotation = Quaternion.Euler(90, 0, 0);
         quad.transform.localScale = new Vector3(grid.GetCellSize() * cellScale, grid.GetCellSize() * cellScale, 1);

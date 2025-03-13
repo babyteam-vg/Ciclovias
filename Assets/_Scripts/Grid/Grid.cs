@@ -143,12 +143,20 @@ public class Grid : MonoBehaviour
         return (dx <= 1 && dy <= 1);
     }
 
-    // ::::: Edge to Center of a Cell
+    // ::::: Edge to Center of a Cell (2D)
     public Vector2 EdgeToMid(Vector2Int edgePosition)
     {
         float centerX = edgePosition.x + cellSize / 2;
         float centerY = edgePosition.y + cellSize / 2;
         return new Vector2(centerX, centerY);
+    }
+
+    // ::::: Edge to Center of a Cell (3D)
+    public Vector3 EdgeToMid(Vector3 edgePosition)
+    {
+        float centerX = edgePosition.x + cellSize / 2;
+        float centerZ = edgePosition.y + cellSize / 2;
+        return new Vector3(centerX, edgePosition.y, centerZ);
     }
 
     // ::::: Get a Group of Adjacent Cells w/the Same Content
