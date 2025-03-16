@@ -14,14 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Bike Store
   surroundings:
-  - {x: 39, y: 11}
-  - {x: 39, y: 10}
-  - {x: 40, y: 9}
-  - {x: 41, y: 8}
-  - {x: 42, y: 7}
-  - {x: 42, y: 6}
-  - {x: 41, y: 6}
-  - {x: 40, y: 6}
-  - {x: 39, y: 6}
   - {x: 38, y: 6}
-  - {x: 37, y: 6}

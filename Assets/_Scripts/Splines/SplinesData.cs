@@ -19,11 +19,12 @@ public class SplinesData
     }
 
     public List<SerializableKnot> knots = new List<SerializableKnot>();
-    public List<IntersectionData> intersections = new List<IntersectionData>();
 }
 
 [System.Serializable]
 public class SplineContainerData
 {
     public List<SplinesData> splines = new List<SplinesData>();
+    public List<IntersectionData> intersections = new List<IntersectionData>();
+    public List<Vector3> sealedPositions = new List<Vector3>();
 }

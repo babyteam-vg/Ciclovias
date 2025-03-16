@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
@@ -11,14 +12,17 @@ public class SplinesManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
+    [SerializeField] private TaskManager taskManager;
 
     public SplineContainer splineContainer;
+    public HashSet<Vector3> sealedPositions = new HashSet<Vector3>();
 
     private Spline spline;
     private Dictionary<Vector3, (Spline, int)> intersections = new Dictionary<Vector3, (Spline, int)>();
     private bool recentIntersection = false;
 
     public event Action SplineChanged;
+    public event Action SplineSealed;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -29,22 +33,18 @@ public class SplinesManager : MonoBehaviour
 
     private void OnEnable()
     {
-        //graph.OnNodeAdded += HandleNodeAdded;
+        taskManager.TaskSealed += UpdateSealedPositions;
+
         graph.OnEdgeAdded += HandleEdgeAdded;
-        //graph.OnNodeRemoved += HandleNodeRemoved;
         graph.OnEdgeRemoved += HandleEdgeRemoved;
     }
     private void OnDisable()
     {
-        //graph.OnNodeAdded -= HandleNodeAdded;
+        taskManager.TaskSealed -= UpdateSealedPositions;
+
         graph.OnEdgeAdded -= HandleEdgeAdded;
-        //graph.OnNodeRemoved -= HandleNodeRemoved;
         graph.OnEdgeRemoved -= HandleEdgeRemoved;
     }
-
-    // :::::::::: PUBLIC METHODS ::::::::::
-    public List<Spline> GetSplines() { return splineContainer.Splines.ToList(); }
-    public Spline GetCurrentSpline() { return spline; }
 
     // :::::::::: EVENT METHODS ::::::::::
     // ::::: Building Lane
@@ -109,6 +109,9 @@ public class SplinesManager : MonoBehaviour
         var (firstSpline, firstIndex) = FindKnotAndSpline(firstWorldPosition);
         var (secondSpline, secondIndex) = FindKnotAndSpline(secondWorldPosition);
 
+        // 'T' and 'Y' Intersections
+        //if (secondNeighbors.Count < 3) HandleTandY(secondWorldPosition);
+
         if (firstSpline == null) return;
         spline = firstSpline;
 
@@ -121,6 +124,7 @@ public class SplinesManager : MonoBehaviour
             {
                 recentIntersection = false;
                 intersections.Remove(secondWorldPosition);
+                Debug.Log($"Intersection Removed at {secondWorldPosition}");
                 BezierKnot newKnot = new BezierKnot(secondWorldPosition);
                 spline.Insert(firstIndex, newKnot, TangentMode.Broken, 0.5f);
                 break;
@@ -190,13 +194,18 @@ public class SplinesManager : MonoBehaviour
             var (spline, index) = intersections[position];
             BezierKnot intersectionKnot = new BezierKnot(position);
 
-            if (!spline.Contains(intersectionKnot)) spline.Insert(index, intersectionKnot);
-            else
+            if (!spline.Contains(intersectionKnot)) // Building
+                spline.Insert(index, intersectionKnot);
+            else // Destroying
             {
-                Vector2Int nodePosition = grid.GetCellFromWorldPosition(position).Value;
-                List<Node> nodeNeighbors = graph.GetNeighbors(nodePosition);
-                
-                if (nodeNeighbors.Count < 3) spline.Remove(intersectionKnot);
+                //List<(Spline, int)> splinesAndKnots = FindAllKnotsAndSplines(position);
+                //foreach ((Spline s, int i) in splinesAndKnots)
+                //{
+                //    Spline iSpline = s;
+                //    int iIndex = i;
+
+                //    iSpline.Remove(intersectionKnot);
+                //}
             }
         }
     }
@@ -212,6 +221,20 @@ public class SplinesManager : MonoBehaviour
 
         return (null, -1);
     }
+
+    // ::::: Find Every Spline That Has a Knot
+    private List<(Spline spline, int knotIndex)> FindAllKnotsAndSplines(Vector3 worldPosition)
+    {
+        var result = new List<(Spline, int)>();
+
+        foreach (var currentSpline in splineContainer.Splines)
+            for (int i = 0; i < currentSpline.Count; i++)
+                if (currentSpline[i].Position.Equals((float3)worldPosition))
+                    result.Add((currentSpline, i));
+
+        return result;
+    }
+
 
     // ::::: 
     private void ReverseSpline(Spline spline)
@@ -234,6 +257,18 @@ public class SplinesManager : MonoBehaviour
             spline.Add(knot);
     }
 
+    // ::::: 
+    private void UpdateSealedPositions(Task task)
+    {
+        foreach (Vector2Int pos in task.path)
+        {
+            Vector3 centeredPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            if (!sealedPositions.Contains(centeredPos)) sealedPositions.Add(centeredPos);
+        }
+
+        SplineSealed?.Invoke();
+    }
+
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Splines -> SplinesData
     public SplineContainerData SaveSplines()
@@ -245,7 +280,7 @@ public class SplinesManager : MonoBehaviour
             SplinesData splineData = new SplinesData();
 
             // Knots
-            foreach (var knot in spline)
+            foreach (BezierKnot knot in spline)
                 splineData.knots.Add(new SplinesData.SerializableKnot
                 {
                     position = knot.Position,
@@ -253,17 +288,23 @@ public class SplinesManager : MonoBehaviour
                     tangentOut = knot.TangentOut
                 });
 
+            containerData.splines.Add(splineData);
+
             // Intersections
             foreach (var kvp in intersections)
                 if (kvp.Value.Item1 == spline)
-                    splineData.intersections.Add(new IntersectionData
+                {
+                    containerData.intersections.Add(new IntersectionData
                     {
                         position = kvp.Key,
                         index = kvp.Value.Item2
                     });
-
-            containerData.splines.Add(splineData);
+                }
         }
+
+        // Sealed
+        foreach (Vector3 seal in sealedPositions)
+            containerData.sealedPositions.Add(seal);
 
         return containerData;
     }
@@ -290,10 +331,13 @@ public class SplinesManager : MonoBehaviour
             }
 
             // Intersections
-            foreach (var intersectionData in splineData.intersections)
+            foreach (var intersectionData in containerData.intersections)
                 intersections[intersectionData.position] = (newSpline, intersectionData.index);
 
             splineContainer.AddSpline(newSpline);
         }
+
+        foreach (Vector3 seal in containerData.sealedPositions)
+            sealedPositions.Add(seal);
     }
 }

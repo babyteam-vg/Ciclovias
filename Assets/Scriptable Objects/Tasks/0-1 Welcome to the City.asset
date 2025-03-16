@@ -28,7 +28,7 @@ MonoBehaviour:
     la <color=#F4C542>Tienda de Bicicletas</color>  hasta la <color=#F4C542>Municipalidad</color>
     para conocer al alcalde."
   safetyRequirement: 1
-  minSafetyCount: 60
+  minSafetyCount: 10
   charmRequirement: 0
   minCharmCount: 0
   flowRequirement: 0

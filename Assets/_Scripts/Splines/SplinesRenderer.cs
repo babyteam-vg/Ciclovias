@@ -29,9 +29,7 @@ public class SplinesRenderer : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
         mesh = new Mesh();
         meshFilter.mesh = mesh;
-
-        if (laneMaterial != null)
-            meshRenderer.material = laneMaterial;
+        meshRenderer.material = laneMaterial;
     }
 
     private void OnEnable() { splinesManager.SplineChanged += UpdateMesh; }

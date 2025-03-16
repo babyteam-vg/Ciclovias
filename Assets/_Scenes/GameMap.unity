@@ -6668,11 +6668,11 @@ MonoBehaviour:
   inputManager: {fileID: 1679302906}
   contentMeshes:
   - content: 3
-    material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
+    material: {fileID: 2100000, guid: c515e08bf04eab342918790a34fd3f35, type: 2}
   - content: 4
     material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
   - content: 5
-    material: {fileID: 2100000, guid: 5c6af8b72f028de4eac88b5eeeadd7fd, type: 2}
+    material: {fileID: 2100000, guid: fd48f48cef1ae0c4eb7ed83aaa18f7fa, type: 2}
   - content: 6
     material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
   - content: 7
@@ -10015,6 +10015,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 378811413}
   graph: {fileID: 1986930194}
+  taskManager: {fileID: 1736919538}
   splineContainer: {fileID: 1215106552}
 --- !u!114 &1215106552
 MonoBehaviour:
@@ -10141,15 +10142,15 @@ MonoBehaviour:
   laneConstructor: {fileID: 1111548992}
   contentMeshes:
   - content: 1
-    material: {fileID: 2100000, guid: 5c6af8b72f028de4eac88b5eeeadd7fd, type: 2}
+    material: {fileID: 2100000, guid: fd48f48cef1ae0c4eb7ed83aaa18f7fa, type: 2}
   - content: 2
     material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
   - content: 3
-    material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
+    material: {fileID: 2100000, guid: c515e08bf04eab342918790a34fd3f35, type: 2}
   - content: 4
     material: {fileID: 2100000, guid: 68e8f015420033746afbc57c90b9a095, type: 2}
   - content: 5
-    material: {fileID: 2100000, guid: 5c6af8b72f028de4eac88b5eeeadd7fd, type: 2}
+    material: {fileID: 2100000, guid: fd48f48cef1ae0c4eb7ed83aaa18f7fa, type: 2}
   - content: 6
     material: {fileID: 2100000, guid: 2e1a1ec3b3bf21842a34a4d645c5277c, type: 2}
   - content: 7
@@ -10174,7 +10175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1285999569
 Transform:
   m_ObjectHideFlags: 0
