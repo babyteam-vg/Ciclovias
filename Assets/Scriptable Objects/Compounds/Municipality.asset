@@ -14,17 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Municipality
   surroundings:
-  - {x: 13, y: 18}
-  - {x: 13, y: 19}
-  - {x: 13, y: 20}
   - {x: 13, y: 21}
-  - {x: 13, y: 22}
-  - {x: 13, y: 23}
-  - {x: 12, y: 23}
-  - {x: 11, y: 23}
-  - {x: 10, y: 23}
-  - {x: 9, y: 23}
-  - {x: 12, y: 18}
-  - {x: 11, y: 18}
-  - {x: 10, y: 18}
-  - {x: 9, y: 18}

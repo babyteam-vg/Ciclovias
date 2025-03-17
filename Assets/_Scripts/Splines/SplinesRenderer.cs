@@ -62,7 +62,7 @@ public class SplinesRenderer : MonoBehaviour
                 tangent = tangent.normalized;
                 Vector3 normal = -Vector3.Cross(tangent, Vector3.up).normalized;
 
-                float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane);
+                float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) + 0.0002f;
                 Vector3 v1 = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
                 Vector3 v2 = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
 

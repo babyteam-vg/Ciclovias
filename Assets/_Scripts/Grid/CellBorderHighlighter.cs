@@ -92,7 +92,7 @@ public class CellBorderHighlighter : MonoBehaviour
         float cornerSize = cellSize * 0.25f;
         float thickness = cornerSize * 0.5f;
 
-        float elevation = rendererUtility.GetMaxElevationAtPoint(worldPosition, plane);
+        float elevation = rendererUtility.GetMaxElevationAtPoint(worldPosition, plane) + 0.0001f;
         Vector3[] cornerOffsets = new Vector3[]
         {
             new Vector3(-cellSize / 2, elevation, -cellSize / 2), // Bottom-Left

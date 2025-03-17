@@ -14,10 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Pizzeria
   surroundings:
-  - {x: 52, y: 34}
   - {x: 52, y: 33}
-  - {x: 52, y: 32}
-  - {x: 53, y: 32}
-  - {x: 54, y: 32}
-  - {x: 55, y: 32}
-  - {x: 56, y: 32}
