@@ -9,7 +9,6 @@ public class LaneConstructor : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private AudioManager audioManager;
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private InGameMenuManager inGameMenuManager;
 
@@ -34,7 +33,6 @@ public class LaneConstructor : MonoBehaviour
         inGameMenuManager.MenuOpened += BlockDestroying;
         inGameMenuManager.MenuClosed += UnblockDestroying;
     }
-
     private void OnDisable()
     {
         inputManager.OnLeftClickDown -= StartBuilding;
@@ -83,7 +81,7 @@ public class LaneConstructor : MonoBehaviour
                 {
                     graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
                     GameManager.Instance.ConsumeMaterial(1); // Construction Material: -1
-                    audioManager.PlaySFX(audioManager.build);
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.build);
 
                     OnLaneBuilt?.Invoke(gridPosition); // !
                     lastCellPosition = gridPosition;

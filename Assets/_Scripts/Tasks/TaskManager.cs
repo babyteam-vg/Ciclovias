@@ -8,7 +8,6 @@ public class TaskManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
-    [SerializeField] private AudioManager audioManager;
     [SerializeField] private SplinesRenderer splinesRenderer;
 
     [Header("UI References")]
@@ -141,7 +140,7 @@ public class TaskManager : MonoBehaviour
                 break;
 
             case TaskState.Completed:
-                audioManager.PlaySFX(audioManager.complete);
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.complete);
                 confirmButton.SetActive(true);
                 TaskCompleted?.Invoke(task);
                 break;

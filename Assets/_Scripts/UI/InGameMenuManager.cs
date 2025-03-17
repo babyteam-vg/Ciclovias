@@ -12,12 +12,16 @@ public class InGameMenuManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private DialogManager dialogManager;
+    private SettingsPanel settingsPanel = SettingsPanel.Instance;
 
     [Header("UI References")]
     public GameObject pauseUI;
     public GameObject tasksDiaryUI;
     public GameObject receiveTaskUI;
     public GameObject dialogUI;
+    private GameObject settingsPanelUI;
+
+    private Stack<GameObject> menuStack = new Stack<GameObject>(3);
 
     public event Action MenuOpened;
     public event Action MenuClosed;
@@ -29,31 +33,54 @@ public class InGameMenuManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        settingsPanelUI = SettingsPanel.Instance.panelSettingsUI;
     }
 
     private void OnEnable()
     {
         taskManager.TaskSealed += EndBuild;
+        settingsPanel.SettingsClosed += CloseMenu;
     }
     private void OnDisable()
     {
         taskManager.TaskSealed -= EndBuild;
+        settingsPanel.SettingsClosed -= CloseMenu;
+    }
+
+    // :::::::::: MENU QUEUE MANAGEMENT ::::::::::
+    private void OpenMenu(GameObject menuUI)
+    {
+        if (menuStack.Count >= 3)
+        {
+            GameObject oldestMenu = menuStack.Pop();
+            oldestMenu.SetActive(false);
+        }
+
+        menuStack.Push(menuUI);
+        menuUI.SetActive(true);
+        MenuOpened?.Invoke();
+    }
+
+    public void CloseMenu()
+    {
+        if (menuStack.Count > 0)
+        {
+            GameObject latestMenu = menuStack.Pop();
+            latestMenu.SetActive(false);
+        }
+        
+        if (menuStack.Count == 0) MenuClosed?.Invoke();
     }
 
     // :::::::::: PAUSE MANAGER ::::::::::
     // ::::: Pause Menu
-    public void OnPauseMenuPress()
-    {
-        pauseUI.SetActive(true);
-        MenuOpened?.Invoke();
-    }
-    public void OnContinuePress()
-    {
-        pauseUI.SetActive(false);
-        MenuClosed?.Invoke();
-    }
+    public void OnPauseMenuPress() { OpenMenu(pauseUI); }
+    public void OnContinuePress() { CloseMenu(); }
+    public void OnSettingsPress() { OpenMenu(settingsPanelUI); }
     public void OnMainMenuPress()
     {
+        LoadingScene.Instance.LoadScene(0); // Loading Screen
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -62,33 +89,20 @@ public class InGameMenuManager : MonoBehaviour
     public void OnTasksDiaryPress()
     {
         TaskDiary.Instance.ShowAvailableTasks();
-        tasksDiaryUI.SetActive(true);
-        MenuOpened?.Invoke(); // !
+        OpenMenu(tasksDiaryUI);
     }
-    public void OnTasksDiaryClose()
-    {
-        tasksDiaryUI.SetActive(false);
-        MenuClosed?.Invoke(); // !
-    }
+    public void OnTasksDiaryClose() { CloseMenu(); }
 
     // ::::: Receive Task
-    public void OnReceiveTaskPress()
-    {
-        receiveTaskUI.SetActive(true);
-        MenuOpened?.Invoke(); // !
-    }
+    public void OnReceiveTaskPress() { OpenMenu(receiveTaskUI); }
     public void OnAcceptTaskPress()
     {
         taskManager.AcceptTask(TaskReceiver.Instance.ReceivedTask);
-        receiveTaskUI.SetActive(false);
-        MenuClosed?.Invoke(); // !
+        CloseMenu();
     }
 
     // ::::: Confirm Task
-    public void OnConfirmTaskPress()
-    {
-        taskManager.ConfirmTask(CurrentTask.Instance.PinnedTask);
-    }
+    public void OnConfirmTaskPress() { taskManager.ConfirmTask(CurrentTask.Instance.PinnedTask); }
 
     // :::::::::: DIALOG MANAGER ::::::::::
     // ::::: Dialog
@@ -96,13 +110,9 @@ public class InGameMenuManager : MonoBehaviour
     {
         dialogUI.SetActive(true);
         dialogManager.StartDialog(task);
-        MenuOpened?.Invoke(); // !
+        OpenMenu(dialogUI);
     }
-    public void OnCloseDialog()
-    {
-        dialogUI.SetActive(false);
-        MenuClosed?.Invoke(); // !
-    }
+    public void OnCloseDialog() { CloseMenu(); }
 
     // ::::: To End the Builds
     public void EndBuild(Task task)

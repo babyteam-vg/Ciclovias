@@ -29,29 +29,30 @@ public class InputManager : MonoBehaviour
     private bool isRightMouseButtonDown = false;
     private bool isMiddleMouseButtonDown = false;
 
-    private bool isAllowed = true;
+    private bool isMenuOpen = false;
     private Vector2Int? lastGridPosition = null;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
-        inGameMenuManager.MenuOpened += BlockBuilding;
-        inGameMenuManager.MenuClosed += UnblockBuilding;
+        inGameMenuManager.MenuOpened += MenuOpened;
+        inGameMenuManager.MenuClosed += MenuClosed;
     }
-
     private void OnDisable()
     {
-        inGameMenuManager.MenuOpened -= BlockBuilding;
-        inGameMenuManager.MenuClosed -= UnblockBuilding;
+        inGameMenuManager.MenuOpened -= MenuOpened;
+        inGameMenuManager.MenuClosed -= MenuClosed;
     }
 
     private void Update()
     {
-        if (isAllowed)
+        if (!isMenuOpen)
         {
             HandleMouseInput();
             HandleHighlightInput();
         }
+
+        if (!GameStateManager.Instance.InBrowser) HandleEscapeInput();
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -146,6 +147,16 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // ::::: ESC
+    private void HandleEscapeInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isMenuOpen) inGameMenuManager.CloseMenu();
+            else inGameMenuManager.OnPauseMenuPress();
+        }
+    }
+
     // ::::: Highlight the Cells
     private void HandleHighlightInput()
     {
@@ -154,6 +165,6 @@ public class InputManager : MonoBehaviour
     }
 
     // ::::: Menu? Allowing
-    private void BlockBuilding() { isAllowed = false; }
-    private void UnblockBuilding() { isAllowed = true; }
+    private void MenuOpened() { isMenuOpen = true; }
+    private void MenuClosed() { isMenuOpen = false; }
 }

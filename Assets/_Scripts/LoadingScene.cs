@@ -1,14 +1,26 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LoadingScene : MonoBehaviour
 {
-    public GameObject loadingScreen;
+    public static LoadingScene Instance { get; private set; }
+
+    [SerializeField] private GameObject loadingScreenUI;
+
+    public event Action<int> SceneLoaded;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else Destroy(gameObject);
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     public void LoadScene(int sceneId)
@@ -21,7 +33,7 @@ public class LoadingScene : MonoBehaviour
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
 
-        loadingScreen.SetActive(true);
+        loadingScreenUI.SetActive(true);
 
         while (!operation.isDone)
         {
@@ -29,5 +41,8 @@ public class LoadingScene : MonoBehaviour
 
             yield return null;
         }
+
+        loadingScreenUI.SetActive(false);
+        SceneLoaded?.Invoke(sceneId);
     }
 }

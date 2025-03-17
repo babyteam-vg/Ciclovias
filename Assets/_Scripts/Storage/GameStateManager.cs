@@ -5,6 +5,7 @@ public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
     public GameData LoadedGameData { get; private set; }
+    public bool InBrowser { get; private set; } = false;
 
     private StorageManager storageManager;
 
@@ -15,7 +16,10 @@ public class GameStateManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-        } else Destroy(gameObject);
+        }
+        else Destroy(gameObject);
+
+        if (Application.platform == RuntimePlatform.WebGLPlayer) InBrowser = true;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

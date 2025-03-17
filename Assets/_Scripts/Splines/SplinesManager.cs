@@ -235,7 +235,6 @@ public class SplinesManager : MonoBehaviour
         return result;
     }
 
-
     // ::::: 
     private void ReverseSpline(Spline spline)
     {

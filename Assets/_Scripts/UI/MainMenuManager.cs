@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField] private LoadingScene loadingScene;
+    [SerializeField] private GameObject settingsPanelUI;
 
     private StorageManager storageManager = new StorageManager();
 
@@ -15,7 +15,9 @@ public class MainMenuManager : MonoBehaviour
     // ::::: Pause Menu
     public void OnContinuePress()
     {
-        loadingScene.LoadScene(1); // Loading Screen
+        SettingsPanel.Instance.OnSettingsClose();
+
+        LoadingScene.Instance.LoadScene(1); // Loading Screen
 
         string mostRecentSave = storageManager.GetMostRecentSaveFile();
         if (mostRecentSave != null)
@@ -34,10 +36,17 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnNewGamePress()
     {
-        loadingScene.LoadScene(1); // Loading Screen
+        SettingsPanel.Instance.OnSettingsClose();
+
+        LoadingScene.Instance.LoadScene(1); // Loading Screen
 
         GameStateManager.Instance.ResetLoadedGameData();
         SceneManager.LoadScene("GameMap");
+    }
+
+    public void OnSettingsPress()
+    {
+        SettingsPanel.Instance.OnSettingsOpen();
     }
 
     public void OnExitPress()

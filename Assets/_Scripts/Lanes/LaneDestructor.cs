@@ -10,7 +10,6 @@ public class LaneDestructor : MonoBehaviour
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private LaneConstructor laneConstructor;
-    [SerializeField] private AudioManager audioManager;
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private InGameMenuManager inGameMenuManager;
 

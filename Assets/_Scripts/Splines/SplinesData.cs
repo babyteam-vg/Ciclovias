@@ -3,6 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class IntersectionData
 {
+    public bool triple;
     public Vector3 position;
     public int index;
 }
