@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject boundingPlane;
 
-    public bool lockCamera = false;
+    private bool lockCamera = false;
 
     // Cursor Movement
     public bool enableEdgeScrolling = true;

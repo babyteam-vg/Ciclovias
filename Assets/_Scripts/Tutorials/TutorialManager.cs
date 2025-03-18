@@ -27,10 +27,10 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tutorialText;
 
     [Header("Tutorials")]
+    public Tutorial activeTutorial = null;
     public List<Tutorial> tutorials;
 
     private Dictionary<Vector2Int, Tutorial> tutorialDictionary;
-    private Tutorial activeTutorial;
     private int currentSectionIndex;
     private bool isTutorialActive = false;
     private MapData originalMapData;
@@ -107,19 +107,14 @@ public class TutorialManager : MonoBehaviour
         activeTutorial.currentSafety = cellScoresCalculator.CalculatePathSafety(path);
         activeTutorial.currentCharm = cellScoresCalculator.CalculatePathCharm(path);
         activeTutorial.currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
-        activeTutorial.usedMaterial = path.Count;
+        activeTutorial.usedMaterial = path.Count - 1;
 
         ActiveTutorialScoresUpdated?.Invoke(activeTutorial);
 
         if (currentSection.destroyRequirement)
         {
             if (graph.GetNode(currentSection.start) == null && graph.GetNode(currentSection.end) == null)
-            {
-                currentSectionIndex++;
-                if (currentSectionIndex < activeTutorial.info.sections.Length)
-                    StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
-                else StopTutorial();
-            }
+                CompleteSection();
         }   
         else
         {
@@ -127,21 +122,13 @@ public class TutorialManager : MonoBehaviour
             {
                 if (currentSection.checkRequirements)
                 {
-                    if (activeTutorial.MeetsRequirements(activeTutorial.currentSafety, activeTutorial.currentCharm, activeTutorial.currentFlow, activeTutorial.usedMaterial))
-                    {
-                        currentSectionIndex++;
-                        if (currentSectionIndex < activeTutorial.info.sections.Length)
-                            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
-                        else StopTutorial();
-                    }
+                    if (activeTutorial.MeetsRequirements(
+                        activeTutorial.currentSafety,
+                        activeTutorial.currentCharm,
+                        activeTutorial.currentFlow,
+                        activeTutorial.usedMaterial)) CompleteSection(path);
                 }
-                else
-                {
-                    currentSectionIndex++;
-                    if (currentSectionIndex < activeTutorial.info.sections.Length)
-                        StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
-                    else StopTutorial();
-                }
+                else CompleteSection(path);
             }
         }
     }
@@ -154,7 +141,6 @@ public class TutorialManager : MonoBehaviour
         activeTutorial.completed = true;
         StopAllCoroutines();
         isTutorialActive = false;
-        cameraController.UnblockCamera();
         activeTutorial = null;
         tutorialCanvas.SetActive(false);
 
@@ -184,7 +170,6 @@ public class TutorialManager : MonoBehaviour
     private IEnumerator ExecuteSection(TutorialSection section)
     {
         isTutorialActive = true;
-        cameraController.BlockCamera();
         tutorialCanvas.SetActive(true);
         tutorialText.text = section.text;
 
@@ -214,6 +199,21 @@ public class TutorialManager : MonoBehaviour
             }
         }   
         TutorialSectionPresentationDone?.Invoke(); // !
+    }
+
+    // ::::: Complete Section
+    private void CompleteSection(List<Vector2Int> path = null)
+    {
+        if (path != null
+            && !activeTutorial.info.sections[currentSectionIndex].dontAddToPath)
+            graph.SealNodes(path);
+
+        currentSectionIndex++;
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[2]);
+
+        if (currentSectionIndex < activeTutorial.info.sections.Length)
+            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
+        else StopTutorial();
     }
 
     // :::::::::: STORAGE ::::::::::

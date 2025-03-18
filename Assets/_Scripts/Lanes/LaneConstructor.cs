@@ -77,11 +77,11 @@ public class LaneConstructor : MonoBehaviour
                 if (graph.GetNode(gridPosition) == null)
                     graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
 
-                if (lastCellPosition.HasValue && !graph.AreConnected(lastCellPosition.Value, gridPosition))
+                if (lastCellPosition.HasValue && !graph.AreNeighbors(lastCellPosition.Value, gridPosition))
                 {
                     graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
                     GameManager.Instance.ConsumeMaterial(1); // Construction Material: -1
-                    AudioManager.Instance.PlaySFX(AudioManager.Instance.build);
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[0]);
 
                     OnLaneBuilt?.Invoke(gridPosition); // !
                     lastCellPosition = gridPosition;

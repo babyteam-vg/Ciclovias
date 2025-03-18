@@ -76,7 +76,7 @@ public class CurrentTask : MonoBehaviour
             titleText.text = PinnedTask.info.title;
             fromText.text = PinnedTask.from.info.compoundName;
             toText.text = PinnedTask.to.info.compoundName;
-            flavorText.text = PinnedTask.info.flavourDetails.flavorMessage;
+            flavorText.text = PinnedTask.info.flavorDetails.flavorMessage;
         }
         else
         {

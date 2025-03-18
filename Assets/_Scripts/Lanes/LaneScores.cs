@@ -65,9 +65,9 @@ public class LaneScores : MonoBehaviour
         {
             Task task = CurrentTask.Instance.PinnedTask;
 
-            if (task.info.safetyRequirement) currentSafety.text = task.currentSafetyCount.ToString();
-            if (task.info.charmRequirement) currentCharm.text = task.currentCharmCount.ToString();
-            if (task.info.flowRequirement) currentFlow.text = ((int)(task.currentFlowPercentage * 100)).ToString();
+            if (task.info.safetyRequirement) currentSafety.text = ((int)(task.currentSafety * 100)).ToString();
+            if (task.info.charmRequirement) currentCharm.text = ((int)(task.currentCharm * 100)).ToString();
+            if (task.info.flowRequirement) currentFlow.text = ((int)(task.currentFlow * 100)).ToString();
             
             if (task.info.maxMaterialRequirement || task.info.minMaterialRequirement) usedMaterial.text = task.usedMaterial.ToString();
             
@@ -78,9 +78,9 @@ public class LaneScores : MonoBehaviour
 
     private void UpdateTaskScoresRequirements(Task task)
     {
-        if (task.info.safetyRequirement) reqSafety.text = task.info.minSafetyCount.ToString();
-        if (task.info.charmRequirement) reqCharm.text = task.info.minCharmCount.ToString();
-        if (task.info.flowRequirement) reqFlow.text = ((int)(task.info.minFlowPercentage * 100)).ToString();
+        if (task.info.safetyRequirement) reqSafety.text = ((int)(task.info.minSafety * 100)).ToString();
+        if (task.info.charmRequirement) reqCharm.text = ((int)(task.info.minCharm * 100)).ToString();
+        if (task.info.flowRequirement) reqFlow.text = ((int)(task.info.minFlow * 100)).ToString();
         if (task.info.maxMaterialRequirement) maxMaterial.text = task.info.maxMaterial.ToString();
     }
 
@@ -89,17 +89,17 @@ public class LaneScores : MonoBehaviour
     // :::::::::: TUTORIAL METHODS ::::::::::
     private void HandleTutorialLaneUpdated(Tutorial tutorial)
     {
-        if (reqSafety.text != "-") currentSafety.text = tutorial.currentSafety.ToString();
-        if (reqCharm.text != "-") currentCharm.text = tutorial.currentCharm.ToString();
+        if (reqSafety.text != "-") currentSafety.text = ((int)(tutorial.currentSafety * 100)).ToString();
+        if (reqCharm.text != "-") currentCharm.text = ((int)(tutorial.currentCharm * 100)).ToString();
         if (reqFlow.text != "-") currentFlow.text = ((int)(tutorial.currentFlow * 100)).ToString();
         if (maxMaterial.text != "-") usedMaterial.text = tutorial.usedMaterial.ToString();
     }
 
     private void UpdateTutorialScoresRequirements(Tutorial tutorial)
     {
-        tutorialSafetyScore = tutorial.info.safetyRequirement ? tutorial.info.minSafetyCount.ToString() : "-";
-        tutorialCharmScore = tutorial.info.charmRequirement ? tutorial.info.minCharmCount.ToString() : "-";
-        tutorialFlowScore = tutorial.info.flowRequirement ? ((int)(tutorial.info.minFlowPercentage * 100)).ToString() : "-";
+        tutorialSafetyScore = tutorial.info.safetyRequirement ? ((int)(tutorial.info.minSafety * 100)).ToString() : "-";
+        tutorialCharmScore = tutorial.info.charmRequirement ? ((int)(tutorial.info.minCharm * 100)).ToString() : "-";
+        tutorialFlowScore = tutorial.info.flowRequirement ? ((int)(tutorial.info.minFlow * 100)).ToString() : "-";
         tutorialUsedMaterial = tutorial.info.maxMaterialRequirement ? tutorial.info.maxMaterial.ToString() : "-";
     }
     private void UpdateTutorialScoresRequirements(TutorialSection section)

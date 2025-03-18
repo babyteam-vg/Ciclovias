@@ -16,8 +16,15 @@ public class Pathfinder
     {
         Node midNode = graph.GetNode(mid);
         if (midNode == null)
-            return (false, new List<Vector2Int>());
-
+        {
+            if (graph.GetFirstAdjacentNodePosition(mid).HasValue)
+            {
+                mid = graph.GetFirstAdjacentNodePosition(mid).Value;
+                midNode = graph.GetNode(mid);
+            }
+            else return (false, new List<Vector2Int>());
+        }
+        
         Node fromNode = null;
         Node toNode = null;
 
@@ -118,7 +125,7 @@ public class Pathfinder
         List<Vector2Int> path = new List<Vector2Int>();
         PathNode currentNode = endNode;
 
-        while (currentNode != startNode)
+        while (currentNode != null)
         {
             path.Add(currentNode.node.position);
             currentNode = currentNode.parentNode;

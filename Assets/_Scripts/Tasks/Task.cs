@@ -12,13 +12,11 @@ public class Task
 
     [Header("Path")]
     public List<Vector2Int> path;
-    //public Vector2Int start;
-    //public Vector2Int end;
 
     [Header("Requirements")]
-    public int currentSafetyCount;
-    public int currentCharmCount;
-    public float currentFlowPercentage;
+    public float currentSafety;
+    public float currentCharm;
+    public float currentFlow;
     public int usedMaterial;
 
     [Header("Flavor")]
@@ -36,9 +34,9 @@ public class Task
                MeetsMaxMaterialRequirement();
     }
 
-    public bool MeetsSafetyRequirement() { return !info.safetyRequirement || currentSafetyCount >= info.minSafetyCount; }
-    public bool MeetsCharmRequirement() { return !info.charmRequirement || currentCharmCount >= info.minCharmCount; }
-    public bool MeetsFlowRequirement() { return !info.flowRequirement || currentFlowPercentage >= info.minFlowPercentage; }
+    public bool MeetsSafetyRequirement() { return !info.safetyRequirement || currentSafety >= info.minSafety; }
+    public bool MeetsCharmRequirement() { return !info.charmRequirement || currentCharm >= info.minCharm; }
+    public bool MeetsFlowRequirement() { return !info.flowRequirement || currentFlow >= info.minFlow; }
     public bool MeetsMinMaterialRequirement() { return !info.minMaterialRequirement || usedMaterial >= info.minMaterial; }
     public bool MeetsMaxMaterialRequirement() { return !info.maxMaterialRequirement || usedMaterial <= info.maxMaterial; }
 
@@ -51,12 +49,10 @@ public class Task
             state = this.state,
 
             path = this.path,
-            //start = this.start,
-            //end = this.end,
 
-            currentSafetyCount = this.currentSafetyCount,
-            currentCharmCount = this.currentCharmCount,
-            currentFlowPercentage = this.currentFlowPercentage,
+            currentSafety = this.currentSafety,
+            currentCharm = this.currentCharm,
+            currentFlow = this.currentFlow,
             usedMaterial = this.usedMaterial,
 
             flavorMet = this.flavorMet,

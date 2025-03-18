@@ -12,11 +12,11 @@ public class TutorialInfo : ScriptableObject
 
     [Header("Requirements")]
     public bool safetyRequirement;
-    public int minSafetyCount;
+    [Range(0f, 1f)] public float minSafety;
     public bool charmRequirement;
-    public int minCharmCount;
+    [Range(0f, 1f)] public float minCharm;
     public bool flowRequirement;
-    [Range(0f, 1f)] public float minFlowPercentage;
+    [Range(0f, 1f)] public float minFlow;
     public bool minMaterialRequirement;
     public int minMaterial;
     public bool maxMaterialRequirement;
@@ -27,6 +27,7 @@ public class TutorialInfo : ScriptableObject
 public struct TutorialSection
 {
     [TextArea(3, 6)] public string text;
+    public bool dontAddToPath;
     public bool destroyRequirement;
     public Vector2Int start;
     public Vector2Int end;

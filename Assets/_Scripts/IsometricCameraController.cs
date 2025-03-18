@@ -10,6 +10,7 @@ public class IsometricCameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject boundingPlane;
     [SerializeField] private InGameMenuManager inGameMenuManager;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("Variables - Pan")]
     public float panSpeed = 30f;
@@ -39,11 +40,17 @@ public class IsometricCameraController : MonoBehaviour
     {
         inGameMenuManager.MenuOpened += BlockCamera;
         inGameMenuManager.MenuClosed += UnblockCamera;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockCamera;
+        tutorialManager.TutorialCompleted += UnblockCamera;
     }
     private void OnDisable()
     {
         inGameMenuManager.MenuOpened -= BlockCamera;
         inGameMenuManager.MenuClosed -= UnblockCamera;
+
+        tutorialManager.TutorialSectionPresentationStarted += BlockCamera;
+        tutorialManager.TutorialCompleted += UnblockCamera;
     }
 
     private void Start()
@@ -51,7 +58,7 @@ public class IsometricCameraController : MonoBehaviour
         areaBounds = boundingPlane.GetComponent<Renderer>().bounds;
 
         minZoom = areaBounds.min.y + ZOOM_OFFSET;
-        maxZoom = areaBounds.max.y + 3 * ZOOM_OFFSET;
+        maxZoom = areaBounds.max.y + 2 * ZOOM_OFFSET;
         currentZoom = (maxZoom + minZoom) / 2;
 
         panHorLimit = new Vector2(areaBounds.min.x + 5f, areaBounds.max.x);
@@ -80,7 +87,7 @@ public class IsometricCameraController : MonoBehaviour
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Menu? Blocking
     public void BlockCamera() { isLocked = true; }
-    public void UnblockCamera() { isLocked = false; }
+    public void UnblockCamera() { if (TutorialManager.Instance.activeTutorial == null) isLocked = false; }
 
     // ::::: Get & Set Zoom
     public float GetCurrentZoom() { return currentZoom; }

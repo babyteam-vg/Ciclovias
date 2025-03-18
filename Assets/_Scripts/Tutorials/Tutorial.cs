@@ -10,14 +10,14 @@ public class Tutorial
     public TutorialInfo info;
 
     [Header("Requirements")]
-    public int currentSafety;
+    public float currentSafety;
     public float currentFlow;
-    public int currentCharm;
+    public float currentCharm;
     public int usedMaterial;
 
     // :::::::::: METHODS ::::::::::
     // ::::: Requirements
-    public bool MeetsRequirements(int currentSafety, int currentCharm, float currentFlow, int usedMaterial)
+    public bool MeetsRequirements(float currentSafety, float currentCharm, float currentFlow, int usedMaterial)
     {
         return MeetsSafetyRequirement(currentSafety) &&
                MeetsCharmRequirement(currentCharm) &&
@@ -26,9 +26,9 @@ public class Tutorial
                MeetsMaxMaterialRequirement(usedMaterial);
     }
 
-    public bool MeetsSafetyRequirement(int currentSafety) { return !info.safetyRequirement || currentSafety >= info.minSafetyCount; }
-    public bool MeetsCharmRequirement(int currentCharm) { return !info.charmRequirement || currentCharm >= info.minCharmCount; }
-    public bool MeetsFlowRequirement(float currentFlow) { return !info.flowRequirement || currentFlow >= info.minFlowPercentage; }
+    public bool MeetsSafetyRequirement(float currentSafety) { return !info.safetyRequirement || currentSafety >= info.minSafety; }
+    public bool MeetsCharmRequirement(float currentCharm) { return !info.charmRequirement || currentCharm >= info.minCharm; }
+    public bool MeetsFlowRequirement(float currentFlow) { return !info.flowRequirement || currentFlow >= info.minFlow; }
     public bool MeetsMinMaterialRequirement(int usedMaterial) { return !info.minMaterialRequirement || usedMaterial >= info.minMaterial; }
     public bool MeetsMaxMaterialRequirement(int usedMaterial) { return !info.maxMaterialRequirement || usedMaterial <= info.maxMaterial; }
 

@@ -68,9 +68,9 @@ public class TaskDiary : MonoBehaviour
                 taskFrom.text = task.from.info.compoundName;
                 taskTo.text = task.to.info.compoundName;
 
-                requirementsSafety.text = task.info.minSafetyCount.ToString();
-                requirementsCharm.text = task.info.minCharmCount.ToString();
-                requirementsFlow.text = task.info.minFlowPercentage.ToString() + "%";
+                requirementsSafety.text = task.info.minSafety.ToString();
+                requirementsCharm.text = task.info.minCharm.ToString();
+                requirementsFlow.text = task.info.minFlow.ToString() + "%";
                 minimumMaterial.text = "Min. " + task.info.minMaterial.ToString();
                 maximumMaterial.text = "Max. " + task.info.maxMaterial.ToString();
 
@@ -115,12 +115,10 @@ public class TaskDiary : MonoBehaviour
             task.state = taskData.state;
 
             task.path = taskData.path;
-            //task.start = taskData.start;
-            //task.end = taskData.end;
 
-            task.currentSafetyCount = taskData.currentSafetyCount;
-            task.currentCharmCount = taskData.currentCharmCount;
-            task.currentFlowPercentage = taskData.currentFlowPercentage;
+            task.currentSafety = taskData.currentSafety;
+            task.currentCharm = taskData.currentCharm;
+            task.currentFlow = taskData.currentFlow;
             task.usedMaterial = taskData.usedMaterial;
 
             task.currentToCross = taskData.currentToCross;

@@ -14,9 +14,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSource SFXSource;
 
     [Header("Audio Clips")]
-    [SerializeField] List<AudioClip> songs = new List<AudioClip>();
-    public AudioClip build;
-    public AudioClip complete;
+    public List<AudioClip> songs = new List<AudioClip>();
+    public List<AudioClip> sfxs = new List<AudioClip>();
 
     private int currentSongIndex = 0;
 
@@ -44,18 +43,17 @@ public class AudioManager : MonoBehaviour
         SFXSource.PlayOneShot(sfx);
     }
 
+    // ::::: Media Player
     public void PlayNextSong()
     {
         currentSongIndex = (currentSongIndex + 1) % songs.Count;
         PlaySong(currentSongIndex);
     }
-
     public void PlayPreviousSong()
     {
         currentSongIndex = (currentSongIndex - 1 + songs.Count) % songs.Count;
         PlaySong(currentSongIndex);
     }
-
     public void PlayRandomSong()
     {
         int newIndex = Random.Range(0, songs.Count);
@@ -66,29 +64,26 @@ public class AudioManager : MonoBehaviour
         currentSongIndex = newIndex;
         PlaySong(currentSongIndex);
     }
-
     public void StopMusic()
     {
         musicSource.Stop();
     }
-
     public void PauseMusic()
     {
         musicSource.Pause();
     }
-
     public void ResumeMusic()
     {
         musicSource.UnPause();
     }
 
+    // ::::: Settings
     public void SetMusicVolume(float volume)
     {
         musicSource.volume = volume;
         PlayerPrefs.SetFloat("MusicVolume", volume);
         PlayerPrefs.Save();
     }
-
     public void SetSFXVolume(float volume)
     {
         SFXSource.volume = volume;

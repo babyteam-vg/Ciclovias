@@ -18,17 +18,16 @@ MonoBehaviour:
   dialogs:
   - "Oh, veo que te han promovido a nuestra ciudad, \xA1muchas felicidades!"
   - "Me presento, soy el Alcalde, \xBFpor qu\xE9 mejor no ponemos en marcha tus habilidades?"
-  - "Construye una ciclov\xEDa desde la <color=#F4C542>Tienda de Bicicletas</color>
-    hasta la <color=#F4C542>Municipalidad</color>."
+  - "Termina de construir esa ciclov\xEDa hasta la <color=#F4C542>Municipalidad</color>."
   - "Yo me encargar\xE9 de proporcionarte material de construcci\xF3n\u2026 al menos
     dentro de nuestro presupuesto <i>hahaha</i>."
   - "Desde hace tiempo quer\xEDa una ruta hasta ese lugar en bicicleta, \xA1conf\xEDo
     en que har\xE1s una ruta confiable con una buena <color=#62B4E8>seguridad</color>!"
-  context: "Construye una ciclov\xEDa con <color=#62B4E8>seguridad</color> desde
-    la <color=#F4C542>Tienda de Bicicletas</color>  hasta la <color=#F4C542>Municipalidad</color>
-    para conocer al alcalde."
+  context: "Construye una ciclov\xEDa <color=#62B4E8>segura</color> desde la <color=#F4C542>Tienda
+    de Bicicletas</color> hasta la <color=#F4C542>Municipalidad</color> para conocer
+    al alcalde."
   safetyRequirement: 1
-  minSafetyCount: 10
+  minSafetyCount: 35
   charmRequirement: 0
   minCharmCount: 0
   flowRequirement: 0
@@ -38,12 +37,12 @@ MonoBehaviour:
   maxMaterialRequirement: 0
   maxMaterial: 0
   flavourDetails:
-    flavorType: 1
-    compound: {fileID: 11400000, guid: 776c584773438fd4388e19020ee0df1a, type: 2}
+    flavorType: 4
+    compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-    flavorMessage: Visit the Central Park
-  materialReward: 60
+    flavorMessage: Use already built lanes
+  materialReward: 30
   unlockedTasks:
   - {x: 0, y: 2}
   rewardDialogs:

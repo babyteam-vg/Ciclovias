@@ -61,9 +61,9 @@ public class TaskReceiver : MonoBehaviour
 
             title.text = task.info.title;
             context.text = task.info.context;
-            safety.text = task.info.safetyRequirement ? task.info.minSafetyCount.ToString() : "-";
-            charm.text = task.info.charmRequirement ? task.info.minCharmCount.ToString() : "-";
-            flow.text = task.info.flowRequirement ? task.info.minFlowPercentage.ToString() : "-";
+            safety.text = task.info.safetyRequirement ? task.info.minSafety.ToString() : "-";
+            charm.text = task.info.charmRequirement ? task.info.minCharm.ToString() : "-";
+            flow.text = task.info.flowRequirement ? task.info.minFlow.ToString() : "-";
             minMat.text = task.info.minMaterialRequirement ? task.info.minMaterial.ToString() : "-";
             maxMat.text = task.info.maxMaterialRequirement ? task.info.maxMaterial.ToString() : "-";
         }

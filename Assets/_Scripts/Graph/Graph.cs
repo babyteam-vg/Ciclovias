@@ -127,8 +127,8 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // ::::: Check Direct Connection Between 2 Nodes
-    public bool AreConnected(Vector2Int positionA, Vector2Int positionB)
+    // ::::: Check If 2 Nodes Are Neighbors
+    public bool AreNeighbors(Vector2Int positionA, Vector2Int positionB)
     {
         if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
             return nodes[positionA].neighbors.Contains(nodes[positionB]);
@@ -160,6 +160,31 @@ public class Graph : MonoBehaviour
         return null;
     }
 
+    // ::::: 
+    public Vector2Int? GetFirstAdjacentNodePosition(Vector2Int position)
+    {
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(0, 1),   // Up
+            new Vector2Int(0, -1),  // Down
+            new Vector2Int(-1, 0),  // Left
+            new Vector2Int(1, 0),   // Right
+            new Vector2Int(1, 1),   // Up-Right
+            new Vector2Int(1, -1),  // Down-Right
+            new Vector2Int(-1, 1),  // Up-Left
+            new Vector2Int(-1, -1)  // Down-Left
+        };
+
+        foreach (var dir in directions)
+        {
+            Vector2Int adjacentPosition = position + dir;
+            if (nodePositions.Contains(adjacentPosition))
+                return adjacentPosition;
+        }
+
+        return null;
+    }
+
     // ::::: Remove a Lonely Node
     public void CheckAndRemoveNode(Vector2Int position)
     {
@@ -172,7 +197,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // ::::: Check if 2 Nodes are Connected
+    // ::::: Check If 2 Separated Nodes are Connected
     public bool AreConnectedByPath(Vector2Int positionA, Vector2Int positionB)
     {
         if (!nodes.ContainsKey(positionA) || !nodes.ContainsKey(positionB))

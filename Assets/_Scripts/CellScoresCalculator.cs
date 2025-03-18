@@ -39,17 +39,19 @@ public class CellScoresCalculator
 
         return safety;
     }
-    public int CalculatePathSafety(List<Vector2Int> path)
+    public float CalculatePathSafety(List<Vector2Int> path)
     {
-        int totalSafety = 0;
+        if (path.Count == 0) return 0;
 
+        int totalSafety = 0;
         for (int i = 0; i < path.Count; i++)
         {
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
             totalSafety += CalculateSafety(currentCell);
         }
 
-        return totalSafety;
+        float normalizedSafety = (float)(totalSafety) / (path.Count);
+        return normalizedSafety;
     }
 
     // ::::: Charm
@@ -75,41 +77,45 @@ public class CellScoresCalculator
 
         return charm;
     }
-    public int CalculatePathCharm(List<Vector2Int> path)
+    public float CalculatePathCharm(List<Vector2Int> path)
     {
-        int totalCharm = 0;
+        if (path.Count == 0) return 0;
 
+        int totalCharm = 0;
         foreach (var position in path)
         {
             Cell cell = grid.GetCell(position.x, position.y);
             totalCharm += CalculateCharm(cell);
         }
 
-        return totalCharm;
+        float normalizedCharm = (float)(totalCharm) / (path.Count);
+        return normalizedCharm;
     }
 
     // ::::: Flow
     public float CalculateFlow(Cell cell)
     {
-        int charm = 0;
+        int flow = 0;
 
         CellContent content = cell.GetContent();
         switch (content)
         {
             case CellContent.Crossing:
-                charm -= 2;
+                flow -= 2;
                 break;
             case CellContent.Attraction:
-                charm -= 2;
+                flow -= 2;
                 break;
             default:
                 break;
         }
 
-        return charm;
+        return flow;
     }
     public float CalculatePathFlow(List<Vector2Int> path, Vector2Int destinationPos)
     {
+        if (path.Count == 0) return 0;
+
         float totalFlow = 0f;
 
         for (int i = 0; i < path.Count; i++)
@@ -124,7 +130,7 @@ public class CellScoresCalculator
             else totalFlow -= 1; // -Flow
         }
 
-        return path.Count > 0 ? Mathf.Clamp(totalFlow / path.Count, 0f, 1f) : 0f;
+        return totalFlow / path.Count;
     }
 
     private bool IsGettingCloser(Cell previousCell, Cell currentCell, Vector2Int destinationPos)

@@ -7643,6 +7643,7 @@ MonoBehaviour:
   mainCamera: {fileID: 460224050}
   boundingPlane: {fileID: 445937665}
   inGameMenuManager: {fileID: 293209384}
+  tutorialManager: {fileID: 1981869352}
   panSpeed: 30
   zoomSpeed: 200
   zoomSmoothness: 50
@@ -9188,6 +9189,57 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1150232502}
   m_Mesh: {fileID: 0}
+--- !u!1 &1164717615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1164717616}
+  - component: {fileID: 1164717617}
+  m_Layer: 0
+  m_Name: Building 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1164717616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164717615}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 29.15, y: 0, z: 22.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1334570564}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1164717617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164717615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c123bf7c7b39ed4fa8c3baff1b29159, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 537187015}
+  mainCamera: {fileID: 460224050}
+  taskManager: {fileID: 1736919538}
+  tutorialManager: {fileID: 1981869352}
+  info: {fileID: 11400000, guid: 435864d4c5a85f9449884379ef35b754, type: 2}
+  givingTaskUI: {fileID: 677421987}
+  offset: {x: 0, y: 2, z: 0}
 --- !u!1 &1164994814
 GameObject:
   m_ObjectHideFlags: 0
@@ -10070,6 +10122,7 @@ Transform:
   - {fileID: 1552072640}
   - {fileID: 1880724658}
   - {fileID: 1871604713}
+  - {fileID: 1164717616}
   m_Father: {fileID: 1219831571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1349512085
@@ -16740,8 +16793,8 @@ MonoBehaviour:
   tasks:
   - state: 1
     info: {fileID: 11400000, guid: c3098e89612308645ab09845f6359cec, type: 2}
-    from: {fileID: 1781034839}
-    to: {fileID: 1552072642}
+    from: {fileID: 1552072642}
+    to: {fileID: 1781034839}
     path: []
     currentSafetyCount: 0
     currentCharmCount: 0
@@ -17045,6 +17098,13 @@ MonoBehaviour:
   tutorialCanvas: {fileID: 1349512085}
   tutorialTitle: {fileID: 1577560134}
   tutorialText: {fileID: 359963552}
+  activeTutorial:
+    completed: 0
+    info: {fileID: 0}
+    currentSafety: 0
+    currentFlow: 0
+    currentCharm: 0
+    usedMaterial: 0
   tutorials:
   - completed: 0
     info: {fileID: 11400000, guid: 2d53a48f619035a4bb72ab2512905060, type: 2}

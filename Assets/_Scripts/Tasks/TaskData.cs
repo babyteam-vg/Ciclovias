@@ -7,12 +7,10 @@ public class TaskData
     public TaskState state;
 
     public List<Vector2Int> path;
-    //public Vector2Int start;
-    //public Vector2Int end;
 
-    public int currentSafetyCount;
-    public int currentCharmCount;
-    public float currentFlowPercentage;
+    public float currentSafety;
+    public float currentCharm;
+    public float currentFlow;
     public int usedMaterial;
 
     public bool flavorMet;

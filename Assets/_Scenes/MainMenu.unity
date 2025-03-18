@@ -4417,8 +4417,10 @@ MonoBehaviour:
   SFXSource: {fileID: 1560831358}
   songs:
   - {fileID: 8300000, guid: ecfbf27dd46801646af068c0e69a48eb, type: 3}
-  build: {fileID: 8300000, guid: ad2c7d03fc3ce0040b8e59f44dd46389, type: 3}
-  complete: {fileID: 8300000, guid: 169121e095db4b247a2bcd98d4081553, type: 3}
+  sfxs:
+  - {fileID: 8300000, guid: ad2c7d03fc3ce0040b8e59f44dd46389, type: 3}
+  - {fileID: 8300000, guid: 169121e095db4b247a2bcd98d4081553, type: 3}
+  - {fileID: 8300000, guid: 81b1c2d7867d8ff4f9618533558a9bfb, type: 3}
 --- !u!4 &1800343149
 Transform:
   m_ObjectHideFlags: 0

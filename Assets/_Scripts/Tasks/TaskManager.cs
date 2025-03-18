@@ -70,29 +70,27 @@ public class TaskManager : MonoBehaviour
 
         foreach (Task activeTask in activeTasks) // Only Active Tasks
         {
-            Vector2Int? tentativeStart = graph.FindNodePosInCells(activeTask.from.info.surroundings);
-            Vector2Int? tentativeEnd = graph.FindNodePosInCells(activeTask.to.info.surroundings);
+            Vector2Int tentativeStart = activeTask.from.info.surroundings.First();
+            Vector2Int tentativeEnd = activeTask.to.info.surroundings.First();
 
-            Vector2Int? start = tentativeStart ?? tentativeEnd;
+            Vector2Int startPos = graph.GetAllNodesPosition().Contains(tentativeStart)
+                ? tentativeStart : tentativeEnd;
 
-            Vector2Int startPos = start.Value;
-            Vector2Int endPos = startPos.Equals(tentativeStart.Value)
-                ? tentativeEnd ?? activeTask.to.info.surroundings.FirstOrDefault()
-                : tentativeStart ?? activeTask.from.info.surroundings.FirstOrDefault();
+            Vector2Int endPos = startPos.Equals(tentativeStart)
+                ? tentativeEnd : tentativeStart;
 
             var (pathFound, path) = pathfinder.FindPath(startPos, gridPosition, endPos); // Execute A*
 
             //splinesRenderer.currentPath = path;
-            //laneRoundScores.lastCellPosition = path.Any() ? path.Last() : gridPosition;
 
-            int safety = cellScoresCalculator.CalculatePathSafety(path);
-            int charm = cellScoresCalculator.CalculatePathCharm(path);
+            float safety = cellScoresCalculator.CalculatePathSafety(path);
+            float charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path, endPos);
-            int usedMaterial = path.Count;
+            int usedMaterial = path.Count - 1;
 
-            activeTask.currentSafetyCount = safety;
-            activeTask.currentCharmCount = charm;
-            activeTask.currentFlowPercentage = flow;
+            activeTask.currentSafety = safety;
+            activeTask.currentCharm = charm;
+            activeTask.currentFlow = flow;
             activeTask.usedMaterial = usedMaterial;
 
             activeTask.flavorMet = MeetsFlavour(activeTask, path);
@@ -102,8 +100,6 @@ public class TaskManager : MonoBehaviour
             if (pathFound)
             {
                 activeTask.path = path;
-                //activeTask.start = path.First();
-                //activeTask.end = path.Last();
 
                 if (activeTask.MeetsRequirements())
                     ChangeTaskState(TaskState.Completed, activeTask); // Complete the Task
@@ -140,7 +136,7 @@ public class TaskManager : MonoBehaviour
                 break;
 
             case TaskState.Completed:
-                AudioManager.Instance.PlaySFX(AudioManager.Instance.complete);
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[1]);
                 confirmButton.SetActive(true);
                 TaskCompleted?.Invoke(task);
                 break;
@@ -180,15 +176,15 @@ public class TaskManager : MonoBehaviour
     // ::::: Meets the Flavour?
     private bool MeetsFlavour(Task task, List<Vector2Int> path)
     {
-        FlavorType type = task.info.flavourDetails.flavorType;
+        FlavorType type = task.info.flavorDetails.flavorType;
         switch (type)
         {
             case FlavorType.Visit:
-                List<Vector2Int> visitSurroundings = task.info.flavourDetails.compound.surroundings;
+                List<Vector2Int> visitSurroundings = task.info.flavorDetails.compound.surroundings;
                 return visitSurroundings.Intersect(path).Any();
 
             case FlavorType.Avoid:
-                List<Vector2Int> avoidSurroundings = task.info.flavourDetails.compound.surroundings;
+                List<Vector2Int> avoidSurroundings = task.info.flavorDetails.compound.surroundings;
                 return !avoidSurroundings.Intersect(path).Any();
 
             case FlavorType.Cross:
@@ -199,11 +195,11 @@ public class TaskManager : MonoBehaviour
                     Cell lastCell = grid.GetCell(path[index - 1].x, path[index - 1].y);
                     Cell currentCell = grid.GetCell(path[index].x, path[index].y);
 
-                    if (currentCell.GetContent() == task.info.flavourDetails.toCross
+                    if (currentCell.GetContent() == task.info.flavorDetails.toCross
                         && lastCell.GetContent() != currentCell.GetContent())
                         task.currentToCross++;
                 }
-                if (task.currentToCross >= task.info.flavourDetails.numberToCross) return true;
+                if (task.currentToCross >= task.info.flavorDetails.numberToCross) return true;
                 break;
 
             case FlavorType.UseLane:
