@@ -29,7 +29,7 @@ MonoBehaviour:
     - position: {x: 36, y: 0, z: 7}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       zoom: 5
-      duration: 1.5
+      duration: 1
   - text: 'Unmarked crossings are <color=#FF9842>medium-risk</color> areas.
 
 

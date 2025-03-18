@@ -13,6 +13,7 @@ public class SplinesManager : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private TutorialManager tutorialManager;
 
     public SplineContainer splineContainer;
     public HashSet<Vector3> sealedPositions = new HashSet<Vector3>();
@@ -21,8 +22,8 @@ public class SplinesManager : MonoBehaviour
     private Dictionary<Vector3, (Spline, int)> intersections = new Dictionary<Vector3, (Spline, int)>();
     private bool recentIntersection = false;
 
-    public event Action SplineChanged;
-    public event Action SplineSealed;
+    public event Action<Spline> SplineChanged;
+    public event Action<HashSet<Vector3>> SplineSealed;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -33,17 +34,19 @@ public class SplinesManager : MonoBehaviour
 
     private void OnEnable()
     {
-        taskManager.TaskSealed += UpdateSealedPositions;
-
         graph.OnEdgeAdded += HandleEdgeAdded;
         graph.OnEdgeRemoved += HandleEdgeRemoved;
+
+        taskManager.TaskSealed += UpdateTaskSealedPositions;
+        tutorialManager.TutorialSectionSealed += UpdateTutorialSealedPositions;
     }
     private void OnDisable()
     {
-        taskManager.TaskSealed -= UpdateSealedPositions;
-
         graph.OnEdgeAdded -= HandleEdgeAdded;
         graph.OnEdgeRemoved -= HandleEdgeRemoved;
+
+        taskManager.TaskSealed -= UpdateTaskSealedPositions;
+        tutorialManager.TutorialSectionSealed -= UpdateTutorialSealedPositions;
     }
 
     // :::::::::: EVENT METHODS ::::::::::
@@ -68,7 +71,7 @@ public class SplinesManager : MonoBehaviour
             || (firstSpline != null && firstIndex != firstSpline.Count - 1)) // Mid Spline
         {
             StartNewSpline(firstWorldPosition, secondWorldPosition);
-            SplineChanged?.Invoke();
+            SplineChanged?.Invoke(spline);
             return;
         }
 
@@ -94,7 +97,7 @@ public class SplinesManager : MonoBehaviour
             HandleIntersection(secondWorldPosition, firstWorldPosition);
         else AddKnotToCurrentSpline(secondWorldPosition);
 
-        SplineChanged?.Invoke(); // !
+        SplineChanged?.Invoke(spline); // !
     }
 
     // ::::: Destroying Lane
@@ -133,7 +136,7 @@ public class SplinesManager : MonoBehaviour
         if (spline.Count == 1)
             splineContainer.RemoveSpline(spline);
 
-        SplineChanged?.Invoke();
+        SplineChanged?.Invoke(spline);
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -256,16 +259,37 @@ public class SplinesManager : MonoBehaviour
             spline.Add(knot);
     }
 
-    // ::::: 
-    private void UpdateSealedPositions(Task task)
+    // ::::: Update Sealed Positions
+    private void UpdateTaskSealedPositions(Task task)
     {
         foreach (Vector2Int pos in task.path)
         {
             Vector3 centeredPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
-            if (!sealedPositions.Contains(centeredPos)) sealedPositions.Add(centeredPos);
+            var (spline, index) = FindKnotAndSpline(centeredPos);
+            if (spline != null)
+            {
+                Vector3 knotPos = spline.ElementAt(index).Position;
+                if (!sealedPositions.Contains(knotPos)) sealedPositions.Add(knotPos);
+            }
         }
 
-        SplineSealed?.Invoke();
+        SplineSealed?.Invoke(sealedPositions);
+    }
+
+    private void UpdateTutorialSealedPositions(List<Vector2Int> path)
+    {
+        foreach (Vector2Int pos in path)
+        {
+            Vector3 centeredPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            var (spline, index) = FindKnotAndSpline(centeredPos);
+            if (spline != null)
+            {
+                Vector3 knotPos = spline.ElementAt(index).Position;
+                if (!sealedPositions.Contains(knotPos)) sealedPositions.Add(knotPos);
+            }
+        }
+
+        SplineSealed?.Invoke(sealedPositions);
     }
 
     // :::::::::: STORAGE METHODS ::::::::::

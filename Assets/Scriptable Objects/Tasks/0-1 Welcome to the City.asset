@@ -27,21 +27,21 @@ MonoBehaviour:
     de Bicicletas</color> hasta la <color=#F4C542>Municipalidad</color> para conocer
     al alcalde."
   safetyRequirement: 1
-  minSafetyCount: 35
+  minSafety: 0
   charmRequirement: 0
-  minCharmCount: 0
+  minCharm: 0
   flowRequirement: 0
-  minFlowPercentage: 0
+  minFlow: 0
   minMaterialRequirement: 0
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
-  flavourDetails:
+  flavorDetails:
     flavorType: 4
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-    flavorMessage: Use already built lanes
+    flavorMessage: Use pre-existing lanes
   materialReward: 30
   unlockedTasks:
   - {x: 0, y: 2}

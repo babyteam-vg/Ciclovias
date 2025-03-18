@@ -40,6 +40,7 @@ public class TutorialManager : MonoBehaviour
     public event Action<TutorialSection> TutorialSectionStarted;
     public event Action TutorialSectionPresentationStarted;
     public event Action TutorialSectionPresentationDone;
+    public event Action<List<Vector2Int>> TutorialSectionSealed;
     public event Action TutorialCompleted;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -206,7 +207,10 @@ public class TutorialManager : MonoBehaviour
     {
         if (path != null
             && !activeTutorial.info.sections[currentSectionIndex].dontAddToPath)
+        {
             graph.SealNodes(path);
+            TutorialSectionSealed(path);
+        }
 
         currentSectionIndex++;
         AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[2]);

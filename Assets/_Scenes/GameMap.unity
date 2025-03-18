@@ -9758,6 +9758,7 @@ MonoBehaviour:
   grid: {fileID: 378811413}
   graph: {fileID: 1986930194}
   taskManager: {fileID: 1736919538}
+  tutorialManager: {fileID: 1981869352}
   splineContainer: {fileID: 1215106552}
 --- !u!114 &1215106552
 MonoBehaviour:
@@ -16796,9 +16797,9 @@ MonoBehaviour:
     from: {fileID: 1552072642}
     to: {fileID: 1781034839}
     path: []
-    currentSafetyCount: 0
-    currentCharmCount: 0
-    currentFlowPercentage: 0
+    currentSafety: 0
+    currentCharm: 0
+    currentFlow: 0
     usedMaterial: 0
     flavorMet: 0
     currentToCross: 0
@@ -16807,9 +16808,9 @@ MonoBehaviour:
     from: {fileID: 1552072642}
     to: {fileID: 1880724660}
     path: []
-    currentSafetyCount: 0
-    currentCharmCount: 0
-    currentFlowPercentage: 0
+    currentSafety: 0
+    currentCharm: 0
+    currentFlow: 0
     usedMaterial: 0
     flavorMet: 0
     currentToCross: 0
@@ -16818,9 +16819,9 @@ MonoBehaviour:
     from: {fileID: 1880724660}
     to: {fileID: 1871604714}
     path: []
-    currentSafetyCount: 0
-    currentCharmCount: 0
-    currentFlowPercentage: 0
+    currentSafety: 0
+    currentCharm: 0
+    currentFlow: 0
     usedMaterial: 0
     flavorMet: 0
     currentToCross: 0

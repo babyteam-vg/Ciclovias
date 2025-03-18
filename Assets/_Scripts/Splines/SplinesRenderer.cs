@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshRenderer))]
 public class SplinesRenderer : MonoBehaviour
 {
     [Header("Dependencies")]
@@ -16,76 +16,79 @@ public class SplinesRenderer : MonoBehaviour
     [SerializeField] private int segmentsPerUnit = 15;
     [SerializeField] private Material laneMaterial;
 
-    private MeshFilter meshFilter;
-    private MeshRenderer meshRenderer;
-    private Mesh mesh;
+    private Dictionary<Spline, MeshFilter> splineMeshes = new Dictionary<Spline, MeshFilter>();
 
     // :::::::::: MONO METHODS ::::::::::
-    private void Awake()
-    {
-        rendererUtility = new RendererUtility();
+    private void Awake() { rendererUtility = new RendererUtility(); }
 
-        meshFilter = GetComponent<MeshFilter>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        mesh = new Mesh();
-        meshFilter.mesh = mesh;
-        meshRenderer.material = laneMaterial;
+    private void OnEnable() { splinesManager.SplineChanged += UpdateSplineMesh; }
+    private void OnDisable() { splinesManager.SplineChanged -= UpdateSplineMesh; }
+
+    private void Start()
+    {
+        foreach (var spline in splinesManager.splineContainer.Splines)
+            UpdateSplineMesh(spline);
     }
 
-    private void OnEnable() { splinesManager.SplineChanged += UpdateMesh; }
-    private void OnDisable() { splinesManager.SplineChanged -= UpdateMesh; }
+    // :::::::::: EVENT METHODS ::::::::::
+    private void UpdateSplineMesh(Spline spline)
+    {
+        if (!splineMeshes.TryGetValue(spline, out MeshFilter meshFilter))
+        {
+            GameObject splineObject = new GameObject("SplineMesh");
+            splineObject.transform.SetParent(transform);
 
-    private void Start() { UpdateMesh(); }
+            meshFilter = splineObject.AddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = splineObject.AddComponent<MeshRenderer>();
+            meshRenderer.material = laneMaterial;
 
-    // :::::::::: PUBLIC METHODS ::::::::::
+            meshFilter.mesh = new Mesh();
+
+            splineMeshes[spline] = meshFilter;
+        }
+
+        BuildMesh(spline, meshFilter.mesh);
+    }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    private void UpdateMesh()
+    private void BuildMesh(Spline spline, Mesh mesh)
     {
-        if (splinesManager == null || splinesManager.splineContainer == null)
-            return;
-
         mesh.Clear();
 
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
 
-        foreach (var spline in splinesManager.splineContainer.Splines)
+        int resolution = Mathf.CeilToInt(spline.GetLength() * segmentsPerUnit);
+        for (int i = 0; i < resolution; i++)
         {
-            int resolution = Mathf.CeilToInt(spline.GetLength() * segmentsPerUnit);
-            for (int i = 0; i < resolution; i++)
+            float t = i / (float)(resolution - 1);
+            Vector3 position = spline.EvaluatePosition(t);
+            Vector3 tangent = spline.EvaluateTangent(t);
+            tangent = tangent.normalized;
+            Vector3 normal = -Vector3.Cross(tangent, Vector3.up).normalized;
+
+            float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) + 0.0002f;
+            Vector3 v1 = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
+            Vector3 v2 = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
+
+            int baseIndex = vertices.Count;
+            vertices.Add(v1);
+            vertices.Add(v2);
+
+            float uvY = t * spline.GetLength(); // Repeat
+            uvs.Add(new Vector2(0, uvY));
+            uvs.Add(new Vector2(1, uvY));
+
+            if (i > 0)
             {
-                float t = i / (float)(resolution - 1);
-                Vector3 position = spline.EvaluatePosition(t);
-                Vector3 tangent = spline.EvaluateTangent(t);
-                tangent = tangent.normalized;
-                Vector3 normal = -Vector3.Cross(tangent, Vector3.up).normalized;
+                triangles.Add(baseIndex - 2);
+                triangles.Add(baseIndex - 1);
+                triangles.Add(baseIndex + 1);
 
-                float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) + 0.0002f;
-                Vector3 v1 = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
-                Vector3 v2 = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
-
-                int baseIndex = vertices.Count;
-                vertices.Add(v1);
-                vertices.Add(v2);
-
-                // Texture Mapping
-                float uvY = t * spline.GetLength(); // Repeat
-                uvs.Add(new Vector2(0, uvY));
-                uvs.Add(new Vector2(1, uvY));
-
-                if (i > 0)
-                {
-                    // Triangles
-                    triangles.Add(baseIndex - 2);
-                    triangles.Add(baseIndex - 1);
-                    triangles.Add(baseIndex + 1);
-
-                    triangles.Add(baseIndex - 2);
-                    triangles.Add(baseIndex + 1);
-                    triangles.Add(baseIndex);
-                }
+                triangles.Add(baseIndex - 2);
+                triangles.Add(baseIndex + 1);
+                triangles.Add(baseIndex);
             }
         }
 
