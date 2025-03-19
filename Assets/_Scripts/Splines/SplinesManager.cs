@@ -63,8 +63,8 @@ public class SplinesManager : MonoBehaviour
         var (firstSpline, firstIndex) = FindKnotAndSpline(firstWorldPosition);
 
         // 'T' and 'Y' Intersections
-        if (firstNeighbors.Count > 2) HandleTandY(firstWorldPosition);
-        if (secondNeighbors.Count > 2) HandleTandY(secondWorldPosition);
+        //if (firstNeighbors.Count > 2) HandleTandY(firstWorldPosition);
+        //if (secondNeighbors.Count > 2) HandleTandY(secondWorldPosition);
 
         // New Spline
         if (firstSpline == null

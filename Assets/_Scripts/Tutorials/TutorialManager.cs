@@ -209,7 +209,7 @@ public class TutorialManager : MonoBehaviour
             && !activeTutorial.info.sections[currentSectionIndex].dontAddToPath)
         {
             graph.SealNodes(path);
-            TutorialSectionSealed(path);
+            TutorialSectionSealed?.Invoke(path);
         }
 
         currentSectionIndex++;
