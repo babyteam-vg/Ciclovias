@@ -50,7 +50,11 @@ public class LaneConstructor : MonoBehaviour
     // ::::: Mouse Input: Down
     private void StartBuilding(Vector2Int gridPosition)
     {
-        if (isAllowed && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable())
+        int neighbors = graph.GetNeighborsCount(gridPosition);
+
+        if (isAllowed                                                       // Not in Menu
+            && neighbors < 3                                                // Tetra-Intersection at Most
+            && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable()) // Buildable Cell
         {
             if (graph.GetNode(gridPosition) == null)
                 graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node

@@ -47,7 +47,13 @@ public class Graph : MonoBehaviour
 
 
     // ::::: Get Node's Neighbors
-    public List<Node> GetNeighbors(Vector2Int position) { return GetNode(position).neighbors; }
+    public int GetNeighborsCount(Vector2Int position)
+    {
+        Node node = GetNode(position);
+        if (node != null)
+            return GetNode(position).neighbors.Count;
+        return 0;
+    }
     public List<Vector2Int> GetNeighborsPos(Vector2Int position)
     {
         Node node = GetNode(position);
