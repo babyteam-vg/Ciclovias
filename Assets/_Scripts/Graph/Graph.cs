@@ -240,7 +240,7 @@ public class Graph : MonoBehaviour
     public bool IsCollinear(Vector2Int a, Vector2Int b, Vector2Int c)
     {
         Vector2Int v1 = b - a;
-        Vector2Int v2 = c - a;
+        Vector2Int v2 = c - b;
 
         int crossProduct = v1.x * v2.y - v1.y * v2.x;
 

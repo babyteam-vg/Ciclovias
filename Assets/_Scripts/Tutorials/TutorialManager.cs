@@ -58,17 +58,11 @@ public class TutorialManager : MonoBehaviour
 
     private void OnEnable()
     {
-        gameManager.MapStateAdvanced += GetNextTutorial;
-
-        laneConstructor.OnLaneBuilt += CheckSectionProgress;
-        laneDestructor.OnLaneDestroyed += CheckSectionProgress;
+        //gameManager.MapStateAdvanced += GetNextTutorial;
     }
     private void OnDisable()
     {
         gameManager.MapStateAdvanced -= GetNextTutorial;
-
-        laneConstructor.OnLaneBuilt -= CheckSectionProgress;
-        laneDestructor.OnLaneDestroyed -= CheckSectionProgress;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -81,6 +75,9 @@ public class TutorialManager : MonoBehaviour
         {
             activeTutorial = tutorial;
             currentSectionIndex = 0;
+
+            laneConstructor.OnLaneBuilt += CheckSectionProgress;
+            laneDestructor.OnLaneDestroyed += CheckSectionProgress;
 
             originalMapData = gridGenerator.GetMapDataForCoordinates(tutorial.info.sections[currentSectionIndex].tutorialMap.coordinates);
 
@@ -144,6 +141,9 @@ public class TutorialManager : MonoBehaviour
         isTutorialActive = false;
         activeTutorial = null;
         tutorialCanvas.SetActive(false);
+
+        laneConstructor.OnLaneBuilt -= CheckSectionProgress;
+        laneDestructor.OnLaneDestroyed -= CheckSectionProgress;
 
         gridGenerator.GenerateGridPortion(originalMapData);
         TutorialCompleted?.Invoke(); // !
