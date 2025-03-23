@@ -46,7 +46,7 @@ public class DialogManager : MonoBehaviour
             ? task.info.rewardDialogs
             : task.info.dialogs;
         portrait.sprite = task.info.character.portrait;
-        characterName.text = task.info.character.characterName;
+        //characterName.text = task.info.character.characterName;
 
         dialog.text = dialogs[0];
         inDialog = true;

@@ -58,7 +58,7 @@ public class TutorialManager : MonoBehaviour
 
     private void OnEnable()
     {
-        //gameManager.MapStateAdvanced += GetNextTutorial;
+        gameManager.MapStateAdvanced += GetNextTutorial;
     }
     private void OnDisable()
     {

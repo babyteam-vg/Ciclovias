@@ -16,18 +16,17 @@ MonoBehaviour:
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
-  - "Oh, veo que te han promovido a nuestra ciudad, \xA1muchas felicidades!"
-  - "Me presento, soy el Alcalde, \xBFpor qu\xE9 mejor no ponemos en marcha tus habilidades?"
-  - "Termina de construir esa ciclov\xEDa hasta la <color=#F4C542>Municipalidad</color>."
-  - "Yo me encargar\xE9 de proporcionarte material de construcci\xF3n\u2026 al menos
-    dentro de nuestro presupuesto <i>hahaha</i>."
-  - "Desde hace tiempo quer\xEDa una ruta hasta ese lugar en bicicleta, \xA1conf\xEDo
-    en que har\xE1s una ruta confiable con una buena <color=#62B4E8>seguridad</color>!"
-  context: "Construye una ciclov\xEDa <color=#62B4E8>segura</color> desde la <color=#F4C542>Tienda
-    de Bicicletas</color> hasta la <color=#F4C542>Municipalidad</color> para conocer
-    al alcalde."
+  - Oh, I see you've been promoted to our city, congratulations!
+  - Let me introduce myself, I'm the Mayor, why don't we put your skills to work?
+  - Finish building the bike lane to the Municipality so we can talk face to face.
+  - I'll take care of providing you with construction material... at least within
+    our budget.
+  - I've been wanting a bike lane to that place for a while, I trust you'll make
+    a reliable route!
+  context: Build a <color=#62B4E8>safe</color> bike lane from the Bike Store to Municipality
+    to meet the Mayor.
   safetyRequirement: 1
-  minSafety: 0
+  minSafety: 0.5
   charmRequirement: 0
   minCharm: 0
   flowRequirement: 0
@@ -46,9 +45,7 @@ MonoBehaviour:
   unlockedTasks:
   - {x: 0, y: 2}
   rewardDialogs:
-  - "Sab\xEDa que tus habilidades eran lo que necesit\xE1bamos para devolver la vida
-    a esta apagada ciudad."
-  - "\xA1Siempre que te necesite te lo har\xE9 saber!"
+  - Wonderful work, trully wonderful!
   posts:
   - {fileID: 11400000, guid: 8c83df947b897fd45b44c5ef636d1c93, type: 2}
   - {fileID: 11400000, guid: 4138f0ec5edb0184092b86ddc8dbcb23, type: 2}

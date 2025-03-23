@@ -21,6 +21,7 @@ public class SplineManager : MonoBehaviour
     private Dictionary<Vector3, Intersection> intersections = new Dictionary<Vector3, Intersection>();
 
     public event Action<Spline> SplineUpdated;
+    public event Action<Spline> SplineSealed;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -32,11 +33,17 @@ public class SplineManager : MonoBehaviour
     {
         graph.OnEdgeAdded += HandleEdgeAdded;
         graph.OnEdgeRemoved += HandleEdgeRemoved;
+
+        taskManager.TaskSealed += OnTaskSealed;
+        tutorialManager.TutorialSectionSealed += OnTutorialSealed;
     }
     private void OnDisable()
     {
         graph.OnEdgeAdded -= HandleEdgeAdded;
         graph.OnEdgeRemoved -= HandleEdgeRemoved;
+
+        taskManager.TaskSealed += OnTaskSealed;
+        tutorialManager.TutorialSectionSealed += OnTutorialSealed;
     }
 
     // :::::::::: EVENT METHODS ::::::::::
@@ -428,6 +435,32 @@ public class SplineManager : MonoBehaviour
             else Debug.Log("  N/E");
         }
     }
+
+    // :::::::::: SEALING METHODS ::::::::::
+    // ::::: Task Sealed
+    private void OnTaskSealed(Task task)
+    {
+        List<Vector2Int> path = task.path;
+        foreach (Vector2Int pos in path)
+        {
+            Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            (Spline spline, int index) = FindKnotAndSpline(worldPos);
+            if (spline != null) SplineSealed?.Invoke(spline);
+        }
+    }
+
+    // ::::: Tutorial Section Completed
+    private void OnTutorialSealed(List<Vector2Int> path)
+    {
+        foreach (Vector2Int pos in path)
+        {
+            Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            (Spline spline, int index) = FindKnotAndSpline(worldPos);
+            if (spline != null) SplineSealed?.Invoke(spline);
+        }
+    }
+
+    // :::::::::: STORAGE METHODS ::::::::::
 }
 
 [System.Serializable]

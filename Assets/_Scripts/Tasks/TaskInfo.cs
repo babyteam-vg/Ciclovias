@@ -7,7 +7,7 @@ public class TaskInfo : ScriptableObject
     public Vector2Int id;
     public string title;
     public Character character;
-    public string[] dialogs;
+    [TextArea(2, 4)] public string[] dialogs;
     [TextArea(3, 6)] public string context;
 
     [Header("Requirements")]
@@ -28,7 +28,7 @@ public class TaskInfo : ScriptableObject
     [Header("Rewards")]
     public int materialReward;
     public Vector2Int[] unlockedTasks;
-    public string[] rewardDialogs;
+    [TextArea(2, 4)] public string[] rewardDialogs;
     public PostInfo[] posts;
 }
 

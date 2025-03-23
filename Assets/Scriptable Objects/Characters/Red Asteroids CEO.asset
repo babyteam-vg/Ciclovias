@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Red Asteroids CEO
   m_EditorClassIdentifier: 
   characterName: Red Asteroid's C.E.O.
-  portrait: {fileID: 21300000, guid: d4a99fa7f04619d42b88863582590040, type: 3}
+  portrait: {fileID: 21300000, guid: a590da67d04a8574a8bc47ec769810d1, type: 3}
