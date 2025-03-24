@@ -3665,7 +3665,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graph: {fileID: 1986930194}
   taskManager: {fileID: 1736919538}
-  splinesManager: {fileID: 1215106551}
+  tutorialManager: {fileID: 1981869352}
+  splineManager: {fileID: 633799251}
   materialCounter: {fileID: 1421969043}
   amountText: {fileID: 148540938}
 --- !u!4 &537187016
@@ -7963,7 +7964,6 @@ MonoBehaviour:
   splineManager: {fileID: 633799251}
   plane: {fileID: 445937665}
   normalMaterial: {fileID: 2100000, guid: 638e45d3abc8c084382834437a06bebc, type: 2}
-  sealedMaterial: {fileID: 2100000, guid: f882b603336f3db43acf5bc11473b4b8, type: 2}
 --- !u!23 &1217385508
 MeshRenderer:
   m_ObjectHideFlags: 0

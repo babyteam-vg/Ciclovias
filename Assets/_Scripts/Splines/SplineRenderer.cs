@@ -13,14 +13,12 @@ public class SplineRenderer : MonoBehaviour
 
     [Header("Materials")]
     [SerializeField] private Material normalMaterial;
-    [SerializeField] private Material sealedMaterial;
 
     private float laneWidth = 0.4f;
-    private float laneHeight = 0.02f;
-    private int segmentsPerUnit = 7;
+    private float laneHeight = 0.05f;
+    private int segmentsPerUnit = 15;
 
     private Dictionary<Spline, MeshFilter> normalMeshes = new Dictionary<Spline, MeshFilter>();
-    private Dictionary<Spline, MeshFilter> sealedMeshes = new Dictionary<Spline, MeshFilter>();
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake() { rendererUtility = new RendererUtility(); }
@@ -28,13 +26,11 @@ public class SplineRenderer : MonoBehaviour
     private void OnEnable()
     {
         splineManager.SplineUpdated += UpdateSplineMesh;
-        //splineManager.SplineSealed += SealSpline;
     }
 
     private void OnDisable()
     {
         splineManager.SplineUpdated -= UpdateSplineMesh;
-        //splineManager.SplineSealed -= SealSpline;
     }
 
     private void Start()
@@ -44,15 +40,8 @@ public class SplineRenderer : MonoBehaviour
     }
 
     // :::::::::: EVENT METHODS ::::::::::
-    // :::::
     private void UpdateSplineMesh(Spline spline)
     {
-        if (sealedMeshes.TryGetValue(spline, out MeshFilter sealedMeshFilter))
-        {
-            BuildMesh(spline, sealedMeshFilter.mesh);
-            return;
-        }
-
         if (!normalMeshes.TryGetValue(spline, out MeshFilter meshFilter))
         {
             meshFilter = CreateSplineMesh(spline, normalMaterial);
@@ -62,25 +51,7 @@ public class SplineRenderer : MonoBehaviour
         BuildMesh(spline, meshFilter.mesh);
     }
 
-    // :::::
-    private void SealSpline(Spline spline)
-    {
-        if (normalMeshes.TryGetValue(spline, out MeshFilter meshFilter))
-        {
-            Destroy(meshFilter.gameObject);
-            normalMeshes.Remove(spline);
-        }
-
-        if (!sealedMeshes.ContainsKey(spline))
-        {
-            MeshFilter sealedMeshFilter = CreateSplineMesh(spline, sealedMaterial);
-            sealedMeshes[spline] = sealedMeshFilter;
-            BuildMesh(spline, sealedMeshFilter.mesh);
-        }
-    }
-
     // :::::::::: PRIVATE METHODS ::::::::::
-    // :::::
     private MeshFilter CreateSplineMesh(Spline spline, Material material)
     {
         GameObject splineObject = new GameObject("SplineMesh");
@@ -94,7 +65,6 @@ public class SplineRenderer : MonoBehaviour
         return meshFilter;
     }
 
-    // :::::
     private void BuildMesh(Spline spline, Mesh mesh)
     {
         mesh.Clear();
@@ -112,7 +82,7 @@ public class SplineRenderer : MonoBehaviour
             Vector3 tangent = spline.EvaluateTangent(t);
             Vector3 normal = -Vector3.Cross(tangent.normalized, Vector3.up).normalized;
 
-            float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane);
+            float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) - laneHeight / 2;
 
             // Upper Vertex
             Vector3 topLeft = position + normal * (laneWidth * 0.5f) + Vector3.up * (elevation + laneHeight);

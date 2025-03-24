@@ -42,7 +42,7 @@ public class GameStateManager : MonoBehaviour
             graph = new GraphData(),
             tasks = new List<TaskData>(),
             tutorials = new List<TutorialData>(),
-            splines = new SplineContainerData(),
+            splines = new SplineData(),
         };
 
         Debug.Log("LoadedGameData reseted and ready for a new game.");

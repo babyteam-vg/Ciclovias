@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
-    [SerializeField] private SplinesManager splinesManager;
+    [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private SplineManager splineManager;
     private StorageManager storageManager = new StorageManager();
 
     [Header("UI References")]
@@ -37,10 +38,12 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         taskManager.TaskSealed += OnTaskSealed;
+        tutorialManager.TutorialCompleted += OnTutorialCompleted;
     }
     private void OnDisable()
     {
         taskManager.TaskSealed -= OnTaskSealed;
+        tutorialManager.TutorialCompleted -= OnTutorialCompleted;
     }
 
     private void Start()
@@ -104,15 +107,10 @@ public class GameManager : MonoBehaviour
         if (MaterialAmount == -1) AddMaterial(120);
     }
 
-    private void MaterialCounterAnimation()
-    {
-        animator.Play("MaterialCounter");
-    }
+    private void MaterialCounterAnimation() { animator.Play("MaterialCounter"); }
 
-    private void OnTaskSealed(Task task)
-    {
-        SaveGame(); // Auto Save
-    }
+    private void OnTaskSealed(Task task) { SaveGame(); } // Auto Save
+    private void OnTutorialCompleted() { SaveGame(); } // Auto Save
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Save
@@ -126,7 +124,7 @@ public class GameManager : MonoBehaviour
             graph = graph.SaveGraph(),
             tasks = TaskDiary.Instance.SaveTasks(),
             tutorials = TutorialManager.Instance.SaveTutorials(),
-            splines = splinesManager.SaveSplines(),
+            splines = splineManager.SaveSplines(),
         };
 
         bool success = fileName == null
@@ -148,7 +146,7 @@ public class GameManager : MonoBehaviour
             graph.LoadGraph(gameData.graph);
             TaskDiary.Instance.LoadTasks(gameData.tasks);
             TutorialManager.Instance.LoadTutorials(gameData.tutorials);
-            splinesManager.LoadSplines(gameData.splines);
+            splineManager.LoadSplines(gameData.splines);
 
             amountText.text = "x" + MaterialAmount.ToString();
 

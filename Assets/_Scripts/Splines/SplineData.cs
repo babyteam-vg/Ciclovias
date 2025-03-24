@@ -1,18 +1,38 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SplineData : MonoBehaviour
+[Serializable]
+public class SplineData
 {
-    // Start is called before the first frame update
-    void Start()
+    [Serializable]
+    public class SerializableKnot
     {
-        
+        public Vector3 position;
+        public Vector3 tangentIn;
+        public Vector3 tangentOut;
     }
 
-    // Update is called once per frame
-    void Update()
+    [Serializable]
+    public class SerializableSpline
     {
-        
+        public List<SerializableKnot> knots = new List<SerializableKnot>();
     }
+
+    [Serializable]
+    public class SerializableIntersection
+    {
+        public SerializableSpline spline;
+        public List<Vector3> edges = new List<Vector3>();
+    }
+
+    [Serializable]
+    public class IntersectionData
+    {
+        public Vector3 position;
+        public SerializableIntersection intersection;
+    }
+
+    public List<SerializableSpline> splines = new List<SerializableSpline>();
+    public List<IntersectionData> intersections = new List<IntersectionData>();
 }
