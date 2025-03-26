@@ -14,8 +14,8 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: BABY TEAM SpA
   productName: Cicloways
-  defaultCursor: {fileID: 2800000, guid: 242aab436ddd02a45962e69310b6caec, type: 3}
-  cursorHotspot: {x: 43, y: 49}
+  defaultCursor: {fileID: 2800000, guid: 75491ec058c73a94b8c50dbd7afcea8e, type: 3}
+  cursorHotspot: {x: 160, y: 110}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1

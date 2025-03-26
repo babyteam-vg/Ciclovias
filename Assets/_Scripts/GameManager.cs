@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
         if (MaterialAmount >= amount)
         {
             MaterialAmount -= amount;
-            amountText.text = "x" + MaterialAmount.ToString();
+            amountText.text = MaterialAmount.ToString();
             MaterialCounterAnimation();
             return true;
         }
@@ -124,6 +124,7 @@ public class GameManager : MonoBehaviour
             graph = graph.SaveGraph(),
             tasks = TaskDiary.Instance.SaveTasks(),
             tutorials = TutorialManager.Instance.SaveTutorials(),
+            tips = TipManager.Instance.SaveTips(),
             splines = splineManager.SaveSplines(),
         };
 
@@ -146,6 +147,7 @@ public class GameManager : MonoBehaviour
             graph.LoadGraph(gameData.graph);
             TaskDiary.Instance.LoadTasks(gameData.tasks);
             TutorialManager.Instance.LoadTutorials(gameData.tutorials);
+            TipManager.Instance.LoadTips(gameData.tips);
             splineManager.LoadSplines(gameData.splines);
 
             amountText.text = "x" + MaterialAmount.ToString();

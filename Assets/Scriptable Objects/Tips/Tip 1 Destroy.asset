@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
   m_Name: Tip 1 Destroy
   m_EditorClassIdentifier: 
-  id: 0
-  text: Drag the cursor with <color=#F4C542>right-click</color> to destroy a bike
-    lane.
+  id: 1
+  tipText: You can destroy part of a bike lane by dragging the cursor while holding
+    down the <color=#F4C542>right-click</color>.

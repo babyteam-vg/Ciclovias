@@ -22,6 +22,8 @@ public class LaneDestructor : MonoBehaviour
     public event Action<Vector2Int> OnLaneDestroyed;
     public event Action<Vector2Int> OnDestroyFinished;
 
+    public event Action OnTryDestroySealed;
+
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
@@ -66,6 +68,8 @@ public class LaneDestructor : MonoBehaviour
             DestroyNodeAndEdges(gridPosition);
             lastCellPosition = gridPosition;
         }
+        else if (node.indestructible)
+            OnTryDestroySealed?.Invoke();
     }
 
     // ::::: Mouse Input: Hold

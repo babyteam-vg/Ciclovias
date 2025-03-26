@@ -11,6 +11,7 @@ public abstract class DialogManager : MonoBehaviour
     [SerializeField] protected Image portrait;
     [SerializeField] protected TextMeshProUGUI characterName;
     [SerializeField] protected TextMeshProUGUI currentDialog;
+    [SerializeField] protected Image next;
 
     protected List<string> dialogs = new List<string>();
 
@@ -57,6 +58,9 @@ public abstract class DialogManager : MonoBehaviour
     // :::::::::: PRIVATE METHODS ::::::::::
     protected void ShowNextDialog()
     {
+        if (currentIndex == dialogs.Count - 1) next.gameObject.SetActive(false);
+        else next.gameObject.SetActive(true);
+
         currentDialog.text = "";
         typingCoroutine = StartCoroutine(TypeDialog(dialogs[currentIndex]));
     }

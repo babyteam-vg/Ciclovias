@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
-  m_Name: Tip 0 Build
+  m_Name: Tip 2 Camera
   m_EditorClassIdentifier: 
-  id: 0
-  text: Drag the cursor with <color=#F4C542>left-click</color> to build a bike lane.
+  id: 2
+  tipText: You can pan the camera with <color=#F4C542>WASD</color>, rotate it with
+    <color=#F4C542>QE</color> and zoom-in and out with the <color=#F4C542>mouse-wheel</color>.

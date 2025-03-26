@@ -72,7 +72,10 @@ public class TutorialDialogManager : DialogManager
         FinishedTyping -= OnFinishedTyping;
 
         if (currentSection.type == SectionType.Close)
+        {
             tutorialManager.StopTutorial();
+            StrictDialogClosed?.Invoke();
+        }
 
         tutorialDialogUI.SetActive(false);
         base.EndDialog();

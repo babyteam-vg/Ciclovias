@@ -48,8 +48,8 @@ MonoBehaviour:
     keyframes: []
   - type: 0
     dialogs:
-    - Ok then... the Municipality obliges me to evaluate you in order to grant you
-      the license to build bike lanes.
+    - The Municipality obliges me to evaluate you in order to grant you the license
+      to build bike lanes...
     - 'Please complete the following test to pass the course: build a completely
       <color=#62B4E8>safe</color> bike lane to the building...'
     checkRequirements: 1
@@ -69,7 +69,8 @@ MonoBehaviour:
     - Congratulations... You're now eligible to accept tasks from the Municipality
       and other entities.
     - The Municipality obliges me to remind you that this is a modular course...
-    - We will see each other as the complexity of your tasks increases.
+    - We will see each other as the complexity of your tasks increases. Have a nice
+      day...
     checkRequirements: 0
     start: {x: 0, y: 0}
     end: {x: 0, y: 0}

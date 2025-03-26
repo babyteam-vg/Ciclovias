@@ -42,6 +42,7 @@ public class GameStateManager : MonoBehaviour
             graph = new GraphData(),
             tasks = new List<TaskData>(),
             tutorials = new List<TutorialData>(),
+            tips = new List<TipData>(),
             splines = new SplineData(),
         };
 

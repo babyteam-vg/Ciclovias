@@ -18,20 +18,23 @@ public class TaskDialogManager : DialogManager
     // :::::::::: EXCLUSIVE METHODS ::::::::::
     public void StartTaskDialogs(Task task)
     {
-        if (inDialog) return;
+        dialogs = task.info.dialogs;
+        portrait.sprite = task.info.character.portrait;
+        characterName.text = task.info.character.characterName;
 
+        taskDialogUI.SetActive(true);
         StrictDialogOpened?.Invoke();
-        //StartDialog(task.info.dialogs, task.info.character.portrait, task.info.character.characterName);
+        StartDialog();
     }
 
     private void StartTaskRewardDialogs(Task task)
     {
-        List<string> dialogs = task.info.dialogs;
-        Sprite portrait = task.info.character.portrait;
-        string name = task.info.character.characterName;
+        dialogs = task.info.rewardDialogs;
+        portrait.sprite = task.info.character.portrait;
+        characterName.text = task.info.character.characterName;
 
         taskDialogUI.SetActive(true);
-        //StartDialog(dialogs, portrait, name);
+        StartDialog();
     }
 
     // :::::::::: OERRIDE METHODS ::::::::::
@@ -39,6 +42,10 @@ public class TaskDialogManager : DialogManager
     {
         taskDialogUI.SetActive(false);
         StrictDialogClosed?.Invoke();
+
+        if (TaskReceiver.Instance.ThereIsReceived())
+            InGameMenuManager.Instance.OnReceiveTaskPress();
+
         base.EndDialog();
     }
 }
