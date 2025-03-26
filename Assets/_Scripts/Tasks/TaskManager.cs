@@ -9,6 +9,7 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private SplinesRenderer splinesRenderer;
+    [SerializeField] private TaskDialogManager taskDialogManager;
 
     [Header("UI References")]
     public GameObject confirmButton;
@@ -145,7 +146,7 @@ public class TaskManager : MonoBehaviour
                 GameManager.Instance.AddMaterial(task.info.materialReward);
                 graph.SealNodes(task.path);
                 UnlockTasks(task);
-                InGameMenuManager.Instance.OnOpenDialog(task);
+                //taskDialogManager.StartDialog(task.info.rewardDialogs, task.info.character.portrait, task.info.character.characterName);
                 confirmButton.SetActive(false);
                 TaskSealed?.Invoke(task);
                 break;

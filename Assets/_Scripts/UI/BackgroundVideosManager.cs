@@ -12,7 +12,7 @@ public class BackgroundVideosManager : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable() { player.loopPointReached += StartLoopVideo; }
     private void OnDisable() { player.loopPointReached -= StartLoopVideo; }
-    private void Start() { Invoke(nameof(StartFadeIn), 1.5f); }
+    private void Start() { Invoke(nameof(StartFadeIn), 2.2f); }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     private void StartLoopVideo(VideoPlayer vp)

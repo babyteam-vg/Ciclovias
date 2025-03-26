@@ -18,7 +18,6 @@ public class InGameMenuManager : MonoBehaviour
     public GameObject pauseUI;
     public GameObject tasksDiaryUI;
     public GameObject receiveTaskUI;
-    public GameObject dialogUI;
     private GameObject settingsPanelUI;
 
     private Stack<GameObject> menuStack = new Stack<GameObject>(3);
@@ -49,7 +48,7 @@ public class InGameMenuManager : MonoBehaviour
     }
 
     // :::::::::: MENU QUEUE MANAGEMENT ::::::::::
-    private void OpenMenu(GameObject menuUI)
+    public void OpenMenu(GameObject menuUI)
     {
         if (menuStack.Count >= 3)
         {
@@ -104,16 +103,7 @@ public class InGameMenuManager : MonoBehaviour
     // ::::: Confirm Task
     public void OnConfirmTaskPress() { taskManager.ConfirmTask(CurrentTask.Instance.PinnedTask); }
 
-    // :::::::::: DIALOG MANAGER ::::::::::
-    // ::::: Dialog
-    public void OnOpenDialog(Task task)
-    {
-        dialogUI.SetActive(true);
-        dialogManager.StartDialog(task);
-        OpenMenu(dialogUI);
-    }
-    public void OnCloseDialog() { CloseMenu(); }
-
+    // :::::::::: BUILD MANAGER ::::::::::
     // ::::: To End the Builds
     public void EndBuild(Task task)
     {

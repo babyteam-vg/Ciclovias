@@ -9,6 +9,7 @@ public class TaskReceiver : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private TaskDialogManager taskDialogManager;
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI title;
@@ -47,7 +48,7 @@ public class TaskReceiver : MonoBehaviour
         if (ReceivedTask == task) return;
 
         ReceivedTask = task;
-        InGameMenuManager.Instance.OnOpenDialog(ReceivedTask);
+        taskDialogManager.StartTaskDialogs(task);
         UpdateTaskUI();
     }
 

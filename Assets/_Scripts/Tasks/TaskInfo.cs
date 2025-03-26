@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "Task", menuName = "Scriptable Object/Task", order = 1)]
 public class TaskInfo : ScriptableObject
@@ -7,7 +8,7 @@ public class TaskInfo : ScriptableObject
     public Vector2Int id;
     public string title;
     public Character character;
-    [TextArea(2, 4)] public string[] dialogs;
+    [TextArea(2, 4)] public List<string> dialogs;
     [TextArea(3, 6)] public string context;
 
     [Header("Requirements")]
@@ -28,7 +29,7 @@ public class TaskInfo : ScriptableObject
     [Header("Rewards")]
     public int materialReward;
     public Vector2Int[] unlockedTasks;
-    [TextArea(2, 4)] public string[] rewardDialogs;
+    [TextArea(2, 4)] public List<string> rewardDialogs;
     public PostInfo[] posts;
 }
 

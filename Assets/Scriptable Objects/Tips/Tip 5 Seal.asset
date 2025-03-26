@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
+  m_Name: Tip 5 Seal
+  m_EditorClassIdentifier: 
+  id: 0
+  text: <color=#5DBB88>Confirming</color> a task will seal the bike lane completing
+    the  task requirerments.

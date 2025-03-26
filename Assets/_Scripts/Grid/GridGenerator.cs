@@ -67,7 +67,7 @@ public class GridGenerator : MonoBehaviour
             if (map.coordinates == coordinates)
                 return map;
         }
-        return null; // Retorna null si no se encuentra un mapa con esas coordenadas
+        return null;
     }
 
 

@@ -14,67 +14,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: {x: 0, y: 1}
   title: Safety Tutorial
+  character: {fileID: 11400000, guid: ad7cc760df277b14a84088d90042607a, type: 2}
   sections:
-  - text: Drag with <color=#F4C542>left click</color> to begin building a new bike
-      lane.
-    dontAddToPath: 0
-    destroyRequirement: 0
+  - type: 0
+    dialogs:
+    - "Welcome to the bike lane construction course... I will be your instructor
+      on the matter. A pleasure\u2026"
+    - "Please build your first bike lane by dragging the cursor while holding down
+      the <color=#F4C542>left-click</color>\u2026"
+    checkRequirements: 0
     start: {x: 38, y: 6}
     end: {x: 34, y: 6}
-    checkRequirements: 0
+    dontAddToPath: 0
     tutorialMap:
-      texture: {fileID: 2800000, guid: 6f13038611b391347baec8f2f89d104c, type: 3}
+      texture: {fileID: 2800000, guid: 38f0ec167ec0b9646b3fe9f8634335a1, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes:
     - position: {x: 36, y: 0, z: 7}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       zoom: 5
       duration: 1
-  - text: 'Unmarked crossings are <color=#FF9842>medium-risk</color> areas.
-
-
-      Roads
-      are even <color=#E96A6A>higher-risk</color> areas.
-
-
-      Going through them
-      will penalize the <color=#62B4E8>safety</color> of your lane.'
-    dontAddToPath: 1
-    destroyRequirement: 0
-    start: {x: 34, y: 6}
-    end: {x: 34, y: 4}
+  - type: 0
+    dialogs:
+    - "Congratulations... Please prefer intersections marked with traffic lights
+      to ensure the <color=#62B4E8>safety</color> of cyclists.\r"
     checkRequirements: 0
-    tutorialMap:
-      texture: {fileID: 2800000, guid: 38f0ec167ec0b9646b3fe9f8634335a1, type: 3}
-      coordinates: {x: 0, y: 0}
-    keyframes: []
-  - text: You can erase part of a lane with <color=#F4C542>right click</color> to
-      recover <color=#F4C542>construction material</color>.
-    dontAddToPath: 0
-    destroyRequirement: 1
-    start: {x: 34, y: 4}
-    end: {x: 34, y: 5}
-    checkRequirements: 0
-    tutorialMap:
-      texture: {fileID: 2800000, guid: 38f0ec167ec0b9646b3fe9f8634335a1, type: 3}
-      coordinates: {x: 0, y: 0}
-    keyframes: []
-  - text: Traffic lights crosses keep your lane's <color=#62B4E8>safety</color> high!
-    dontAddToPath: 0
-    destroyRequirement: 0
     start: {x: 34, y: 6}
     end: {x: 31, y: 6}
-    checkRequirements: 0
+    dontAddToPath: 0
     tutorialMap:
       texture: {fileID: 2800000, guid: c165b1e3b9d96574482cf671d6b2d6da, type: 3}
       coordinates: {x: 0, y: 0}
     keyframes: []
-  - text: Now, get to the building <color=#62B4E8>as safe as possible</color>.
-    dontAddToPath: 0
-    destroyRequirement: 0
+  - type: 0
+    dialogs:
+    - Ok then... the Municipality obliges me to evaluate you in order to grant you
+      the license to build bike lanes.
+    - 'Please complete the following test to pass the course: build a completely
+      <color=#62B4E8>safe</color> bike lane to the building...'
+    checkRequirements: 1
     start: {x: 31, y: 6}
     end: {x: 26, y: 22}
-    checkRequirements: 1
+    dontAddToPath: 0
     tutorialMap:
       texture: {fileID: 2800000, guid: 72eca0067e4b09149a6286ec48422fd4, type: 3}
       coordinates: {x: 0, y: 0}
@@ -83,6 +64,20 @@ MonoBehaviour:
       rotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
       zoom: 7
       duration: 1.5
+  - type: 2
+    dialogs:
+    - Congratulations... You're now eligible to accept tasks from the Municipality
+      and other entities.
+    - The Municipality obliges me to remind you that this is a modular course...
+    - We will see each other as the complexity of your tasks increases.
+    checkRequirements: 0
+    start: {x: 0, y: 0}
+    end: {x: 0, y: 0}
+    dontAddToPath: 0
+    tutorialMap:
+      texture: {fileID: 0}
+      coordinates: {x: 0, y: 0}
+    keyframes: []
   safetyRequirement: 1
   minSafety: 1
   charmRequirement: 0

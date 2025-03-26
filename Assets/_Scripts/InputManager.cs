@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Grid grid;
     [SerializeField] private InGameMenuManager inGameMenuManager;
+    [SerializeField] private TaskDialogManager taskDialogManager;
+    [SerializeField] private TutorialDialogManager tutorialDialogManager;
 
     public event Action<Vector2Int> OnCursorMove;
 
@@ -29,24 +31,36 @@ public class InputManager : MonoBehaviour
     private bool isRightMouseButtonDown = false;
     private bool isMiddleMouseButtonDown = false;
 
-    private bool isMenuOpen = false;
+    private bool isAllowed = true;
     private Vector2Int? lastGridPosition = null;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
-        inGameMenuManager.MenuOpened += MenuOpened;
-        inGameMenuManager.MenuClosed += MenuClosed;
+        inGameMenuManager.MenuOpened += BlockInput;
+        inGameMenuManager.MenuClosed += UnlockInput;
+
+        taskDialogManager.StrictDialogOpened += BlockInput;
+        taskDialogManager.StrictDialogClosed -= UnlockInput;
+
+        tutorialDialogManager.StrictDialogOpened += BlockInput;
+        tutorialDialogManager.StrictDialogClosed += UnlockInput;
     }
     private void OnDisable()
     {
-        inGameMenuManager.MenuOpened -= MenuOpened;
-        inGameMenuManager.MenuClosed -= MenuClosed;
+        inGameMenuManager.MenuOpened -= BlockInput;
+        inGameMenuManager.MenuClosed -= UnlockInput;
+
+        taskDialogManager.StrictDialogOpened -= BlockInput;
+        taskDialogManager.StrictDialogClosed -= UnlockInput;
+
+        tutorialDialogManager.StrictDialogOpened -= BlockInput;
+        tutorialDialogManager.StrictDialogClosed -= UnlockInput;
     }
 
     private void Update()
     {
-        if (!isMenuOpen)
+        if (isAllowed)
         {
             HandleMouseInput();
             HandleHighlightInput();
@@ -152,7 +166,7 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isMenuOpen) inGameMenuManager.CloseMenu();
+            if (!isAllowed) inGameMenuManager.CloseMenu();
             else inGameMenuManager.OnPauseMenuPress();
         }
     }
@@ -165,6 +179,6 @@ public class InputManager : MonoBehaviour
     }
 
     // ::::: Menu? Allowing
-    private void MenuOpened() { isMenuOpen = true; }
-    private void MenuClosed() { isMenuOpen = false; }
+    private void BlockInput() { isAllowed = false; }
+    private void UnlockInput() { isAllowed = true; }
 }

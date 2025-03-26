@@ -8,6 +8,7 @@ public class TutorialInfo : ScriptableObject
     [Header("Basic")]
     public Vector2Int id;
     public string title;
+    public Character character;
     public TutorialSection[] sections;
 
     [Header("Requirements")]
@@ -26,14 +27,21 @@ public class TutorialInfo : ScriptableObject
 [System.Serializable]
 public struct TutorialSection
 {
-    [TextArea(3, 6)] public string text;
-    public bool dontAddToPath;
-    public bool destroyRequirement;
+    public SectionType type;
+    [TextArea(2, 4)] public List<string> dialogs;
+    public bool checkRequirements;
     public Vector2Int start;
     public Vector2Int end;
-    public bool checkRequirements;
+    public bool dontAddToPath; // If True, the Path Won't Automatically Seal When the Section is Completed
     public MapData tutorialMap;
     public Keyframe[] keyframes;
+}
+
+public enum SectionType
+{
+    Build,
+    Destroy,
+    Close,
 }
 
 [System.Serializable]

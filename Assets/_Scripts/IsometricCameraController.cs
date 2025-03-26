@@ -38,19 +38,19 @@ public class IsometricCameraController : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
-        inGameMenuManager.MenuOpened += BlockCamera;
-        inGameMenuManager.MenuClosed += UnblockCamera;
+        inGameMenuManager.MenuOpened += LockCamera;
+        inGameMenuManager.MenuClosed += UnlockCamera;
 
-        tutorialManager.TutorialSectionPresentationStarted += BlockCamera;
-        tutorialManager.TutorialCompleted += UnblockCamera;
+        tutorialManager.TutorialSectionPresentationStarted += LockCamera;
+        tutorialManager.TutorialCompleted += UnlockCamera;
     }
     private void OnDisable()
     {
-        inGameMenuManager.MenuOpened -= BlockCamera;
-        inGameMenuManager.MenuClosed -= UnblockCamera;
+        inGameMenuManager.MenuOpened -= LockCamera;
+        inGameMenuManager.MenuClosed -= UnlockCamera;
 
-        tutorialManager.TutorialSectionPresentationStarted += BlockCamera;
-        tutorialManager.TutorialCompleted += UnblockCamera;
+        tutorialManager.TutorialSectionPresentationStarted += LockCamera;
+        tutorialManager.TutorialCompleted += UnlockCamera;
     }
 
     private void Start()
@@ -86,8 +86,8 @@ public class IsometricCameraController : MonoBehaviour
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Menu? Blocking
-    public void BlockCamera() { isLocked = true; }
-    public void UnblockCamera() { if (TutorialManager.Instance.activeTutorial == null) isLocked = false; }
+    public void LockCamera() { isLocked = true; }
+    public void UnlockCamera() { if (!TutorialManager.Instance.isTutorialActive) isLocked = false; }
 
     // ::::: Get & Set Zoom
     public float GetCurrentZoom() { return currentZoom; }

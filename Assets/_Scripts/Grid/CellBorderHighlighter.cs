@@ -30,20 +30,23 @@ public class CellBorderHighlighter : MonoBehaviour
         currentTask.TaskPinned += HighlightCompoundCells;
         currentTask.TaskUnpinned += ClearHighlight;
 
-        tutorialManager.TutorialSectionStarted += HighlightTutorialCells;
+        tutorialManager.TutorialSectionReadyToCompleteStarted += HighlightTutorialCells;
+        tutorialManager.TutorialSectionCompleted += ClearHighlight;
         tutorialManager.TutorialCompleted += ClearHighlight;
     }
     private void OnDisable()
     {
         currentTask.TaskPinned -= HighlightCompoundCells;
         currentTask.TaskUnpinned -= ClearHighlight;
-        tutorialManager.TutorialSectionStarted -= HighlightTutorialCells;
+
+        tutorialManager.TutorialSectionReadyToCompleteStarted -= HighlightTutorialCells;
+        tutorialManager.TutorialSectionCompleted -= ClearHighlight;
         tutorialManager.TutorialCompleted -= ClearHighlight;
     }
 
-    // :::::::::: PUBLIC METHODS ::::::::::
+    // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: 
-    public void HighlightCompoundCells(Task task)
+    private void HighlightCompoundCells(Task task)
     {
         ClearHighlight();
 
@@ -62,10 +65,8 @@ public class CellBorderHighlighter : MonoBehaviour
         }
     }
 
-    public void HighlightTutorialCells(TutorialSection section)
+    private void HighlightTutorialCells(TutorialSection section)
     {
-        ClearHighlight();
-
         Cell start = grid.GetCell(section.start.x, section.start.y);
         if (start == null || !start.GetBuildable()) return;
         CreateHighlightCorners(new Vector2Int(start.x, start.y), fromMaterial);
@@ -76,7 +77,7 @@ public class CellBorderHighlighter : MonoBehaviour
     }
 
     // ::::: Clear All teh Highlights
-    public void ClearHighlight()
+    private void ClearHighlight()
     {
         foreach (GameObject highlight in highlights)
             Destroy(highlight);
@@ -84,7 +85,7 @@ public class CellBorderHighlighter : MonoBehaviour
         highlights.Clear();
     }
 
-    // :::::::::: PRIVATE METHODS ::::::::::
+    // ::::: 
     private void CreateHighlightCorners(Vector2Int gridPosition, Material material)
     {
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
