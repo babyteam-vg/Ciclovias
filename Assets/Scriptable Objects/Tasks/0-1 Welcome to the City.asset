@@ -16,17 +16,16 @@ MonoBehaviour:
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
-  - Oh, I see you've been promoted to our city, congratulations!
-  - Let me introduce myself, I'm the Mayor, why don't we put your skills to work?
-  - Finish building the bike lane to the Municipality so we can talk face to face.
-  - I'll take care of providing you with construction material... at least within
-    our budget.
-  - I've been wanting a bike lane to that place for a while, I trust you'll make
-    a reliable route!
-  context: Build a <color=#62B4E8>safe</color> bike lane from the Bike Store to Municipality
+  - Let me introduce myself, I'm the Mayor. I'll provide you with construction material...
+    at least within our budget.
+  - Finish building that bike lane on the way to the Municipality. We have a lot
+    to discuss. Tons of work to be done!
+  - I've been wanting a bike lane to connect with the Bike Store for quite a while.
+    I trust you'll make a reliable route!
+  context: Finish building the bike lane from the Bike Store to the Municipality
     to meet the Mayor.
   safetyRequirement: 1
-  minSafety: 0.5
+  minSafety: 0.6
   charmRequirement: 0
   minCharm: 0
   flowRequirement: 0
@@ -40,8 +39,7 @@ MonoBehaviour:
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-    flavorMessage: Use pre-existing lanes
-  materialReward: 30
+  materialReward: 20
   unlockedTasks:
   - {x: 0, y: 2}
   rewardDialogs:

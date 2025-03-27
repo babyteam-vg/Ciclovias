@@ -37,24 +37,24 @@ public class InputManager : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
     {
-        inGameMenuManager.MenuOpened += BlockInput;
+        inGameMenuManager.MenuOpened += LockInput;
         inGameMenuManager.MenuClosed += UnlockInput;
 
-        taskDialogManager.StrictDialogOpened += BlockInput;
-        taskDialogManager.StrictDialogClosed -= UnlockInput;
+        taskDialogManager.StrictDialogOpened += LockInput;
+        taskDialogManager.StrictDialogClosed += UnlockInput;
 
-        tutorialDialogManager.StrictDialogOpened += BlockInput;
+        tutorialDialogManager.StrictDialogOpened += LockInput;
         tutorialDialogManager.StrictDialogClosed += UnlockInput;
     }
     private void OnDisable()
     {
-        inGameMenuManager.MenuOpened -= BlockInput;
+        inGameMenuManager.MenuOpened -= LockInput;
         inGameMenuManager.MenuClosed -= UnlockInput;
 
-        taskDialogManager.StrictDialogOpened -= BlockInput;
+        taskDialogManager.StrictDialogOpened -= LockInput;
         taskDialogManager.StrictDialogClosed -= UnlockInput;
 
-        tutorialDialogManager.StrictDialogOpened -= BlockInput;
+        tutorialDialogManager.StrictDialogOpened -= LockInput;
         tutorialDialogManager.StrictDialogClosed -= UnlockInput;
     }
 
@@ -179,6 +179,6 @@ public class InputManager : MonoBehaviour
     }
 
     // ::::: Menu? Allowing
-    private void BlockInput() { isAllowed = false; }
+    private void LockInput() { isAllowed = false; }
     private void UnlockInput() { isAllowed = true; }
 }

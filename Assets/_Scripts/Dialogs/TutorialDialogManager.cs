@@ -15,15 +15,17 @@ public class TutorialDialogManager : DialogManager
     public event Action StrictDialogClosed;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void OnEnable()
+    protected override void OnEnable()
     {
         tutorialManager.TutorialStarted += StartTutorialDialogs;
         tutorialManager.TutorialSectionStarted += OnTutorialSectionStarted;
+        base.OnEnable();
     }
-    private void OnDisable()
+    protected override void OnDisable()
     {
         tutorialManager.TutorialStarted -= StartTutorialDialogs;
         tutorialManager.TutorialSectionStarted -= OnTutorialSectionStarted;
+        base.OnDisable();
     }
 
     // :::::::::: EXCLUSIVE METHODS ::::::::::
@@ -64,6 +66,15 @@ public class TutorialDialogManager : DialogManager
             ShowNextDialog();
         else if (currentSection.type == SectionType.Close)
             EndDialog();
+    }
+
+    protected override void ShowNextDialog()
+    {
+        if (currentSection.type != SectionType.Close
+            && currentIndex == dialogs.Count - 1) next.gameObject.SetActive(false);
+        else next.gameObject.SetActive(true);
+
+        base.ShowNextDialog();
     }
 
     public override void EndDialog()

@@ -10,6 +10,7 @@ public class LaneScores : MonoBehaviour
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private CurrentTask currentTask;
     [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private TutorialDialogManager tutorialDialogManager;
 
     [Header("UI References - Safety")]
     [SerializeField] private TextMeshProUGUI currentSafety;
@@ -24,14 +25,14 @@ public class LaneScores : MonoBehaviour
     [SerializeField] private TextMeshProUGUI reqFlow;
 
     [Header("UI References - Material")]
-    //[SerializeField] private TextMeshProUGUI minMaterial;
     [SerializeField] private TextMeshProUGUI usedMaterial;
+    [SerializeField] private TextMeshProUGUI minMaterial;
     [SerializeField] private TextMeshProUGUI maxMaterial;
 
     [Header("UI References - Flavor")]
     [SerializeField] private GameObject flavorFill;
 
-    private String tutorialSafetyScore, tutorialCharmScore, tutorialFlowScore, tutorialUsedMaterial;
+    private String tutorialMinSafety, tutorialMinCharm, tutorialMinFlow, tutorialMinMaterial, tutorialMaxMaterial;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -43,7 +44,7 @@ public class LaneScores : MonoBehaviour
 
         tutorialManager.ActiveTutorialScoresUpdated += HandleTutorialLaneUpdated;
         tutorialManager.TutorialStarted += UpdateTutorialScoresRequirements;
-        tutorialManager.TutorialSectionStarted += UpdateTutorialScoresRequirements;
+        tutorialDialogManager.ReadyToCompleteSection += UpdateTutorialScoresRequirements;
         tutorialManager.TutorialCompleted += ClearScoresRequirements;
     }
     private void OnDisable()
@@ -53,9 +54,15 @@ public class LaneScores : MonoBehaviour
 
         currentTask.TaskPinned -= UpdateTaskScoresRequirements;
 
+        tutorialManager.ActiveTutorialScoresUpdated -= HandleTutorialLaneUpdated;
         tutorialManager.TutorialStarted -= UpdateTutorialScoresRequirements;
-        tutorialManager.TutorialSectionStarted -= UpdateTutorialScoresRequirements;
+        tutorialDialogManager.ReadyToCompleteSection -= UpdateTutorialScoresRequirements;
         tutorialManager.TutorialCompleted -= ClearScoresRequirements;
+    }
+
+    private void Start()
+    {
+        ClearScoresRequirements();
     }
 
     // :::::::::: TASK METHODS ::::::::::
@@ -65,67 +72,144 @@ public class LaneScores : MonoBehaviour
         {
             Task task = CurrentTask.Instance.PinnedTask;
 
-            if (task.info.safetyRequirement) currentSafety.text = ((int)(task.currentSafety * 100)).ToString();
-            if (task.info.charmRequirement) currentCharm.text = ((int)(task.currentCharm * 100)).ToString();
-            if (task.info.flowRequirement) currentFlow.text = ((int)(task.currentFlow * 100)).ToString();
-            
-            if (task.info.maxMaterialRequirement || task.info.minMaterialRequirement) usedMaterial.text = task.usedMaterial.ToString();
-            
-            if (task.flavorMet) flavorFill.SetActive(true);
+            if (task.info.safetyRequirement)
+                currentSafety.text = ConvertToUI(ScoreType.CurrentPercentage, task.currentSafety);
+
+            if (task.info.charmRequirement)
+                currentCharm.text = ConvertToUI(ScoreType.CurrentPercentage, task.currentCharm);
+
+            if (task.info.flowRequirement)
+                currentFlow.text = ConvertToUI(ScoreType.CurrentPercentage, task.currentFlow);
+
+            if (task.info.maxMaterialRequirement || task.info.minMaterialRequirement)
+                usedMaterial.text = ConvertToUI(ScoreType.CurrentAmount, task.usedMaterial);
+
+            if (task.flavorMet)
+                flavorFill.SetActive(true);
             else flavorFill.SetActive(false);
         }
     }
 
     private void UpdateTaskScoresRequirements(Task task)
     {
-        if (task.info.safetyRequirement) reqSafety.text = ((int)(task.info.minSafety * 100)).ToString();
-        if (task.info.charmRequirement) reqCharm.text = ((int)(task.info.minCharm * 100)).ToString();
-        if (task.info.flowRequirement) reqFlow.text = ((int)(task.info.minFlow * 100)).ToString();
-        if (task.info.maxMaterialRequirement) maxMaterial.text = task.info.maxMaterial.ToString();
+        if (task.info.safetyRequirement)
+            reqSafety.text = ConvertToUI(ScoreType.RequirementPercentage, task.info.minSafety);
+
+        if (task.info.charmRequirement)
+            reqCharm.text = ConvertToUI(ScoreType.RequirementPercentage, task.info.minCharm);
+
+        if (task.info.flowRequirement)
+            reqFlow.text = ConvertToUI(ScoreType.RequirementPercentage, task.info.minFlow);
+
+        if (task.info.minMaterialRequirement)
+            maxMaterial.text = ConvertToUI(ScoreType.MinimumMaterial, task.info.minMaterial);
+
+        if (task.info.maxMaterialRequirement)
+            maxMaterial.text = ConvertToUI(ScoreType.MaximumMaterial, task.info.maxMaterial);
     }
 
-    private void ClearTaskScoresRequirements(Task task) { ClearScoresRequirements(); }
+    private void ClearTaskScoresRequirements(Task _) { ClearScoresRequirements(); }
 
     // :::::::::: TUTORIAL METHODS ::::::::::
     private void HandleTutorialLaneUpdated(Tutorial tutorial)
     {
-        if (reqSafety.text != "-") currentSafety.text = ((int)(tutorial.currentSafety * 100)).ToString();
-        if (reqCharm.text != "-") currentCharm.text = ((int)(tutorial.currentCharm * 100)).ToString();
-        if (reqFlow.text != "-") currentFlow.text = ((int)(tutorial.currentFlow * 100)).ToString();
-        if (maxMaterial.text != "-") usedMaterial.text = tutorial.usedMaterial.ToString();
+        if (reqSafety.text != "")
+            currentSafety.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentSafety);
+
+        if (reqCharm.text != "")
+            currentCharm.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentCharm);
+
+        if (reqFlow.text != "")
+            currentFlow.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentFlow);
+
+        if (maxMaterial.text != "" || minMaterial.text != "")
+            usedMaterial.text = ConvertToUI(ScoreType.MaximumMaterial, tutorial.usedMaterial);
     }
 
     private void UpdateTutorialScoresRequirements(Tutorial tutorial)
     {
-        tutorialSafetyScore = tutorial.info.safetyRequirement ? ((int)(tutorial.info.minSafety * 100)).ToString() : "-";
-        tutorialCharmScore = tutorial.info.charmRequirement ? ((int)(tutorial.info.minCharm * 100)).ToString() : "-";
-        tutorialFlowScore = tutorial.info.flowRequirement ? ((int)(tutorial.info.minFlow * 100)).ToString() : "-";
-        tutorialUsedMaterial = tutorial.info.maxMaterialRequirement ? tutorial.info.maxMaterial.ToString() : "-";
+        tutorialMinSafety = tutorial.info.safetyRequirement
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minSafety) : "";
+
+        tutorialMinCharm = tutorial.info.charmRequirement
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minCharm) : "";
+
+        tutorialMinFlow = tutorial.info.flowRequirement
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minFlow) : "";
+
+        tutorialMinMaterial = tutorial.info.minMaterialRequirement
+            ? ConvertToUI(ScoreType.MinimumMaterial, tutorial.info.minMaterial) : "";
+
+        tutorialMaxMaterial = tutorial.info.maxMaterialRequirement
+            ? ConvertToUI(ScoreType.MaximumMaterial, tutorial.info.maxMaterial) : "";
     }
     private void UpdateTutorialScoresRequirements(TutorialSection section)
     {
         if (section.checkRequirements)
         {
-            reqSafety.text = tutorialSafetyScore;
-            reqCharm.text = tutorialCharmScore;
-            reqFlow.text = tutorialFlowScore;
-            maxMaterial.text = tutorialUsedMaterial;
+            reqSafety.text = tutorialMinSafety;
+            reqCharm.text = tutorialMinCharm;
+            reqFlow.text = tutorialMinFlow;
+            minMaterial.text = tutorialMinMaterial;
+            maxMaterial.text = tutorialMaxMaterial;
         }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     private void ClearScoresRequirements()
     {
-        currentSafety.text = "-";
-        currentCharm.text = "-";
-        currentFlow.text = "-";
-        usedMaterial.text = "-";
+        currentSafety.text = "";
+        reqSafety.text = "";
 
-        reqSafety.text = "-";
-        reqCharm.text = "-";
-        reqFlow.text = "-";
-        maxMaterial.text = "-";
+        currentCharm.text = "";
+        reqCharm.text = "";
+
+        currentFlow.text = "";
+        reqFlow.text = "";
+
+        usedMaterial.text = "";
+        minMaterial.text = "";
+        maxMaterial.text = "";
 
         flavorFill.SetActive(false);
     }
+
+    private string ConvertToUI(ScoreType type, float? percentage = null, int? amount = null)
+    {
+        string convertion = string.Empty;
+
+        switch (type)
+        {
+            case ScoreType.CurrentPercentage:
+                convertion = ((int)(percentage * 100)).ToString();
+                break;
+
+            case ScoreType.CurrentAmount:
+                convertion = amount.ToString();
+                break;
+
+            case ScoreType.RequirementPercentage:
+                convertion = ((int)(percentage * 100)).ToString() + "%";
+                break;
+
+            case ScoreType.MinimumMaterial:
+                convertion = ">" + amount.ToString();
+                break;
+
+            case ScoreType.MaximumMaterial:
+                convertion = "<" + amount.ToString();
+                break;
+        }
+
+        return convertion;
+    }
+}
+
+public enum ScoreType
+{
+    CurrentPercentage,
+    CurrentAmount,
+    RequirementPercentage,
+    MinimumMaterial,
+    MaximumMaterial,
 }

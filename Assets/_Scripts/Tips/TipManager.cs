@@ -59,7 +59,7 @@ public class TipManager : MonoBehaviour
             tipTMP.text = tip.info.tipText;
             tipUI.SetActive(true);
 
-            yield return new WaitForSeconds(20f);
+            yield return new WaitForSeconds(12f);
 
             tipUI.SetActive(false);
         }

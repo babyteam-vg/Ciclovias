@@ -104,7 +104,5 @@ public class SocialNetworkManager : MonoBehaviour
                     repeatablePosts.Add(post);
                 else uniquePostQueue.Enqueue(post);
             }
-
-        Debug.Log("Posts successfully regenerated.");
     }
 }

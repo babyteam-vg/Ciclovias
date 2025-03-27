@@ -12,8 +12,16 @@ public class TaskDialogManager : DialogManager
     public event Action StrictDialogClosed;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void OnEnable() { taskManager.TaskSealed += StartTaskRewardDialogs; }
-    private void OnDisable() { taskManager.TaskSealed -= StartTaskRewardDialogs; }
+    protected override void OnEnable()
+    {
+        taskManager.TaskSealed += StartTaskRewardDialogs;
+        base.OnEnable();
+    }
+    protected override void OnDisable()
+    {
+        taskManager.TaskSealed -= StartTaskRewardDialogs;
+        base.OnDisable();
+    }
 
     // :::::::::: EXCLUSIVE METHODS ::::::::::
     public void StartTaskDialogs(Task task)
@@ -34,6 +42,7 @@ public class TaskDialogManager : DialogManager
         characterName.text = task.info.character.characterName;
 
         taskDialogUI.SetActive(true);
+        StrictDialogOpened?.Invoke();
         StartDialog();
     }
 

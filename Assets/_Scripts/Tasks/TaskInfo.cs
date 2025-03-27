@@ -40,7 +40,6 @@ public class Flavor
     public CompoundInfo compound;
     public CellContent toCross;
     public int numberToCross;
-    [TextArea(3, 6)] public string flavorMessage;
 }
 
 public enum FlavorType

@@ -7,6 +7,9 @@ using System;
 
 public abstract class DialogManager : MonoBehaviour
 {
+    [Header("Dependencies")]
+    [SerializeField] private InGameMenuManager inGameMenuManager;
+
     [Header("UI References")]
     [SerializeField] protected Image portrait;
     [SerializeField] protected TextMeshProUGUI characterName;
@@ -15,6 +18,7 @@ public abstract class DialogManager : MonoBehaviour
 
     protected List<string> dialogs = new List<string>();
 
+    protected bool isAllowed = true;
     protected bool inDialog = false;
     protected bool isTyping = false;
     protected bool tutorialAllowsIt = true;
@@ -25,13 +29,27 @@ public abstract class DialogManager : MonoBehaviour
     public event Action FinishedTyping;
 
     // :::::::::: MONO METHODS ::::::::::
+    protected virtual void OnEnable()
+    {
+        inGameMenuManager.MenuOpened += LockDialog;
+        inGameMenuManager.MenuClosed += UnlockDialog;
+    }
+    protected virtual void OnDisable()
+    {
+        inGameMenuManager.MenuOpened -= LockDialog;
+        inGameMenuManager.MenuClosed -= UnlockDialog;
+    }
+
     protected virtual void Update()
     {
-        if (Input.GetMouseButtonDown(0)
-            && inDialog && tutorialAllowsIt) // Manage Player Clicks
+        if (isAllowed)
         {
-            if (isTyping) CompleteTyping();
-            else NextDialog();
+            if (Input.GetMouseButtonDown(0)
+            && inDialog && tutorialAllowsIt) // Manage Player Clicks
+            {
+                if (isTyping) CompleteTyping();
+                else NextDialog();
+            }
         }
     }
 
@@ -56,11 +74,8 @@ public abstract class DialogManager : MonoBehaviour
     public virtual void EndDialog() { inDialog = false; }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    protected void ShowNextDialog()
+    protected virtual void ShowNextDialog()
     {
-        if (currentIndex == dialogs.Count - 1) next.gameObject.SetActive(false);
-        else next.gameObject.SetActive(true);
-
         currentDialog.text = "";
         typingCoroutine = StartCoroutine(TypeDialog(dialogs[currentIndex]));
     }
@@ -105,4 +120,7 @@ public abstract class DialogManager : MonoBehaviour
         FinishedTyping?.Invoke(); // !
         isTyping = false;
     }
+
+    protected void LockDialog() { isAllowed = false; }
+    protected void UnlockDialog() { isAllowed = true; }
 }

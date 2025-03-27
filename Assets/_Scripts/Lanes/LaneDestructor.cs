@@ -56,20 +56,22 @@ public class LaneDestructor : MonoBehaviour
     {
         Node node = graph.GetNode(gridPosition);
 
-        if (isAllowed                   // Not in Menu
-            && node != null             // Node in the Graph
+        if (node != null)
+        {
+            if (isAllowed                   // Not in Menu
             && node.neighbors.Count < 2 // Edge of the Graph
             && !node.indestructible)    // Not Part of a Sealed Task
-        {
-            isDestroying = true;
-            OnDestroyStarted?.Invoke(gridPosition);
+            {
+                isDestroying = true;
+                OnDestroyStarted?.Invoke(gridPosition);
 
-            lastNeighbors = graph.GetNeighborsPos(gridPosition);
-            DestroyNodeAndEdges(gridPosition);
-            lastCellPosition = gridPosition;
+                lastNeighbors = graph.GetNeighborsPos(gridPosition);
+                DestroyNodeAndEdges(gridPosition);
+                lastCellPosition = gridPosition;
+            }
+            else if (node.indestructible)
+                OnTryDestroySealed?.Invoke();
         }
-        else if (node.indestructible)
-            OnTryDestroySealed?.Invoke();
     }
 
     // ::::: Mouse Input: Hold

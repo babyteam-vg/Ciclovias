@@ -10,6 +10,7 @@ public class IsometricCameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject boundingPlane;
     [SerializeField] private InGameMenuManager inGameMenuManager;
+    [SerializeField] private TaskDialogManager taskDialogManager;
     [SerializeField] private TutorialManager tutorialManager;
 
     [Header("Variables - Pan")]
@@ -41,6 +42,9 @@ public class IsometricCameraController : MonoBehaviour
         inGameMenuManager.MenuOpened += LockCamera;
         inGameMenuManager.MenuClosed += UnlockCamera;
 
+        taskDialogManager.StrictDialogOpened += LockCamera;
+        taskDialogManager.StrictDialogClosed += UnlockCamera;
+
         tutorialManager.TutorialSectionPresentationStarted += LockCamera;
         tutorialManager.TutorialCompleted += UnlockCamera;
     }
@@ -49,8 +53,11 @@ public class IsometricCameraController : MonoBehaviour
         inGameMenuManager.MenuOpened -= LockCamera;
         inGameMenuManager.MenuClosed -= UnlockCamera;
 
-        tutorialManager.TutorialSectionPresentationStarted += LockCamera;
-        tutorialManager.TutorialCompleted += UnlockCamera;
+        taskDialogManager.StrictDialogOpened -= LockCamera;
+        taskDialogManager.StrictDialogClosed -= UnlockCamera;
+
+        tutorialManager.TutorialSectionPresentationStarted -= LockCamera;
+        tutorialManager.TutorialCompleted -= UnlockCamera;
     }
 
     private void Start()

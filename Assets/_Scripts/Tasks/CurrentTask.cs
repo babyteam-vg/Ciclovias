@@ -11,12 +11,13 @@ public class CurrentTask : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References - Texts")]
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI fromText;
-    [SerializeField] private TextMeshProUGUI toText;
-    [SerializeField] private TextMeshProUGUI flavorText;
+    public TextMeshProUGUI titleText;
+    public GameObject flavorUI;
+
+    private TextMeshProUGUI flavorText;
 
     public event Action<Task> TaskPinned;
     public event Action TaskUnpinned;
@@ -28,6 +29,8 @@ public class CurrentTask : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        flavorText = flavorUI.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     private void OnEnable()
@@ -35,15 +38,26 @@ public class CurrentTask : MonoBehaviour
         taskManager.TaskAccepted += PinTask;
         taskManager.TaskActivated += PinTask;
         taskManager.TaskSealed += UnpinTask;
+
+        tutorialManager.TutorialStarted += PinTutorial;
+        tutorialManager.TutorialCompleted += ClearUI;
     }
     private void OnDisable()
     {
         taskManager.TaskAccepted -= PinTask;
         taskManager.TaskActivated -= PinTask;
         taskManager.TaskSealed -= UnpinTask;
+
+        tutorialManager.TutorialStarted -= PinTutorial;
+        tutorialManager.TutorialCompleted -= ClearUI;
     }
 
-    // :::::::::: PUBLIC METHODS ::::::::::
+    private void Start()
+    {
+        ClearUI();
+    }
+
+    // :::::::::: TASK METHODS ::::::::::
     // ::::: Is There a Task Pinned?
     public bool ThereIsPinned() { return PinnedTask != null; }
 
@@ -66,6 +80,13 @@ public class CurrentTask : MonoBehaviour
         UpdateTaskUI();
     }
 
+    // :::::::::: TUTORIAL METHODS ::::::::::
+    private void PinTutorial(Tutorial tutorial)
+    {
+        ClearUI();
+        titleText.text = tutorial.info.title;
+    }
+
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: UI Only Affected When Changing the Pinned Task
     private void UpdateTaskUI()
@@ -73,17 +94,22 @@ public class CurrentTask : MonoBehaviour
         // Texts
         if (ThereIsPinned())
         {
+            if (PinnedTask.info.flavorDetails.flavorType != FlavorType.None)
+            {
+                flavorUI.SetActive(true);
+                flavorText.text = PinnedTask.GenerateFlavorMessage();
+            }
+
             titleText.text = PinnedTask.info.title;
-            fromText.text = PinnedTask.from.info.compoundName;
-            toText.text = PinnedTask.to.info.compoundName;
-            flavorText.text = PinnedTask.info.flavorDetails.flavorMessage;
         }
-        else
-        {
-            titleText.text = "Task";
-            fromText.text = "From";
-            toText.text = "To";
-            flavorText.text = "Flavor";
-        }
+        else ClearUI();
+    }
+
+    private void ClearUI()
+    {
+        titleText.text = "";
+
+        flavorText.text = "";
+        flavorUI.SetActive(false);
     }
 }

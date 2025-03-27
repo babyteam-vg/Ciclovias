@@ -23,8 +23,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject materialCounter;
     [SerializeField] private TextMeshProUGUI amountText;
 
-    private Animator animator;
-
     public event Action<int> MapStateAdvanced;
     public event Action<int> SmokeStateReduced;
 
@@ -50,8 +48,7 @@ public class GameManager : MonoBehaviour
     {
         ApplyLoadedGameData(GameStateManager.Instance.LoadedGameData);
 
-        amountText.text = "x" + MaterialAmount.ToString();
-        animator = materialCounter.GetComponent<Animator>();
+        amountText.text = MaterialAmount.ToString();
 
         StartCoroutine(DelayedInitialize());
     }
@@ -74,8 +71,7 @@ public class GameManager : MonoBehaviour
     public void AddMaterial(int amount)
     {
         MaterialAmount += amount;
-        amountText.text = "x" + MaterialAmount.ToString();
-        MaterialCounterAnimation();
+        amountText.text = MaterialAmount.ToString();
     }
     public bool ConsumeMaterial(int amount)
     {
@@ -83,7 +79,6 @@ public class GameManager : MonoBehaviour
         {
             MaterialAmount -= amount;
             amountText.text = MaterialAmount.ToString();
-            MaterialCounterAnimation();
             return true;
         }
         else return false;
@@ -104,10 +99,8 @@ public class GameManager : MonoBehaviour
 
         if (MapState == -1) AdvanceMapState();
         if (SmokeState == -1) ReduceSmokeState();
-        if (MaterialAmount == -1) AddMaterial(120);
+        if (MaterialAmount == -1) AddMaterial(30);
     }
-
-    private void MaterialCounterAnimation() { animator.Play("MaterialCounter"); }
 
     private void OnTaskSealed(Task task) { SaveGame(); } // Auto Save
     private void OnTutorialCompleted() { SaveGame(); } // Auto Save
@@ -150,7 +143,7 @@ public class GameManager : MonoBehaviour
             TipManager.Instance.LoadTips(gameData.tips);
             splineManager.LoadSplines(gameData.splines);
 
-            amountText.text = "x" + MaterialAmount.ToString();
+            amountText.text = MaterialAmount.ToString();
 
             Debug.Log("GAME LOADED");
         }
