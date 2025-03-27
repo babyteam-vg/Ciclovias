@@ -53,7 +53,7 @@ public class TutorialManager : MonoBehaviour
 
         InitializeTutorialsDictionary();
         pathfinder = new Pathfinder(graph);
-        cellScoresCalculator = new CellScoresCalculator(grid);
+        cellScoresCalculator = new CellScoresCalculator(grid, graph);
     }
 
     private void OnEnable()
@@ -104,7 +104,7 @@ public class TutorialManager : MonoBehaviour
 
             activeTutorial.currentSafety = cellScoresCalculator.CalculatePathSafety(path);
             activeTutorial.currentCharm = cellScoresCalculator.CalculatePathCharm(path);
-            activeTutorial.currentFlow = cellScoresCalculator.CalculatePathFlow(path, currentSection.end);
+            activeTutorial.currentFlow = cellScoresCalculator.CalculatePathFlow(path);
             activeTutorial.usedMaterial = path.Count - 1;
 
             ActiveTutorialScoresUpdated?.Invoke(activeTutorial);

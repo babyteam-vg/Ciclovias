@@ -28,7 +28,7 @@ public class TaskManager : MonoBehaviour
     private void Awake()
     {
         pathfinder = new Pathfinder(graph);
-        cellScoresCalculator = new CellScoresCalculator(grid);
+        cellScoresCalculator = new CellScoresCalculator(grid, graph);
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -86,7 +86,7 @@ public class TaskManager : MonoBehaviour
 
             float safety = cellScoresCalculator.CalculatePathSafety(path);
             float charm = cellScoresCalculator.CalculatePathCharm(path);
-            float flow = cellScoresCalculator.CalculatePathFlow(path, endPos);
+            float flow = cellScoresCalculator.CalculatePathFlow(path);
             int usedMaterial = path.Count - 1;
 
             activeTask.currentSafety = safety;

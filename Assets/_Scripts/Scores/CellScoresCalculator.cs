@@ -5,10 +5,15 @@ using UnityEngine;
 
 public class CellScoresCalculator
 {
-    [SerializeField] private Grid grid;
+    private Grid grid;
+    private Graph graph;
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    public CellScoresCalculator(Grid grid) { this.grid = grid; }
+    public CellScoresCalculator(Grid grid, Graph graph)
+    {
+        this.grid = grid;
+        this.graph = graph;
+    }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Safety
@@ -66,7 +71,7 @@ public class CellScoresCalculator
                 charm += 1;
                 break;
             case CellContent.Repulsive:
-                charm -= 2;
+                charm -= 5;
                 break;
             case CellContent.Attraction:
                 charm += 3;
@@ -107,12 +112,13 @@ public class CellScoresCalculator
                 flow -= 2;
                 break;
             default:
+                flow += 1;
                 break;
         }
 
         return flow;
     }
-    public float CalculatePathFlow(List<Vector2Int> path, Vector2Int destinationPos)
+    public float CalculatePathFlow(List<Vector2Int> path)
     {
         if (path.Count == 0) return 0;
 
@@ -120,44 +126,23 @@ public class CellScoresCalculator
 
         for (int i = 0; i < path.Count; i++)
         {
-            Cell previousCell = i > 0 ? grid.GetCell(path[i - 1].x, path[i - 1].y) : null;
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
             totalFlow += CalculateFlow(currentCell);
 
-            // Detour
-            if (IsGettingCloser(previousCell, currentCell, destinationPos))
-                totalFlow += 1; // +Flow
-            else totalFlow -= 1; // -Flow
+            if (graph.GetNeighborsCount(path[i]) > 2)
+                totalFlow -= 3;
+
+            if (i > 1)
+            {
+                Vector2Int prevDir = path[i - 1] - path[i - 2];
+                Vector2Int currentDir = path[i] - path[i - 1];
+
+                float angle = Vector2.Angle(prevDir, currentDir);
+                if (angle > 90)
+                    totalFlow -= 3;
+            }
         }
 
         return totalFlow / path.Count;
-    }
-
-    private bool IsGettingCloser(Cell previousCell, Cell currentCell, Vector2Int destinationPos)
-    {
-        if (previousCell == null || currentCell == null || destinationPos == null)
-            return false;
-
-        float previousDistanceSq = Mathf.Pow(previousCell.x - destinationPos.x, 2) +
-                                   Mathf.Pow(previousCell.y - destinationPos.y, 2);
-
-        float currentDistanceSq = Mathf.Pow(currentCell.x - destinationPos.x, 2) +
-                                  Mathf.Pow(currentCell.y - destinationPos.y, 2);
-
-        Vector2Int previousToCurrent = new Vector2Int(
-            currentCell.x - previousCell.x,
-            currentCell.y - previousCell.y);
-        Vector2Int currentToDestination = new Vector2Int(
-            destinationPos.x - currentCell.x,
-            destinationPos.y - currentCell.y);
-        float angle = Vector2.Angle(previousToCurrent, currentToDestination);
-
-        if (angle >= 90f)
-            return false;
-
-        if (currentDistanceSq < previousDistanceSq)
-            return true;
-
-        return false;
     }
 }

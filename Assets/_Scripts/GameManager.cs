@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
 
         if (MapState == -1) AdvanceMapState();
         if (SmokeState == -1) ReduceSmokeState();
-        if (MaterialAmount == -1) AddMaterial(30);
+        if (MaterialAmount == -1) AddMaterial(45);
     }
 
     private void OnTaskSealed(Task task) { SaveGame(); } // Auto Save
