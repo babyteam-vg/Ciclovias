@@ -85,7 +85,7 @@ public class TutorialManager : MonoBehaviour
             // Updates
             currentSectionIndex = 0;
             originalMapData = gridGenerator.GetMapDataForCoordinates(activeTutorial.info.sections[currentSectionIndex].tutorialMap.coordinates);
-            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
+            ExecuteSection(activeTutorial.info.sections[currentSectionIndex]);
             TutorialStarted?.Invoke(activeTutorial); // !
         }
     }
@@ -144,7 +144,6 @@ public class TutorialManager : MonoBehaviour
 
         // Updates
         activeTutorial.completed = true;
-        StopAllCoroutines();
         isTutorialActive = false;
         gridGenerator.GenerateGridPortion(originalMapData);
         TutorialCompleted?.Invoke(); // !
@@ -152,7 +151,7 @@ public class TutorialManager : MonoBehaviour
 
     // :::::::::: SECTION METHODS ::::::::::
     // ::::: Start a Section of the Tuutorial
-    private IEnumerator ExecuteSection(TutorialSection section)
+    private void ExecuteSection(TutorialSection section)
     {
         if (section.type != SectionType.Close)
         {
@@ -168,25 +167,8 @@ public class TutorialManager : MonoBehaviour
 
         // Presentation
         TutorialSectionPresentationStarted?.Invoke(); // !
-        foreach (var keyframe in section.keyframes)
-        {
-            float elapsedTime = 0f;
-            Vector3 startPosition = cameraController.transform.position;
-            Quaternion startRotation = cameraController.transform.rotation;
-            float startZoom = cameraController.GetCurrentZoom();
-
-            while (elapsedTime < keyframe.duration)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / keyframe.duration;
-
-                cameraController.transform.position = Vector3.Lerp(startPosition, keyframe.position, t);
-                cameraController.transform.rotation = Quaternion.Slerp(startRotation, keyframe.rotation, t);
-                cameraController.SetZoom(Mathf.Lerp(startZoom, keyframe.zoom, t));
-
-                yield return null;
-            }
-        }   
+        Keyframe keyframe = section.keyframe;
+        cameraController.StartCameraMovement(keyframe.duration, keyframe.position, keyframe.rotation, keyframe.zoom);
         TutorialSectionPresentationDone?.Invoke(); // !
     }
 
@@ -207,7 +189,7 @@ public class TutorialManager : MonoBehaviour
         // Advance Section
         currentSectionIndex++;
         if (currentSectionIndex < activeTutorial.info.sections.Length)
-            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
+            ExecuteSection(activeTutorial.info.sections[currentSectionIndex]);
     }
 
     // :::::::::: SUPPORT METHODS ::::::::::

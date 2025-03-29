@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 using UnityEngine.Splines;
 
 public class IsometricCameraController : MonoBehaviour
 {
     [Header("Dependencies")]
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private GameObject boundingPlane;
     [SerializeField] private InGameMenuManager inGameMenuManager;
     [SerializeField] private TaskDialogManager taskDialogManager;
     [SerializeField] private TutorialManager tutorialManager;
+
+    public List<GameObject> boundingPlanes;
 
     [Header("Variables - Pan")]
     public float panSpeed = 30f;
@@ -25,20 +29,34 @@ public class IsometricCameraController : MonoBehaviour
 
     private bool isLocked = false;
     private bool isRotating = false;
-    private Bounds areaBounds;
     private float currentZoom;
     private float minZoom, maxZoom;
     private Vector2 edgePanVelocity;
     private Vector2 panHorLimit, panVertLimit;
     private Vector2 screenSize;
+    private Coroutine cameraMovement;
 
     const float ZOOM_PAN_RATIO = 2f;
     const float ZOOM_OFFSET = 4f;
     const float EDGE_THRESHOLD = 5f;
+    const float DURATION = 3f;
 
     // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        Bounds initialBounds = boundingPlanes[0].GetComponent<Renderer>().bounds;
+
+        minZoom = initialBounds.min.y + ZOOM_OFFSET;
+        maxZoom = initialBounds.max.y + 2 * ZOOM_OFFSET;
+        currentZoom = (maxZoom + minZoom) / 2;
+
+        screenSize = new Vector2(Screen.width, Screen.height);
+    }
+
     private void OnEnable()
     {
+        gameManager.MapStateAdvanced += NewAreaBounds;
+
         inGameMenuManager.MenuOpened += LockCamera;
         inGameMenuManager.MenuClosed += UnlockCamera;
 
@@ -50,6 +68,8 @@ public class IsometricCameraController : MonoBehaviour
     }
     private void OnDisable()
     {
+        gameManager.MapStateAdvanced -= NewAreaBounds;
+
         inGameMenuManager.MenuOpened -= LockCamera;
         inGameMenuManager.MenuClosed -= UnlockCamera;
 
@@ -62,24 +82,12 @@ public class IsometricCameraController : MonoBehaviour
 
     private void Start()
     {
-        areaBounds = boundingPlane.GetComponent<Renderer>().bounds;
-
-        minZoom = areaBounds.min.y + ZOOM_OFFSET;
-        maxZoom = areaBounds.max.y + 2 * ZOOM_OFFSET;
-        currentZoom = (maxZoom + minZoom) / 2;
-
-        panHorLimit = new Vector2(areaBounds.min.x + 5f, areaBounds.max.x);
-        panVertLimit = new Vector2(areaBounds.min.z, areaBounds.max.z - 5f);
-
-        transform.position = new Vector3((panHorLimit.x + panHorLimit.y) / 2, 0f, (panVertLimit.x + panVertLimit.y) / 2);
-        screenSize = new Vector2(Screen.width, Screen.height);
+        if (GameManager.Instance.MapState > 0)
+            NewAreaBounds(GameManager.Instance.MapState);
     }
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Tab)) // Debug Purposes
-            isLocked = !isLocked;
-
         if (!isLocked)
         {
             panSpeed = currentZoom * ZOOM_PAN_RATIO;
@@ -92,16 +100,20 @@ public class IsometricCameraController : MonoBehaviour
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Menu? Blocking
-    public void LockCamera() { isLocked = true; }
-    public void UnlockCamera() { if (!TutorialManager.Instance.isTutorialActive) isLocked = false; }
-
     // ::::: Get & Set Zoom
     public float GetCurrentZoom() { return currentZoom; }
     public void SetZoom(float zoom)
     {
         currentZoom = Mathf.Clamp(zoom, minZoom, maxZoom);
         mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, currentZoom, zoomSmoothness * Time.deltaTime);
+    }
+
+    // ::::: Cinematic Camera Movement
+    public void StartCameraMovement(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
+    {
+        if (cameraMovement != null)
+            StopCoroutine(cameraMovement);
+        cameraMovement = StartCoroutine(MoveCamera(duration, position, rotation, zoom));
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
@@ -186,5 +198,55 @@ public class IsometricCameraController : MonoBehaviour
 
         transform.rotation = endRotation;
         isRotating = false;
+    }
+
+    // ::::: Cinematic Camera Movement
+    private IEnumerator MoveCamera(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
+    {
+        LockCamera();
+
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
+        float startZoom = currentZoom;
+
+        for (float elapsedTime = 0f;  elapsedTime < duration; elapsedTime += Time.deltaTime)
+        {
+            float t = elapsedTime / duration;
+
+            if (position.HasValue) transform.position = Vector3.Lerp(startPosition, position.Value, t);
+            if (rotation.HasValue) transform.rotation = Quaternion.Slerp(startRotation, rotation.Value, t);
+            if (zoom.HasValue) SetZoom(Mathf.Lerp(startZoom, zoom.Value, t));
+
+            yield return null;
+        }
+
+        UnlockCamera();
+    }
+
+    // :::::::::: EVENT METHODS ::::::::::
+    // ::::: Menu? Blocking
+    private void LockCamera() { isLocked = true; }
+    private void UnlockCamera() { if (!TutorialManager.Instance.isTutorialActive) isLocked = false; }
+
+    // ::::: Expand Map When Advancing Map State
+    private void NewAreaBounds(int newMapState)
+    {
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+        float minZ = float.MaxValue;
+        float maxZ = float.MinValue;
+
+        for (int i = 0; i <= newMapState; i++)
+        {
+            Bounds bounds = boundingPlanes[i].GetComponent<Renderer>().bounds;
+
+            if (bounds.min.x < minX) minX = bounds.min.x;
+            if (bounds.max.x > maxX) maxX = bounds.max.x;
+            if (bounds.min.z < minZ) minZ = bounds.min.z;
+            if (bounds.max.z > maxZ) maxZ = bounds.max.z;
+        }
+
+        panHorLimit = new Vector2(minX + EDGE_THRESHOLD, maxX);
+        panVertLimit = new Vector2(minZ, maxZ - EDGE_THRESHOLD);
     }
 }

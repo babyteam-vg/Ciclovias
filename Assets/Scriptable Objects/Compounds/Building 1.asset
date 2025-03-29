@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Building 1
   surroundings:
-  - {x: 26, y: 22}
+  - {x: 90, y: 58}

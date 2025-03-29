@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compoundName: Market
   surroundings:
-  - {x: 8, y: 12}
-  - {x: 5, y: 15}
-  - {x: 2, y: 12}
+  - {x: 69, y: 51}
+  - {x: 69, y: 42}

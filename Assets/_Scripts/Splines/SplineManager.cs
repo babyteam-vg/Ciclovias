@@ -16,6 +16,7 @@ public class SplineManager : MonoBehaviour
     public SplineContainer splineContainer;
 
     private Dictionary<Vector3, Intersection> intersections = new Dictionary<Vector3, Intersection>();
+    private HashSet<Spline> sealedSplines = new HashSet<Spline>();
 
     public event Action<Spline> SplineUpdated;
     public event Action<Spline> SplineSealed;
@@ -47,6 +48,8 @@ public class SplineManager : MonoBehaviour
     // ::::: Building Lane
     private void HandleEdgeAdded(Vector2Int firstNodePosition, Vector2Int secondNodePosition)
     {
+        Node firstNode = graph.GetNode(firstNodePosition);
+
         Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
         Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
@@ -153,8 +156,16 @@ public class SplineManager : MonoBehaviour
                     }
                     else // ...and Add a Knot
                     {
-                        //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Continue");
-                        AddKnotToSpline(spline, index, secondWorldPosition);
+                        if (firstNode.indestructible)
+                        {
+                            //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Sealed");
+                            StartNewSpline(firstWorldPosition, secondWorldPosition);
+                        }
+                        else
+                        {
+                            //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Continue");
+                            AddKnotToSpline(spline, index, secondWorldPosition);
+                        }
                     }   
                 }
             }
@@ -508,7 +519,7 @@ public class SplineManager : MonoBehaviour
         {
             Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
             (Spline spline, int index) = FindKnotAndSpline(worldPos);
-            if (spline != null) SplineSealed?.Invoke(spline);
+            if (spline != null) SealSpline(spline);
         }
     }
 
@@ -519,9 +530,17 @@ public class SplineManager : MonoBehaviour
         {
             Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
             (Spline spline, int index) = FindKnotAndSpline(worldPos);
-            if (spline != null) SplineSealed?.Invoke(spline);
+            if (spline != null) SealSpline(spline);
         }
     }
+
+    public void SealSpline(Spline spline)
+    {
+        if (sealedSplines.Add(spline))
+            SplineSealed?.Invoke(spline);
+    }
+
+    public bool IsSplineSealed(Spline spline) { return sealedSplines.Contains(spline); }
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Spline -> SplineData
@@ -529,10 +548,13 @@ public class SplineManager : MonoBehaviour
     {
         SplineData data = new SplineData();
 
-        // Guardar Splines
+        // Splines
         foreach (var spline in splineContainer.Splines)
         {
-            SplineData.SerializableSpline splineData = new SplineData.SerializableSpline();
+            SplineData.SerializableSpline splineData = new SplineData.SerializableSpline
+            {
+                isSealed = IsSplineSealed(spline)
+            };
 
             foreach (var knot in spline)
             {
@@ -548,7 +570,7 @@ public class SplineManager : MonoBehaviour
             data.splines.Add(splineData);
         }
 
-        // Guardar Intersecciones como una lista de pares clave-valor
+        // Intersections
         foreach (var kvp in intersections)
         {
             var position = kvp.Key;
@@ -584,7 +606,7 @@ public class SplineManager : MonoBehaviour
     // ::::: SplineData -> Spline
     public void LoadSplines(SplineData data)
     {
-        // Cargar Splines
+        // Splines
         foreach (var splineData in data.splines)
         {
             Spline newSpline = new Spline();
@@ -600,9 +622,13 @@ public class SplineManager : MonoBehaviour
             }
 
             splineContainer.AddSpline(newSpline);
+
+            if (splineData.isSealed)
+                SealSpline(newSpline);
+            else SplineUpdated?.Invoke(newSpline);
         }
 
-        // Cargar Intersecciones desde la lista de pares clave-valor
+        // Intersections
         intersections.Clear();
 
         foreach (var intersectionData in data.intersections)

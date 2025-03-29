@@ -8,7 +8,6 @@ public class TaskManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
-    [SerializeField] private SplinesRenderer splinesRenderer;
     [SerializeField] private TaskDialogManager taskDialogManager;
 
     [Header("UI References")]

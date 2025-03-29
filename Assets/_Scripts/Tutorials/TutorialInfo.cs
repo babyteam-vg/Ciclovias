@@ -34,7 +34,7 @@ public struct TutorialSection
     public Vector2Int end;
     public bool dontAddToPath; // If True, the Path Won't Automatically Seal When the Section is Completed
     public MapData tutorialMap;
-    public Keyframe[] keyframes;
+    public Keyframe keyframe;
 }
 
 public enum SectionType

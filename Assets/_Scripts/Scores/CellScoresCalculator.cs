@@ -71,7 +71,7 @@ public class CellScoresCalculator
                 charm += 1;
                 break;
             case CellContent.Repulsive:
-                charm -= 5;
+                charm -= 3;
                 break;
             case CellContent.Attraction:
                 charm += 3;

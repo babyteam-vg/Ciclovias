@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
-  m_Name: Tip 1 Destroy
+  m_Script: {fileID: 11500000, guid: 148769a9c88d8dd48aa888467455cf12, type: 3}
+  m_Name: Pizzeria
   m_EditorClassIdentifier: 
-  id: 1
-  tipText: You can destroy part of a bike lane by dragging the cursor while holding
-    down the <color=#F4C542>right-click</color>.
+  compoundName: Pizzeria
+  surroundings:
+  - {x: 116, y: 69}

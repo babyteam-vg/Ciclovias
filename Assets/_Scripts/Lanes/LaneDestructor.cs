@@ -79,22 +79,27 @@ public class LaneDestructor : MonoBehaviour
     {
         Node node = graph.GetNode(gridPosition);
 
-        if (node != null && !node.indestructible && node.neighbors.Count < 2) // Node's Existence
+        if (node != null) // Node's Existence
         {
-            if (isAllowed && isDestroying && lastCellPosition.HasValue) // Flags
+            if (!node.indestructible && node.neighbors.Count < 2)
             {
-                if (lastCellPosition.Value == gridPosition) return; // Prevent Duplicates
-
-                if (grid.IsAdjacent(lastCellPosition.Value, gridPosition) && IsInCriticalArea(gridPosition)) // Adjacency
+                if (isAllowed && isDestroying && lastCellPosition.HasValue) // Flags
                 {
-                    if (lastNeighbors.Contains(gridPosition)) // Continued Destruction w/o Jumps
+                    if (lastCellPosition.Value == gridPosition) return; // Prevent Duplicates
+
+                    if (grid.IsAdjacent(lastCellPosition.Value, gridPosition) && IsInCriticalArea(gridPosition)) // Adjacency
                     {
-                        lastNeighbors = graph.GetNeighborsPos(gridPosition);
-                        DestroyNodeAndEdges(gridPosition);
-                        lastCellPosition = gridPosition;
+                        if (lastNeighbors.Contains(gridPosition)) // Continued Destruction w/o Jumps
+                        {
+                            lastNeighbors = graph.GetNeighborsPos(gridPosition);
+                            DestroyNodeAndEdges(gridPosition);
+                            lastCellPosition = gridPosition;
+                        }
                     }
                 }
             }
+            else if (node.indestructible)
+                OnTryDestroySealed?.Invoke();
         }
     }
 

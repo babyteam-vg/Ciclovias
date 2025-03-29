@@ -30,8 +30,9 @@ public class TaskDialogManager : DialogManager
         portrait.sprite = task.info.character.portrait;
         characterName.text = task.info.character.characterName;
 
-        taskDialogUI.SetActive(true);
         StrictDialogOpened?.Invoke();
+        taskDialogUI.SetActive(true);
+        
         StartDialog();
     }
 

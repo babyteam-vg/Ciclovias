@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
 
         if (MapState == -1) AdvanceMapState();
         if (SmokeState == -1) ReduceSmokeState();
-        if (MaterialAmount == -1) AddMaterial(45);
+        if (MaterialAmount == -1) AddMaterial(61);
     }
 
     private void OnTaskSealed(Task task) { SaveGame(); } // Auto Save
@@ -124,7 +124,6 @@ public class GameManager : MonoBehaviour
         bool success = fileName == null
             ? storageManager.AutoSaveGame(gameData)
             : storageManager.ManualSaveGame(fileName, gameData);
-
         if (success) Debug.Log("GAME SAVED");
         else Debug.LogError("ERROR SAVING");
     }

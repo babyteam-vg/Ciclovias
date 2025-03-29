@@ -11,7 +11,6 @@ public class InGameMenuManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private TaskManager taskManager;
-    [SerializeField] private DialogManager dialogManager;
     private SettingsPanel settingsPanel = SettingsPanel.Instance;
 
     [Header("UI References")]
