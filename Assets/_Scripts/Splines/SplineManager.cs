@@ -510,6 +510,31 @@ public class SplineManager : MonoBehaviour
         }
     }
 
+    // ::::: Print All Sealed Splines
+    private void PrintSealedSplines()
+    {
+        if (sealedSplines == null || sealedSplines.Count == 0)
+        {
+            Debug.Log("No splines in sealedSplines.");
+            return;
+        }
+
+        int splineIndex = 0;
+        foreach (Spline spline in sealedSplines)
+        {
+            if (spline == null)
+            {
+                Debug.Log($"Spline {splineIndex} is null");
+                splineIndex++;
+                continue;
+            }
+
+            Debug.Log($"Spline {splineIndex}: {(Vector3)spline.ElementAt(0).Position} - {(Vector3)spline.ElementAt(1).Position}");
+
+            splineIndex++;
+        }
+    }
+
     // :::::::::: SEALING METHODS ::::::::::
     // ::::: Task Sealed
     private void OnTaskSealed(Task task)
@@ -538,6 +563,7 @@ public class SplineManager : MonoBehaviour
     {
         if (sealedSplines.Add(spline))
             SplineSealed?.Invoke(spline);
+        PrintSealedSplines();
     }
 
     public bool IsSplineSealed(Spline spline) { return sealedSplines.Contains(spline); }

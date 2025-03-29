@@ -32,8 +32,16 @@ public class GridHighlighter : MonoBehaviour
             contentMaterialMap[mesh.content] = mesh.material;
     }
 
-    private void OnEnable() { inputManager.OnCursorMove += HighlightBuildableCells; }
-    private void OnDisable() { inputManager.OnCursorMove -= HighlightBuildableCells; }
+    private void OnEnable()
+    {
+        inputManager.OnCursorMove += HighlightBuildableCells;
+        inputManager.NothingDetected += ClearHighlight;
+    }
+    private void OnDisable()
+    {
+        inputManager.OnCursorMove -= HighlightBuildableCells;
+        inputManager.NothingDetected -= ClearHighlight;
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     public void HighlightBuildableCells(Vector2Int gridPosition)

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private TutorialDialogManager tutorialDialogManager;
 
     public event Action<Vector2Int> OnCursorMove;
+    public event Action<Vector2Int> NothingDetected;
 
     public event Action<Vector2Int> OnLeftClickDown;
     public event Action<Vector2Int> OnLeftClickHold;
@@ -87,7 +89,11 @@ public class InputManager : MonoBehaviour
     // ::::: Mouse, RayCast and Events
     private void HandleMouseInput()
     {
-        if (mainCamera == null || grid == null) return;
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) // Not in UI
+        {
+            NothingDetected?.Invoke(new Vector2Int());
+            return;
+        }
 
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -137,9 +143,8 @@ public class InputManager : MonoBehaviour
 
                 Debug.DrawRay(ray.origin, ray.direction * 1000, Color.blue);
             }
+            else NothingDetected?.Invoke(new Vector2Int());
         }
-        else
-            Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red);
 
         // Handle Mouse Button Up Events Globally
         if (isLeftMouseButtonDown && Input.GetMouseButtonUp(0))

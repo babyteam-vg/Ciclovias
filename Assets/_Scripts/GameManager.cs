@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject materialCounter;
     [SerializeField] private TextMeshProUGUI amountText;
 
+    private bool pendingSave = false;
+
     public event Action<int> MapStateAdvanced;
     public event Action<int> SmokeStateReduced;
 
@@ -51,6 +53,15 @@ public class GameManager : MonoBehaviour
         amountText.text = MaterialAmount.ToString();
 
         StartCoroutine(DelayedInitialize());
+    }
+
+    private void LateUpdate()
+    {
+        if (pendingSave)
+        {
+            SaveGame();
+            pendingSave = false;
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -102,8 +113,8 @@ public class GameManager : MonoBehaviour
         if (MaterialAmount == -1) AddMaterial(61);
     }
 
-    private void OnTaskSealed(Task task) { SaveGame(); } // Auto Save
-    private void OnTutorialCompleted() { SaveGame(); } // Auto Save
+    private void OnTaskSealed(Task _) { pendingSave = true; } // Auto Save
+    private void OnTutorialCompleted() { pendingSave = true; } // Auto Save
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Save

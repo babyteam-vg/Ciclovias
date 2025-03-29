@@ -46,9 +46,15 @@ public class IsometricCameraController : MonoBehaviour
     {
         Bounds initialBounds = boundingPlanes[0].GetComponent<Renderer>().bounds;
 
+        // Zoom
         minZoom = initialBounds.min.y + ZOOM_OFFSET;
         maxZoom = initialBounds.max.y + 2 * ZOOM_OFFSET;
         currentZoom = (maxZoom + minZoom) / 2;
+
+        // Limits
+        panHorLimit = new Vector2(initialBounds.min.x + 5f, initialBounds.max.x);
+        panVertLimit = new Vector2(initialBounds.min.z, initialBounds.max.z - 5f);
+        transform.position = new Vector3((panHorLimit.x + panHorLimit.y) / 2, 0f, (panVertLimit.x + panVertLimit.y) / 2);
 
         screenSize = new Vector2(Screen.width, Screen.height);
     }

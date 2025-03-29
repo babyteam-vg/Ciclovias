@@ -6,15 +6,16 @@ using UnityEngine.UI;
 
 public class Compound : MonoBehaviour
 {
+    public CompoundInfo info;
+
     [Header("Dependencies")]
     [SerializeField] private GameManager gameManager;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private TutorialManager tutorialManager;
-    public CompoundInfo info;
 
     [Header("UI References")]
-    [SerializeField] private GameObject givingTaskUI;
+    [SerializeField] private Button givingTaskButton;
     public Vector3 offset = new Vector3(0, 2, 0);
 
     private Task givingTask;
@@ -42,8 +43,8 @@ public class Compound : MonoBehaviour
 
     private void Start()
     {
-        full = givingTaskUI.GetComponentInChildren<Image>(true);
-        portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
+        full = givingTaskButton.GetComponentInChildren<Image>(true);
+        //portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
     }
 
     private void Update()
@@ -57,17 +58,18 @@ public class Compound : MonoBehaviour
 
         if (IsGivingTask())
         {
-            portrait.sprite = givingTask.info.character.portrait;
+            //portrait.sprite = givingTask.info.character.portrait;
 
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
             newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
 
-            givingTaskUI.transform.position = newTaskPos;
+            givingTaskButton.transform.position = newTaskPos;
 
             bool isOutOfBounds = newTaskPos.x <= minX || newTaskPos.x >= maxX || newTaskPos.y <= minY || newTaskPos.y >= maxY;
-            full.gameObject.SetActive(!isOutOfBounds); // Deactivate if Out of Bounds
+            //full.gameObject.SetActive(!isOutOfBounds);
+            givingTaskButton.interactable = !isOutOfBounds; // Deactivate if Out of Bounds
         }
     }
 
@@ -83,7 +85,7 @@ public class Compound : MonoBehaviour
             .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
-        givingTaskUI.SetActive(true);
+        givingTaskButton.gameObject.SetActive(true);
     }
 
     public void OnAcceptedTask(Task task, bool isManualAccept)
@@ -91,30 +93,27 @@ public class Compound : MonoBehaviour
         if (IsGivingTask())
             if (task == givingTask)
             {
-                givingTaskUI.SetActive(false);
+                givingTaskButton.gameObject.SetActive(false);
                 givingTask = null;
             }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Click on Compound (Mesh)
-    private void OnMouseDown()
+    public void AcceptTaskFromButton()
     {
-        if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) // Prevent UI Interference
-        {
-            if (!IsGivingTask()) return;
+        if (IsGivingTask())
             TaskReceiver.Instance.ReceiveTask(givingTask);
-        }
     }
 
     // ::::: When a Tutorial is Started or Completed
     private void RecoverGivingTask()
     {
         if (IsGivingTask())
-            givingTaskUI.SetActive(true);
+            givingTaskButton.gameObject.SetActive(true);
     }
     private void HideGivingTask(Tutorial _)
     {
-        givingTaskUI.SetActive(false);
+        givingTaskButton.gameObject.SetActive(false);
     }
 }

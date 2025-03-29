@@ -33,7 +33,7 @@ MonoBehaviour:
       position: {x: 100, y: 0, z: 43}
       rotation: {x: 0, y: 0, z: 0, w: 0}
       zoom: 5
-      duration: 0.1
+      duration: 0.5
   - type: 0
     dialogs:
     - "Congratulations... Please prefer intersections marked with traffic lights
@@ -84,9 +84,9 @@ MonoBehaviour:
       coordinates: {x: 0, y: 0}
     keyframe:
       position: {x: 80, y: 0, z: 58}
-      rotation: {x: 0, y: -0.38268346, z: 0, w: 0.9238795}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
       zoom: 6
-      duration: 3
+      duration: 2
   safetyRequirement: 1
   minSafety: 1
   charmRequirement: 0
