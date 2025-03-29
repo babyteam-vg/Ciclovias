@@ -64,7 +64,7 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: c8e191dffc6cf4948b4231f3eda0fe57, type: 3}
       coordinates: {x: 1, y: 1}
     keyframe:
-      position: {x: 93, y: 0, z: 51}
+      position: {x: 92, y: 0, z: 51}
       rotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
       zoom: 6
       duration: 1.5
@@ -83,7 +83,7 @@ MonoBehaviour:
       texture: {fileID: 0}
       coordinates: {x: 0, y: 0}
     keyframe:
-      position: {x: 80, y: 0, z: 58}
+      position: {x: 82, y: 0, z: 58}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       zoom: 6
       duration: 2

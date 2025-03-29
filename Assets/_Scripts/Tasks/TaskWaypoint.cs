@@ -16,7 +16,7 @@ public class TaskWaypoint : MonoBehaviour
 
     private Vector3 fromOffset, toOffset;
     private Transform fromCompoundPos, toCompundPos;
-    private Image fromFull, toFull, fromCircleBorder;
+    private Image fromImg, toImg;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -38,20 +38,18 @@ public class TaskWaypoint : MonoBehaviour
 
     private void Start()
     {
-        fromFull = from.GetComponentInChildren<Image>(true);
-        fromCircleBorder = from.GetComponentsInChildren<Image>(true)[2];
-
-        toFull = to.GetComponentInChildren<Image>(true);
+        fromImg = from.GetComponentInChildren<Image>(true);
+        toImg = to.GetComponentInChildren<Image>(true);
     }
 
     public void Update()
     {
         // Get Screen Borders
-        float minX = fromCircleBorder.GetPixelAdjustedRect().width / 2;
+        float minX = fromImg.GetPixelAdjustedRect().width / 3;
         float maxX = Screen.width - minX;
 
-        float minY = fromCircleBorder.GetPixelAdjustedRect().height - fromFull.GetPixelAdjustedRect().height;
-        float maxY = Screen.height - fromFull.GetPixelAdjustedRect().height;
+        float minY = -fromImg.GetPixelAdjustedRect().height / 3;
+        float maxY = Screen.height - fromImg.GetPixelAdjustedRect().height;
 
         if (CurrentTask.Instance.ThereIsPinned())
         {
@@ -71,10 +69,10 @@ public class TaskWaypoint : MonoBehaviour
             to.transform.position = toPos;
 
             bool isFromOutOfBounds = fromPos.x <= minX || fromPos.x >= maxX || fromPos.y <= minY || fromPos.y >= maxY;
-            fromFull.gameObject.SetActive(!isFromOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            fromImg.gameObject.SetActive(!isFromOutOfBounds); // Deactivate 'Full' if Out of Bounds
 
             bool isToOutOfBounds = toPos.x <= minX || toPos.x >= maxX || toPos.y <= minY || toPos.y >= maxY;
-            toFull.gameObject.SetActive(!isToOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            toImg.gameObject.SetActive(!isToOutOfBounds); // Deactivate 'Full' if Out of Bounds
         }
     }
 

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.UIElements.ToolbarMenu;
 
 public class TaskReceiver : MonoBehaviour
 {
@@ -10,15 +11,22 @@ public class TaskReceiver : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private TaskManager taskManager;
     [SerializeField] private TaskDialogManager taskDialogManager;
+    [SerializeField] private LaneScores laneScores;
 
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI title;
-    [SerializeField] private TextMeshProUGUI context;
-    [SerializeField] private TextMeshProUGUI safety;
-    [SerializeField] private TextMeshProUGUI charm;
-    [SerializeField] private TextMeshProUGUI flow;
-    [SerializeField] private TextMeshProUGUI minMat;
-    [SerializeField] private TextMeshProUGUI maxMat;
+    public TextMeshProUGUI title;
+    public TextMeshProUGUI context;
+    public Image variant;
+    public TextMeshProUGUI safety;
+    public TextMeshProUGUI charm;
+    public TextMeshProUGUI flow;
+    public TextMeshProUGUI minMat;
+    public TextMeshProUGUI maxMat;
+
+    [Header("UI Variants")]
+    public Sprite safetyVariant;
+    public Sprite charmVariant;
+    public Sprite flowVariant;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -61,17 +69,37 @@ public class TaskReceiver : MonoBehaviour
             Task task = ReceivedTask;
 
             title.text = task.info.title;
+
             context.text = task.info.context;
-            safety.text = task.info.safetyRequirement ? task.info.minSafety.ToString() : "-";
-            charm.text = task.info.charmRequirement ? task.info.minCharm.ToString() : "-";
-            flow.text = task.info.flowRequirement ? task.info.minFlow.ToString() : "-";
-            minMat.text = task.info.minMaterialRequirement ? task.info.minMaterial.ToString() : "-";
-            maxMat.text = task.info.maxMaterialRequirement ? task.info.maxMaterial.ToString() : "-";
+
+            if (task.info.flowRequirement) variant.sprite = flowVariant;
+            else if (task.info.charmRequirement) variant.sprite = charmVariant;
+            else if (task.info.safetyRequirement) variant.sprite = safetyVariant;
+
+            safety.text = task.info.safetyRequirement
+                ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minSafety)
+                : "-";
+
+            charm.text = task.info.charmRequirement
+                ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minCharm)
+                : "-";
+
+            flow.text = task.info.flowRequirement
+                ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minFlow)
+                : "-";
+
+            minMat.text = task.info.minMaterialRequirement
+                ? laneScores.ConvertToUI(ScoreType.MinimumMaterial, task.info.minMaterial)
+                : "-";
+
+            maxMat.text = task.info.maxMaterialRequirement
+                ? laneScores.ConvertToUI(ScoreType.MaximumMaterial, task.info.maxMaterial)
+                : "-";
         }
         else
         {
-            title.text = "Task Title";
-            context.text = "Task Context";
+            title.text = "-";
+            context.text = "-";
             safety.text = "-";
             charm.text =  "-";
             flow.text = "-";

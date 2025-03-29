@@ -68,7 +68,6 @@ public class Compound : MonoBehaviour
             givingTaskButton.transform.position = newTaskPos;
 
             bool isOutOfBounds = newTaskPos.x <= minX || newTaskPos.x >= maxX || newTaskPos.y <= minY || newTaskPos.y >= maxY;
-            //full.gameObject.SetActive(!isOutOfBounds);
             givingTaskButton.interactable = !isOutOfBounds; // Deactivate if Out of Bounds
         }
     }

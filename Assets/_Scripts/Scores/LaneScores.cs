@@ -113,35 +113,35 @@ public class LaneScores : MonoBehaviour
     // :::::::::: TUTORIAL METHODS ::::::::::
     private void HandleTutorialLaneUpdated(Tutorial tutorial)
     {
-        if (reqSafety.text != "")
+        if (reqSafety.text != "-")
             currentSafety.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentSafety);
 
-        if (reqCharm.text != "")
+        if (reqCharm.text != "-")
             currentCharm.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentCharm);
 
-        if (reqFlow.text != "")
+        if (reqFlow.text != "-")
             currentFlow.text = ConvertToUI(ScoreType.CurrentPercentage, tutorial.currentFlow);
 
-        if (maxMaterial.text != "" || minMaterial.text != "")
+        if (maxMaterial.text != "-" || minMaterial.text != "-")
             usedMaterial.text = ConvertToUI(ScoreType.MaximumMaterial, tutorial.usedMaterial);
     }
 
     private void UpdateTutorialScoresRequirements(Tutorial tutorial)
     {
         tutorialMinSafety = tutorial.info.safetyRequirement
-            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minSafety) : "";
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minSafety) : "-";
 
         tutorialMinCharm = tutorial.info.charmRequirement
-            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minCharm) : "";
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minCharm) : "-";
 
         tutorialMinFlow = tutorial.info.flowRequirement
-            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minFlow) : "";
+            ? ConvertToUI(ScoreType.RequirementPercentage, tutorial.info.minFlow) : "-";
 
         tutorialMinMaterial = tutorial.info.minMaterialRequirement
-            ? ConvertToUI(ScoreType.MinimumMaterial, tutorial.info.minMaterial) : "";
+            ? ConvertToUI(ScoreType.MinimumMaterial, tutorial.info.minMaterial) : "-";
 
         tutorialMaxMaterial = tutorial.info.maxMaterialRequirement
-            ? ConvertToUI(ScoreType.MaximumMaterial, tutorial.info.maxMaterial) : "";
+            ? ConvertToUI(ScoreType.MaximumMaterial, tutorial.info.maxMaterial) : "-";
     }
     private void UpdateTutorialScoresRequirements(TutorialSection section)
     {
@@ -155,26 +155,8 @@ public class LaneScores : MonoBehaviour
         }
     }
 
-    // :::::::::: PRIVATE METHODS ::::::::::
-    private void ClearScoresRequirements()
-    {
-        currentSafety.text = "";
-        reqSafety.text = "";
-
-        currentCharm.text = "";
-        reqCharm.text = "";
-
-        currentFlow.text = "";
-        reqFlow.text = "";
-
-        usedMaterial.text = "";
-        minMaterial.text = "";
-        maxMaterial.text = "";
-
-        flavorFill.SetActive(false);
-    }
-
-    private string ConvertToUI(ScoreType type, float? percentage = null, int? amount = null)
+    // :::::::::: PUBLIC METHODS ::::::::::
+    public string ConvertToUI(ScoreType type, float? percentage = null, int? amount = null)
     {
         string convertion = string.Empty;
 
@@ -202,6 +184,25 @@ public class LaneScores : MonoBehaviour
         }
 
         return convertion;
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
+    private void ClearScoresRequirements()
+    {
+        currentSafety.text = "-";
+        reqSafety.text = "-";
+
+        currentCharm.text = "-";
+        reqCharm.text = "-";
+
+        currentFlow.text = "-";
+        reqFlow.text = "-";
+
+        usedMaterial.text = "-";
+        minMaterial.text = "-";
+        maxMaterial.text = "-";
+
+        flavorFill.SetActive(false);
     }
 }
 
