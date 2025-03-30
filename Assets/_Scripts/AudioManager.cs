@@ -42,6 +42,22 @@ public class AudioManager : MonoBehaviour
     {
         SFXSource.PlayOneShot(sfx);
     }
+    public bool IsSFXPlaying()
+    {
+        return SFXSource.isPlaying;
+    }
+    public void SetSFXPitch(float pitch)
+    {
+        SFXSource.pitch = Mathf.Clamp(pitch, -3f, 3f);
+    }
+    public void ResetSFXPitch()
+    {
+        SFXSource.pitch = 1f;
+    }
+    public void StopSFX()
+    {
+        SFXSource.Stop();
+    }
 
     // ::::: Media Player
     public void PlayNextSong()

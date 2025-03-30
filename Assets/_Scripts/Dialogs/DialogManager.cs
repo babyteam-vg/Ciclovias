@@ -25,6 +25,7 @@ public abstract class DialogManager : MonoBehaviour
     protected int currentIndex = 0;
     protected float textSpeed = 0.025f;
     protected Coroutine typingCoroutine;
+    protected Coroutine typingSFXCoroutine;
 
     public event Action FinishedTyping;
 
@@ -44,8 +45,7 @@ public abstract class DialogManager : MonoBehaviour
     {
         if (isAllowed)
         {
-            if (Input.GetMouseButtonDown(0)
-            && inDialog && tutorialAllowsIt) // Manage Player Clicks
+            if (Input.GetMouseButtonDown(0) && inDialog && tutorialAllowsIt) // Manage Player Clicks
             {
                 if (isTyping) CompleteTyping();
                 else NextDialog();
@@ -85,6 +85,9 @@ public abstract class DialogManager : MonoBehaviour
         isTyping = true;
         currentDialog.text = "";
 
+        if (typingSFXCoroutine == null)
+            typingSFXCoroutine = StartCoroutine(PlayTypingSFX());
+
         int i = 0;
         while (i < dialog.Length)
         {
@@ -104,8 +107,9 @@ public abstract class DialogManager : MonoBehaviour
             yield return new WaitForSeconds(textSpeed);
         }
 
-        FinishedTyping?.Invoke(); // !
         isTyping = false;
+        FinishedTyping?.Invoke();
+        StopTypingSFX();
     }
 
     protected void CompleteTyping()
@@ -117,10 +121,34 @@ public abstract class DialogManager : MonoBehaviour
         }
 
         currentDialog.text = dialogs[currentIndex];
-        FinishedTyping?.Invoke(); // !
         isTyping = false;
+        FinishedTyping?.Invoke();
+        StopTypingSFX();
     }
 
+    // Play Type SFX
+    private IEnumerator PlayTypingSFX()
+    {
+        while (isTyping)
+        {
+            AudioManager.Instance.SetSFXPitch(UnityEngine.Random.Range(0.95f, 1.05f));
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[3]);
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.15f));
+        }
+        typingSFXCoroutine = null;
+    }
+
+    private void StopTypingSFX()
+    {
+        if (typingSFXCoroutine != null)
+        {
+            AudioManager.Instance.ResetSFXPitch();
+            StopCoroutine(typingSFXCoroutine);
+            typingSFXCoroutine = null;
+        }
+    }
+
+    // :::::::::: EVENT METHODS ::::::::::
     protected void LockDialog() { isAllowed = false; }
     protected void UnlockDialog() { isAllowed = true; }
 }
