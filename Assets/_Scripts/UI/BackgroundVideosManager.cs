@@ -33,7 +33,6 @@ public class BackgroundVideosManager : MonoBehaviour
         float targetAlpha = 1f;
 
         uiGroup.interactable = false;
-        uiGroup.blocksRaycasts = false;
 
         float elapsedTime = 0f;
 
@@ -47,6 +46,5 @@ public class BackgroundVideosManager : MonoBehaviour
 
         uiGroup.alpha = targetAlpha;
         uiGroup.interactable = true;
-        uiGroup.blocksRaycasts = true;
     }
 }

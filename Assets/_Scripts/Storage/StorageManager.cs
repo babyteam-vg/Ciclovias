@@ -37,7 +37,8 @@ public class StorageManager
         {
             RotateAutoSaves(maxAutoSaves);
 
-            string fileName = "/auto_save_1.json";
+            string playerName = PlayerNameManager.Instance.GetPlayerName();
+            string fileName = $"/{playerName}_1.json";
             return dataService.SaveData(fileName, gameData, encrypted);
         }
         catch (Exception e)
@@ -146,10 +147,11 @@ public class StorageManager
     // ::::: Auto Save Rotation
     private void RotateAutoSaves(int maxAutoSaves)
     {
+        string playerName = PlayerNameManager.Instance.GetPlayerName();
         for (int i = maxAutoSaves - 1; i >= 1; i--)
         {
-            string oldPath = Application.persistentDataPath + $"/auto_save_{i}.json";
-            string newPath = Application.persistentDataPath + $"/auto_save_{i + 1}.json";
+            string oldPath = Application.persistentDataPath + $"/{playerName}_{i}.json";
+            string newPath = Application.persistentDataPath + $"/{playerName}_{i + 1}.json";
 
             if (File.Exists(oldPath))
             {

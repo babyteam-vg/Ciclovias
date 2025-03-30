@@ -112,7 +112,7 @@ public class AudioManager : MonoBehaviour
     {
         if (sceneId == 0) // Main Menu
             StopMusic();
-        else if (sceneId == 1) // GameMap
+        else if (sceneId == 2) // GameMap
             PlaySong(0); // Train to the Sky City
     }
 

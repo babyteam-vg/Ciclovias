@@ -38,31 +38,8 @@ public class LoadingScene : MonoBehaviour
         StartCoroutine(LoadSceneAsync(sceneId));
     }
 
-    // :::::::::: PRIVATE METHODS ::::::::::
-    // ::::: 
-    private IEnumerator LoadSceneAsync(int sceneId)
-    {
-        loadingScreenUI.SetActive(true);
-        yield return StartCoroutine(FadeCanvasGroup(0f, 1f, DURATION));
-
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
-
-        float rotationSpeed = 400f * Time.deltaTime;
-        while (!operation.isDone)
-        {
-            backWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
-            frontWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
-
-            yield return null;
-        }
-        yield return StartCoroutine(FadeCanvasGroup(1f, 0f, DURATION));
-
-        loadingScreenUI.SetActive(false);
-        SceneLoaded?.Invoke(sceneId);
-    }
-
-    // ::::: 
-    private IEnumerator FadeCanvasGroup(float startAlpha, float endAlpha, float duration)
+    // ::::: Public Method to Fade Canvas Groups
+    public IEnumerator FadeCanvasGroup(CanvasGroup canvasGroup, float startAlpha, float endAlpha, float duration)
     {
         float timeElapsed = 0f;
         canvasGroup.alpha = startAlpha;
@@ -75,5 +52,27 @@ public class LoadingScene : MonoBehaviour
         }
 
         canvasGroup.alpha = endAlpha;
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
+    private IEnumerator LoadSceneAsync(int sceneId)
+    {
+        loadingScreenUI.SetActive(true);
+        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, DURATION));
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
+
+        float rotationSpeed = 400f * Time.deltaTime;
+        while (!operation.isDone)
+        {
+            backWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
+            frontWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
+
+            yield return null;
+        }
+        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 1f, 0f, DURATION));
+
+        loadingScreenUI.SetActive(false);
+        SceneLoaded?.Invoke(sceneId);
     }
 }

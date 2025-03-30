@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField] private GameObject settingsPanelUI;
+    public Button continueButton;
+    public GameObject playerNameUI;
+    public TMP_InputField nameInputField;
+    public Button confirmButton;
 
     private StorageManager storageManager = new StorageManager();
 
-    // :::::::::: MONO METHODS ::::::::::
-
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Pause Menu
+    // ::::: Continue
     public void OnContinuePress()
     {
         SettingsPanel.Instance.OnSettingsClose();
@@ -28,27 +31,36 @@ public class MainMenuManager : MonoBehaviour
                 GameStateManager.Instance.SetLoadedGameData(gameData);
             else Debug.LogWarning("Failed to load the most recent savefile.");
         }
-        else Debug.LogWarning("No savefile found!");
+        else continueButton.enabled = false;
     }
 
+    // ::::: New Game
     public void OnNewGamePress()
     {
         SettingsPanel.Instance.OnSettingsClose();
+        playerNameUI.SetActive(true);
+    }
+    public void OnNameConfirmed()
+    {
+        string playerName = nameInputField.text.Trim();
 
-        LoadingScene.Instance.LoadScene(2); // Loading Screen
-
-        GameStateManager.Instance.ResetLoadedGameData();
+        if (!string.IsNullOrEmpty(playerName))
+        {
+            PlayerNameManager.Instance.SetPlayerName(playerName);
+            LoadingScene.Instance.LoadScene(1);
+            GameStateManager.Instance.ResetLoadedGameData();
+        }
     }
 
+    // ::::: Settings
     public void OnSettingsPress()
     {
         SettingsPanel.Instance.OnSettingsOpen();
     }
 
+    // ::::: Exit
     public void OnExitPress()
     {
         Application.Quit();
     }
-
-    // :::::::::: PRIVATE METHODS ::::::::::
 }
