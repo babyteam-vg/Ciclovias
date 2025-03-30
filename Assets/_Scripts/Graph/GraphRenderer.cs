@@ -32,22 +32,22 @@ public class GraphRenderer : MonoBehaviour
     private void OnEnable()
     {
         // Subscribe to Graph events
-        graph.OnNodeAdded += HandleNodeAdded;
-        graph.OnEdgeAdded += HandleEdgeAdded;
-        graph.OnNodeRemoved += HandleNodeRemoved;
-        graph.OnEdgeRemoved += HandleEdgeRemoved;
-        graph.OnLonelyNodeRemoved += HandleLonelyNodeRemoved;
+        graph.NodeAdded += HandleNodeAdded;
+        graph.EdgeAdded += HandleEdgeAdded;
+        graph.NodeRemoved += HandleNodeRemoved;
+        graph.EdgeRemoved += HandleEdgeRemoved;
+        graph.LonelyNodeRemoved += HandleLonelyNodeRemoved;
 
         taskManager.TaskSealed += ResetCurrentPath;
     }
     private void OnDisable()
     {
         // Unsubscribe from Graph events
-        graph.OnNodeAdded -= HandleNodeAdded;
-        graph.OnEdgeAdded -= HandleEdgeAdded;
-        graph.OnNodeRemoved -= HandleNodeRemoved;
-        graph.OnEdgeRemoved -= HandleEdgeRemoved;
-        graph.OnLonelyNodeRemoved -= HandleLonelyNodeRemoved;
+        graph.NodeAdded -= HandleNodeAdded;
+        graph.EdgeAdded -= HandleEdgeAdded;
+        graph.NodeRemoved -= HandleNodeRemoved;
+        graph.EdgeRemoved -= HandleEdgeRemoved;
+        graph.LonelyNodeRemoved -= HandleLonelyNodeRemoved;
 
         taskManager.TaskSealed -= ResetCurrentPath;
     }

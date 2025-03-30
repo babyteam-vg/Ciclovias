@@ -1,13 +1,21 @@
 using System;
 using System.Collections;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LoadingScene : MonoBehaviour
 {
     public static LoadingScene Instance { get; private set; }
 
-    [SerializeField] private GameObject loadingScreenUI;
+    public GameObject loadingScreenUI;
+    public Image backWheel;
+    public Image frontWheel;
+
+    private CanvasGroup canvasGroup;
+
+    const float DURATION = 0.25f;
 
     public event Action<int> SceneLoaded;
 
@@ -20,6 +28,8 @@ public class LoadingScene : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else Destroy(gameObject);
+
+        canvasGroup = loadingScreenUI.GetComponent<CanvasGroup>();
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -29,20 +39,41 @@ public class LoadingScene : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    IEnumerator LoadSceneAsync(int sceneId)
+    // ::::: 
+    private IEnumerator LoadSceneAsync(int sceneId)
     {
+        loadingScreenUI.SetActive(true);
+        yield return StartCoroutine(FadeCanvasGroup(0f, 1f, DURATION));
+
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
 
-        loadingScreenUI.SetActive(true);
-
+        float rotationSpeed = 400f * Time.deltaTime;
         while (!operation.isDone)
         {
-            float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
+            backWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
+            frontWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
 
             yield return null;
         }
+        yield return StartCoroutine(FadeCanvasGroup(1f, 0f, DURATION));
 
         loadingScreenUI.SetActive(false);
         SceneLoaded?.Invoke(sceneId);
+    }
+
+    // ::::: 
+    private IEnumerator FadeCanvasGroup(float startAlpha, float endAlpha, float duration)
+    {
+        float timeElapsed = 0f;
+        canvasGroup.alpha = startAlpha;
+
+        while (timeElapsed < duration)
+        {
+            timeElapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, timeElapsed / duration);
+            yield return null;
+        }
+
+        canvasGroup.alpha = endAlpha;
     }
 }

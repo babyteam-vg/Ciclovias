@@ -15,6 +15,7 @@ public class SplineManager : MonoBehaviour
 
     public SplineContainer splineContainer;
 
+    //[SerializeField] private List<IntersectionEntry> intersectionsList = new List<IntersectionEntry>();
     private Dictionary<Vector3, Intersection> intersections = new Dictionary<Vector3, Intersection>();
     private HashSet<Spline> sealedSplines = new HashSet<Spline>();
 
@@ -29,20 +30,29 @@ public class SplineManager : MonoBehaviour
 
     private void OnEnable()
     {
-        graph.OnEdgeAdded += HandleEdgeAdded;
-        graph.OnEdgeRemoved += HandleEdgeRemoved;
+        graph.EdgeAdded += HandleEdgeAdded;
+        graph.EdgeRemoved += HandleEdgeRemoved;
 
         taskManager.TaskSealed += OnTaskSealed;
         tutorialManager.TutorialSectionSealed += OnTutorialSealed;
     }
     private void OnDisable()
     {
-        graph.OnEdgeAdded -= HandleEdgeAdded;
-        graph.OnEdgeRemoved -= HandleEdgeRemoved;
+        graph.EdgeAdded -= HandleEdgeAdded;
+        graph.EdgeRemoved -= HandleEdgeRemoved;
 
         taskManager.TaskSealed += OnTaskSealed;
         tutorialManager.TutorialSectionSealed += OnTutorialSealed;
     }
+
+    //private void Update()
+    //{
+    //    intersectionsList.Clear();
+    //    foreach (var kvp in intersections)
+    //    {
+    //        intersectionsList.Add(new IntersectionEntry(kvp.Key, kvp.Value));
+    //    }
+    //}
 
     // :::::::::: EVENT METHODS ::::::::::
     // ::::: Building Lane
@@ -148,10 +158,18 @@ public class SplineManager : MonoBehaviour
                             //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Intersection");
                             IntersectionFromStraightSpline(spline, index, firstWorldPosition, secondWorldPosition);
                         }
-                        if (isSecondIntersection) // ...and Adapt 2 an Intersection
+                        if (isSecondIntersection)
                         {
-                            //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Intersection (Fusion)");
-                            IntersectionFusing2StraighSplines(spline, index, firstWorldPosition, secondWorldPosition);
+                            if (secondNeighbors.Count < 3) // ...and Adapt 2 an Intersection
+                            {
+                                //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Intersection (Fusion)");
+                                IntersectionFusing2StraighSplines(spline, index, firstWorldPosition, secondWorldPosition);
+                            }
+                            else
+                            {
+                                //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > Straight Spline > Continue");
+                                TripleIntersectionCrossing2StraightSplines(spline, index, firstWorldPosition, secondWorldPosition);
+                            }
                         }
                     }
                     else // ...and Add a Knot
@@ -178,33 +196,58 @@ public class SplineManager : MonoBehaviour
         Vector3 firstWorldPosition = grid.GetWorldPositionFromCellCentered(firstNodePosition.x, firstNodePosition.y);
         Vector3 secondWorldPosition = grid.GetWorldPositionFromCellCentered(secondNodePosition.x, secondNodePosition.y);
 
-        List<Vector2Int> secondNeighbors = graph.GetNeighborsPos(secondNodePosition);
-
-        // Find Knot and Spline
-        (Spline spline, int index) = FindKnotAndSpline(firstWorldPosition);
-
-        if (spline != null) // Destroying a Spline...
+        if (intersections.ContainsKey(firstWorldPosition)) // Remove an Intersection...
         {
-            BezierKnot previousKnot = GeneratePreviousKnot(spline, index);
+            Node intersectionNode = graph.GetNode(firstNodePosition);
+            Intersection intersection = intersections[firstWorldPosition];
 
-            if (intersections.ContainsKey(secondWorldPosition)) // ...in an Intersection
+            if (intersection.edges.Count > 2) // ...Triple
             {
-                Intersection intersection = intersections[secondWorldPosition];
-                if (IsIntersectionSpline(spline))
-                {
-                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Intersection (Simple) Removed");
-                    RemoveIntersection(index, secondWorldPosition, intersection);
-                }
-                else
-                {
-                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Intersection (Triple) Removed");
-                    ReduceTripleIntersection(spline, firstWorldPosition, secondWorldPosition, intersection);
-                }
+                //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Splited in Triple Intersection");
+                SplitTripleIntersection(firstWorldPosition, intersection);
             }
-            else
+            else // ...Simple
             {
-                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Reduced or Removed");
-                RemoveKnotToSpline(spline, index, previousKnot.Position);
+                //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Splited in Intersection");
+                SplitIntersection(firstWorldPosition, intersection);
+            }
+        }
+        else
+        {
+            // Find Knot and Spline
+            (Spline spline, int index) = FindKnotAndSpline(firstWorldPosition);
+
+            if (spline != null) // Destroying a Spline...
+            {
+                if (index == -1) // ...by the Middle
+                {
+                    //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Splited");
+                    SplitStraightSpline(spline, firstWorldPosition);
+                }
+                else // ...by the Edges
+                {
+                    BezierKnot previousKnot = GeneratePreviousKnot(spline, index);
+
+                    if (intersections.ContainsKey(secondWorldPosition)) // ...in an Intersection
+                    {
+                        Intersection intersection = intersections[secondWorldPosition];
+                        if (IsIntersectionSpline(spline))
+                        {
+                            //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Intersection (Simple) Removed");
+                            RemoveIntersection(index, secondWorldPosition, intersection);
+                        }
+                        else
+                        {
+                            //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Intersection (Triple) Removed");
+                            ReduceTripleIntersection(spline, firstWorldPosition, secondWorldPosition, intersection);
+                        }
+                    }
+                    else
+                    {
+                        //Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Reduced or Removed");
+                        RemoveKnotToSpline(spline, index, previousKnot.Position);
+                    }
+                }
             }
         }
     }
@@ -303,7 +346,9 @@ public class SplineManager : MonoBehaviour
                 AddKnotToSpline(edgeSpline, edgeIndex, intersectionPosition);
         }
 
-        intersections[intersectionPosition].edges.Add(newEdgePosition);
+        // Intesections Dictionary
+        intersection.spline = null;
+        intersection.edges.Add(newEdgePosition);
     }
 
     // :::::::::: SPLINE (BUILDING) METHODS ::::::::::
@@ -342,6 +387,36 @@ public class SplineManager : MonoBehaviour
 
         // New Intersection Spline
         CreateIntersection(fromKnot, toKnot, intersectionPosition);
+    }
+
+    // ::::: 
+    private void TripleIntersectionCrossing2StraightSplines(Spline spline, int index, Vector3 newEdgePosition, Vector3 intersectionPosition)
+    {
+        (Spline crossedSpline, int crossedIndex) = FindKnotAndSpline(intersectionPosition);
+        (Spline firstSpline, Spline secondSpline) = SplitStraightSpline(crossedSpline, intersectionPosition);
+
+        Vector3 firstEdge = firstSpline.ElementAt(1).Position;
+        Vector3 secondEdge = secondSpline.ElementAt(0).Position;
+
+        // Expand Edge Splines
+        AddKnotToSpline(spline, index, intersectionPosition);
+        AddKnotToSpline(firstSpline, 1, intersectionPosition);
+        AddKnotToSpline(secondSpline, 0, intersectionPosition);
+
+        // Intersection Dictionary
+        if (!intersections.ContainsKey(intersectionPosition))
+            intersections.Add(
+                intersectionPosition,
+                new Intersection
+                {
+                    spline = null,
+                    edges = new List<Vector3>
+                    {
+                        newEdgePosition,
+                        firstEdge,
+                        secondEdge
+                    },
+                });
     }
 
     // ::::: Expand the Edge Splines From an Intersection (Entering an Intersection)
@@ -395,7 +470,8 @@ public class SplineManager : MonoBehaviour
             SplineUpdated?.Invoke(intersectionSpline);
         }
 
-        intersections.Remove(intersectionPosition); // Intersections
+        // Intersection Dictionary
+        intersections.Remove(intersectionPosition);
     }
 
     // ::::: Triple Intersection -> Simple Intersection
@@ -427,7 +503,70 @@ public class SplineManager : MonoBehaviour
         Vector3 to = intersections[intersectionPosition].edges[1];
         BezierKnot toKnot = new BezierKnot(to);
 
-        intersections[intersectionPosition].spline = CreateIntersection(fromKnot, toKnot, intersectionPosition);
+        // Intersections Dictionary
+        intersection.spline = CreateIntersection(fromKnot, toKnot, intersectionPosition);
+    }
+
+    // ::::: Spliting a Spline in Two
+    private (Spline firstSpline, Spline secondSpline) SplitStraightSpline(Spline splitedSpline, Vector3 splitPosition)
+    {
+        // Original Spline
+        Vector3 originalStart = splitedSpline.ElementAt(0).Position;
+        Vector3 originalEnd = splitedSpline.ElementAt(1).Position;
+        splitedSpline.Clear();
+        SplineUpdated?.Invoke(splitedSpline);
+        splineContainer.RemoveSpline(splitedSpline);
+
+        // First New Spline (Edge = 1)
+        Spline firstSpline = StartNewSpline(originalStart, splitPosition);
+        BezierKnot firstKnot = GeneratePreviousKnot(firstSpline, 1);
+        firstSpline.RemoveAt(1);
+        firstSpline.Insert(1, firstKnot, TangentMode.Broken, 0.5f);
+        SplineUpdated?.Invoke(firstSpline);
+        splineContainer.AddSpline(firstSpline);
+
+        // Second New Spline (Edge = 0)
+        Spline secondSpline = StartNewSpline(splitPosition, originalEnd);
+        BezierKnot secondKnot = GeneratePreviousKnot(secondSpline, 0);
+        secondSpline.RemoveAt(0);
+        secondSpline.Insert(0, secondKnot, TangentMode.Broken, 0.5f);
+        SplineUpdated?.Invoke(secondSpline);
+        splineContainer.AddSpline(secondSpline);
+
+        return (firstSpline, secondSpline);
+    }
+
+    // ::::: Splitting in an Intersection
+    private void SplitIntersection(Vector3 splitPosition, Intersection intersection)
+    {
+        // Intersection Spline
+        Spline intersectionSpline = intersection.spline;
+        intersectionSpline.Clear();
+        SplineUpdated(intersectionSpline);
+        splineContainer.RemoveSpline(intersectionSpline);
+
+
+        // Intersections Dictionary
+        intersections.Remove(splitPosition);
+    }
+
+    // ::::: Splitting in a Triple Intersection
+    private void SplitTripleIntersection(Vector3 splitPosition, Intersection intersection)
+    {
+        // Modify Edge Splines
+        foreach (Vector3 edgePos in intersection.edges)
+        {
+            (Spline edgeSpline, int edgeIndex) = FindKnotAndSpline(splitPosition);
+
+            if (edgeSpline != null) // Spline Still Exists
+            {
+                BezierKnot previousKnot = GeneratePreviousKnot(edgeSpline, edgeIndex);
+                RemoveKnotToSpline(edgeSpline, edgeIndex, previousKnot.Position);
+            }
+        }
+
+        // Intersection Dictionary
+        intersections.Remove(splitPosition);
     }
 
     // :::::::::: SUPPORT METHODS ::::::::::
@@ -455,40 +594,35 @@ public class SplineManager : MonoBehaviour
     }
 
     // ::::: Find a Spline and Knot Index
-    private (Spline, int) FindKnotAndSpline(Vector3 worldPosition)
+    private (Spline, int) FindKnotAndSpline(Vector3 worldPosition, float threshold = 0.1f)
     {
-        foreach (Spline spline in splineContainer.Splines) // Splines
+        foreach (Spline spline in splineContainer.Splines)
         {
-            if (spline.ElementAt(0).Position.Equals(worldPosition)) return (spline, 0);
-            if (spline.ElementAt(1).Position.Equals(worldPosition)) return (spline, 1);
-        }
+            if (spline.Count > 1)
+            {
+                Vector3 p0 = spline.ElementAt(0).Position;
+                Vector3 p1 = spline.ElementAt(1).Position;
 
+                // At the Edges
+                if (p0.Equals(worldPosition)) return (spline, 0);
+                if (p1.Equals(worldPosition)) return (spline, 1);
+
+                // In the Midle
+                float distance = DistanceToSegment(worldPosition, p0, p1);
+                if (distance < threshold) return (spline, -1);
+            }
+        }
         return (null, -1);
     }
 
-    // ::::: Spliting a Spline in Two
-    private Spline SplitSpline(Spline splitedSpline, Vector3 splitPosition)
+    // ::::: Distance Point-Segment
+    private float DistanceToSegment(Vector3 point, Vector3 p0, Vector3 p1)
     {
-        Vector3 originalEnd = splitedSpline.ElementAt(1).Position;
-
-        BezierKnot newKnot = new BezierKnot(splitPosition);
-        splitedSpline.RemoveAt(1);
-        splitedSpline.Insert(1, newKnot);
-
-        Spline newSpline = StartNewSpline(splitPosition, originalEnd);
-
-        //for (int i = splitIndex; i < splitedSpline.Count; i++) // ** New Spline
-        //    newSpline.Insert(newSpline.Count, splitedSpline[i], TangentMode.Broken, 0.5f);
-
-        //for (int i = splitedSpline.Count - 1; i >= splitIndex; i--) // * Original Spline
-        //    currentSpline.RemoveAt(i);
-
-        //splineContainer.AddSpline(newSpline);
-
-        //SplineUpdated?.Invoke(currentSpline);
-        //SplineUpdated?.Invoke(newSpline);{
-
-        return newSpline;
+        Vector3 v0 = p1 - p0;
+        Vector3 v1 = point - p0;
+        float t = Mathf.Clamp(Vector3.Dot(v1, v0) / v0.sqrMagnitude, 0f, 1f);
+        Vector3 projection = p0 + t * v0;
+        return Vector3.Distance(point, projection);
     }
 
     // ::::: Print All Edges From an Intersection
@@ -511,7 +645,7 @@ public class SplineManager : MonoBehaviour
     }
 
     // ::::: Print All Sealed Splines
-    private void PrintSealedSplines()
+    private void DebugSealedSplines()
     {
         if (sealedSplines == null || sealedSplines.Count == 0)
         {
@@ -563,7 +697,6 @@ public class SplineManager : MonoBehaviour
     {
         if (sealedSplines.Add(spline))
             SplineSealed?.Invoke(spline);
-        PrintSealedSplines();
     }
 
     public bool IsSplineSealed(Spline spline) { return sealedSplines.Contains(spline); }
@@ -686,3 +819,16 @@ public class Intersection
     public Spline spline;
     public List<Vector3> edges;
 }
+
+//[System.Serializable]
+//public class IntersectionEntry
+//{
+//    public Vector3 position;
+//    public Intersection intersection;
+
+//    public IntersectionEntry(Vector3 pos, Intersection inter)
+//    {
+//        position = pos;
+//        intersection = inter;
+//    }
+//}

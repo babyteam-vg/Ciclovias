@@ -34,16 +34,16 @@ public class SplinesManager : MonoBehaviour
 
     private void OnEnable()
     {
-        graph.OnEdgeAdded += HandleEdgeAdded;
-        graph.OnEdgeRemoved += HandleEdgeRemoved;
+        graph.EdgeAdded += HandleEdgeAdded;
+        graph.EdgeRemoved += HandleEdgeRemoved;
 
         taskManager.TaskSealed += UpdateTaskSealedPositions;
         tutorialManager.TutorialSectionSealed += UpdateTutorialSealedPositions;
     }
     private void OnDisable()
     {
-        graph.OnEdgeAdded -= HandleEdgeAdded;
-        graph.OnEdgeRemoved -= HandleEdgeRemoved;
+        graph.EdgeAdded -= HandleEdgeAdded;
+        graph.EdgeRemoved -= HandleEdgeRemoved;
 
         taskManager.TaskSealed -= UpdateTaskSealedPositions;
         tutorialManager.TutorialSectionSealed -= UpdateTutorialSealedPositions;

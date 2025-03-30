@@ -10,11 +10,11 @@ public class Graph : MonoBehaviour
     public Dictionary<Vector2Int, Node> nodes;
     private HashSet<Vector2Int> nodePositions;
 
-    public event Action<Vector2Int> OnNodeAdded;
-    public event Action<Vector2Int, Vector2Int> OnEdgeAdded;
-    public event Action<Vector2Int> OnNodeRemoved;
-    public event Action<Vector2Int, Vector2Int> OnEdgeRemoved;
-    public event Action<Vector2Int> OnLonelyNodeRemoved;
+    public event Action<Vector2Int> NodeAdded;
+    public event Action<Vector2Int, Vector2Int> EdgeAdded;
+    public event Action<Vector2Int> NodeRemoved;
+    public event Action<Vector2Int, Vector2Int> EdgeRemoved;
+    public event Action<Vector2Int> LonelyNodeRemoved;
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Constructor
@@ -74,7 +74,7 @@ public class Graph : MonoBehaviour
         {
             nodes[position] = new Node(position, worldPosition, indestructible);
             nodePositions.Add(position);
-            OnNodeAdded?.Invoke(position);
+            NodeAdded?.Invoke(position);
         }
     }
 
@@ -88,7 +88,7 @@ public class Graph : MonoBehaviour
 
             nodes.Remove(position);
             nodePositions.Remove(position);
-            OnNodeRemoved?.Invoke(position);
+            NodeRemoved?.Invoke(position);
         }
     }
 
@@ -100,7 +100,7 @@ public class Graph : MonoBehaviour
             Node nodeA = nodes[positionA];
             Node nodeB = nodes[positionB];
             nodeA.AddNeighbor(nodeB);
-            OnEdgeAdded?.Invoke(positionA, positionB);
+            EdgeAdded?.Invoke(positionA, positionB);
         }
     }
 
@@ -115,20 +115,20 @@ public class Graph : MonoBehaviour
             nodeA.RemoveNeighbor(nodeB);
             nodeB.RemoveNeighbor(nodeA);
 
-            OnEdgeRemoved?.Invoke(positionA, positionB);
+            EdgeRemoved?.Invoke(positionA, positionB);
 
             if (nodeA.neighbors.Count == 0) // Lonely Node
             {
                 nodes.Remove(positionA);
                 nodePositions.Remove(positionA);
-                OnLonelyNodeRemoved?.Invoke(positionA);
+                LonelyNodeRemoved?.Invoke(positionA);
             }
 
             if (nodeB.neighbors.Count == 0)
             {
                 nodes.Remove(positionB);
                 nodePositions.Remove(positionB);
-                OnLonelyNodeRemoved?.Invoke(positionB);
+                LonelyNodeRemoved?.Invoke(positionB);
             }
         }
     }
@@ -199,7 +199,7 @@ public class Graph : MonoBehaviour
         if (node != null && node.neighbors.Count == 0)
         {
             RemoveNode(position);
-            OnLonelyNodeRemoved?.Invoke(position);
+            LonelyNodeRemoved?.Invoke(position);
         }
     }
 

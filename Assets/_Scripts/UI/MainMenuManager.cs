@@ -17,7 +17,7 @@ public class MainMenuManager : MonoBehaviour
     {
         SettingsPanel.Instance.OnSettingsClose();
 
-        LoadingScene.Instance.LoadScene(1); // Loading Screen
+        LoadingScene.Instance.LoadScene(2); // Loading Screen
 
         string mostRecentSave = storageManager.GetMostRecentSaveFile();
         if (mostRecentSave != null)
@@ -25,10 +25,7 @@ public class MainMenuManager : MonoBehaviour
             GameData gameData = storageManager.LoadGame(mostRecentSave);
 
             if (gameData != null)
-            {
                 GameStateManager.Instance.SetLoadedGameData(gameData);
-                SceneManager.LoadScene("GameMap");
-            }
             else Debug.LogWarning("Failed to load the most recent savefile.");
         }
         else Debug.LogWarning("No savefile found!");
@@ -38,10 +35,9 @@ public class MainMenuManager : MonoBehaviour
     {
         SettingsPanel.Instance.OnSettingsClose();
 
-        LoadingScene.Instance.LoadScene(1); // Loading Screen
+        LoadingScene.Instance.LoadScene(2); // Loading Screen
 
         GameStateManager.Instance.ResetLoadedGameData();
-        SceneManager.LoadScene("GameMap");
     }
 
     public void OnSettingsPress()

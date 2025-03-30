@@ -79,7 +79,6 @@ public class InGameMenuManager : MonoBehaviour
     public void OnMainMenuPress()
     {
         LoadingScene.Instance.LoadScene(0); // Loading Screen
-        SceneManager.LoadScene("MainMenu");
     }
 
     // :::::::::: TASKS MANAGER ::::::::::
