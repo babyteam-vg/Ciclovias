@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class LaneScores : MonoBehaviour
 {
@@ -66,7 +65,7 @@ public class LaneScores : MonoBehaviour
     }
 
     // :::::::::: TASK METHODS ::::::::::
-    private void HandleTaskLaneUpdated()
+    private void HandleTaskLaneUpdated(List<Vector2Int> _)
     {
         if (CurrentTask.Instance.ThereIsPinned())
         {

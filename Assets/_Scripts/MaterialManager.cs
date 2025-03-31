@@ -1,0 +1,81 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+public class MaterialManager : MonoBehaviour
+{
+    public static MaterialManager Instance { get; private set; }
+    public int MaterialAmount { get; private set; } = 0;
+
+    [Header("UI References")]
+    [SerializeField] private InputManager inputManager;
+
+    [Header("UI References")]
+    public GameObject materialUI;
+    public Sprite buildImg;
+    public Sprite destroyImg;
+
+    private Image materialIcon;
+    private TextMeshProUGUI materialTMP;
+
+    // :::::::::: MONO METHODS ::::::::::
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        inputManager.OnRightClickDown += ChangeToDestroy;
+        inputManager.OnRightClickUp += ChangeToBuild;
+    }
+    private void OnDisable()
+    {
+        inputManager.OnRightClickDown -= ChangeToDestroy;
+        inputManager.OnRightClickUp -= ChangeToBuild;
+    }
+
+    private void Start()
+    {
+        materialIcon = materialUI.GetComponentInChildren<Image>();
+        materialTMP = materialUI.GetComponentInChildren<TextMeshProUGUI>();
+    }
+
+    // :::::::::: PUBLIC METHODS ::::::::::
+    public void AddMaterial(int amount)
+    {
+        MaterialAmount += amount;
+        materialTMP.text = MaterialAmount.ToString();
+    }
+    public bool ConsumeMaterial(int amount)
+    {
+        if (MaterialAmount >= amount)
+        {
+            MaterialAmount -= amount;
+            materialTMP.text = MaterialAmount.ToString();
+            return true;
+        }
+        else return false;
+    }
+
+    // ::::: Load Game
+    public void LoadMaterial(int amount)
+    {
+        MaterialAmount = amount;
+    }
+
+    // :::::::::: PRIVATE METHODS ::::::::::
+    private void ChangeToBuild(Vector2Int _)
+    {
+        materialIcon.sprite = buildImg;
+    }
+    private void ChangeToDestroy(Vector2Int _)
+    {
+        materialIcon.sprite = destroyImg;
+    }
+}

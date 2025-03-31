@@ -85,7 +85,7 @@ public class TutorialManager : MonoBehaviour
             // Updates
             currentSectionIndex = 0;
             originalMapData = gridGenerator.GetMapDataForCoordinates(activeTutorial.info.sections[currentSectionIndex].tutorialMap.coordinates);
-            ExecuteSection(activeTutorial.info.sections[currentSectionIndex]);
+            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
             TutorialStarted?.Invoke(activeTutorial); // !
         }
     }
@@ -151,7 +151,7 @@ public class TutorialManager : MonoBehaviour
 
     // :::::::::: SECTION METHODS ::::::::::
     // ::::: Start a Section of the Tuutorial
-    private void ExecuteSection(TutorialSection section)
+    private IEnumerator ExecuteSection(TutorialSection section)
     {
         if (section.type != SectionType.Close)
         {
@@ -168,7 +168,7 @@ public class TutorialManager : MonoBehaviour
         // Presentation
         TutorialSectionPresentationStarted?.Invoke(); // !
         Keyframe keyframe = section.keyframe;
-        cameraController.StartCameraMovement(keyframe.duration, keyframe.position, keyframe.rotation, keyframe.zoom);
+        yield return StartCoroutine(cameraController.MoveCamera(keyframe.duration, keyframe.position, keyframe.rotation, keyframe.zoom));
         TutorialSectionPresentationDone?.Invoke(); // !
     }
 
@@ -189,7 +189,7 @@ public class TutorialManager : MonoBehaviour
         // Advance Section
         currentSectionIndex++;
         if (currentSectionIndex < activeTutorial.info.sections.Length)
-            ExecuteSection(activeTutorial.info.sections[currentSectionIndex]);
+            StartCoroutine(ExecuteSection(activeTutorial.info.sections[currentSectionIndex]));
     }
 
     // :::::::::: SUPPORT METHODS ::::::::::

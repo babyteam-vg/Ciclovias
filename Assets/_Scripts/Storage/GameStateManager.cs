@@ -36,9 +36,9 @@ public class GameStateManager : MonoBehaviour
 
         LoadedGameData = new GameData
         {
-            MapState = -1,
-            SmokeState = -1,
-            MaterialAmount = -1,
+            mapState = -1,
+            smokeState = -1,
+            materialAmount = -1,
             graph = new GraphData(),
             tasks = new List<TaskData>(),
             tutorials = new List<TutorialData>(),

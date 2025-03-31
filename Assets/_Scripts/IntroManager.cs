@@ -19,19 +19,24 @@ public class IntroManager : MonoBehaviour
     private void Start()
     {
         cardTMP.text =
-            $"      Dear {PlayerNameManager.Instance.GetPlayerName()}" +
+            $"      Dear {PlayerNameManager.Instance.GetPlayerName()}," +
             $"\n\n" +
-            $"We are pleased to announce that you have been appointed as Chief Engineer for Bicycle Path Construction." +
+            $"      We are pleased to announce that you have been appointed as the new Chief Engineer for Bike Lanes Construction of our city." +
             $"\n\n" +
-            $"An inspector will be expecting you at the Bike Store tomorrow morning to assist you in becoming acquainted with your new role." +
+            $"      An inspector will be expecting you at the Bike Store tomorrow morning to assist you in becoming acquainted with your new role." +
             $"\n\n" +
-            $"      Sincerely, the Municipality.";
+            $"      Sincerely," +
+            $"\n" +
+            $"the Municipality.";
     }
 
     private void Update()
     {
         if (isAllowed && Input.GetMouseButtonDown(0))
+        {
             LoadingScene.Instance.LoadScene(2);
+            isAllowed = false;
+        }
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::

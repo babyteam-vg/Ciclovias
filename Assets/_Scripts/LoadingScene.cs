@@ -59,20 +59,21 @@ public class LoadingScene : MonoBehaviour
     {
         loadingScreenUI.SetActive(true);
         yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, DURATION));
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[4]);
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
 
-        float rotationSpeed = 400f * Time.deltaTime;
         while (!operation.isDone)
         {
-            backWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
-            frontWheel.rectTransform.Rotate(0, 0, -rotationSpeed);
+            backWheel.rectTransform.Rotate(0, 0, -400f * Time.deltaTime);
+            frontWheel.rectTransform.Rotate(0, 0, -400f * Time.deltaTime);
 
             yield return null;
         }
-        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 1f, 0f, DURATION));
-
-        loadingScreenUI.SetActive(false);
         SceneLoaded?.Invoke(sceneId);
+
+        AudioManager.Instance.StopSFX();
+        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 1f, 0f, DURATION));
+        loadingScreenUI.SetActive(false);
     }
 }

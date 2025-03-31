@@ -114,14 +114,6 @@ public class IsometricCameraController : MonoBehaviour
         mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, currentZoom, zoomSmoothness * Time.deltaTime);
     }
 
-    // ::::: Cinematic Camera Movement
-    public void StartCameraMovement(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
-    {
-        if (cameraMovement != null)
-            StopCoroutine(cameraMovement);
-        cameraMovement = StartCoroutine(MoveCamera(duration, position, rotation, zoom));
-    }
-
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Pan
     private void CameraPan()
@@ -207,7 +199,7 @@ public class IsometricCameraController : MonoBehaviour
     }
 
     // ::::: Cinematic Camera Movement
-    private IEnumerator MoveCamera(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
+    public IEnumerator MoveCamera(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
     {
         LockCamera();
 

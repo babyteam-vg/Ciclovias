@@ -3,9 +3,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class GameData
 {
-    public int MapState;
-    public int SmokeState;
-    public int MaterialAmount;
+    public int mapState;
+    public int smokeState;
+    public int materialAmount;
     public GraphData graph;
     public List<TaskData> tasks;
     public List<TutorialData> tutorials;

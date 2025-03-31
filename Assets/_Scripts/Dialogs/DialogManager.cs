@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.EventSystems;
 
 public abstract class DialogManager : MonoBehaviour
 {
@@ -126,7 +127,7 @@ public abstract class DialogManager : MonoBehaviour
         StopTypingSFX();
     }
 
-    // Play Type SFX
+    // ::::: Play Type SFX
     private IEnumerator PlayTypingSFX()
     {
         while (isTyping)

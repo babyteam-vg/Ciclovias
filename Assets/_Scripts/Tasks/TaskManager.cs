@@ -16,7 +16,7 @@ public class TaskManager : MonoBehaviour
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
-    public event Action ActiveTaskScoresUpdated;
+    public event Action<List<Vector2Int>> ActiveTaskScoresUpdated;
     public event Action<Task> TaskUnlocked;
     public event Action<Task, bool> TaskAccepted;
     public event Action<Task, bool> TaskActivated;
@@ -81,8 +81,6 @@ public class TaskManager : MonoBehaviour
 
             var (pathFound, path) = pathfinder.FindPath(startPos, gridPosition, endPos); // Execute A*
 
-            //splinesRenderer.currentPath = path;
-
             float safety = cellScoresCalculator.CalculatePathSafety(path);
             float charm = cellScoresCalculator.CalculatePathCharm(path);
             float flow = cellScoresCalculator.CalculatePathFlow(path);
@@ -95,7 +93,7 @@ public class TaskManager : MonoBehaviour
 
             activeTask.flavorMet = MeetsFlavour(activeTask, path);
 
-            ActiveTaskScoresUpdated?.Invoke();
+            ActiveTaskScoresUpdated?.Invoke(path);
 
             if (pathFound)
             {
@@ -142,10 +140,9 @@ public class TaskManager : MonoBehaviour
                 break;
 
             case TaskState.Sealed:
-                GameManager.Instance.AddMaterial(task.info.materialReward);
+                MaterialManager.Instance.AddMaterial(task.info.materialReward);
                 graph.SealNodes(task.path);
                 UnlockTasks(task);
-                //taskDialogManager.StartDialog(task.info.rewardDialogs, task.info.character.portrait, task.info.character.characterName);
                 confirmButton.SetActive(false);
                 TaskSealed?.Invoke(task);
                 break;

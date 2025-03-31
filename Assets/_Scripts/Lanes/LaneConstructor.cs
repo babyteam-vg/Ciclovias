@@ -76,7 +76,7 @@ public class LaneConstructor : MonoBehaviour
             if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
 
-            if (GameManager.Instance.MaterialAmount > 0)
+            if (MaterialManager.Instance.MaterialAmount > 0)
             {
                 if (graph.GetNode(gridPosition) == null)
                     graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
@@ -84,7 +84,7 @@ public class LaneConstructor : MonoBehaviour
                 if (lastCellPosition.HasValue && !graph.AreNeighbors(lastCellPosition.Value, gridPosition))
                 {
                     graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
-                    GameManager.Instance.ConsumeMaterial(1); // Construction Material: -1
+                    MaterialManager.Instance.ConsumeMaterial(1); // Construction Material: -1
                     AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[0]);
 
                     OnLaneBuilt?.Invoke(gridPosition); // !

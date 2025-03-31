@@ -12,7 +12,17 @@ public class MainMenuManager : MonoBehaviour
     public TMP_InputField nameInputField;
     public Button confirmButton;
 
+    private string mostRecentSave;
+
     private StorageManager storageManager = new StorageManager();
+
+    // :::::::::: PUBLIC METHODS ::::::::::
+    private void Start()
+    {
+        mostRecentSave = storageManager.GetMostRecentSaveFile();
+        if (!(mostRecentSave != null))
+            continueButton.interactable = false;
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Continue
@@ -20,18 +30,16 @@ public class MainMenuManager : MonoBehaviour
     {
         SettingsPanel.Instance.OnSettingsClose();
 
-        LoadingScene.Instance.LoadScene(2); // Loading Screen
-
-        string mostRecentSave = storageManager.GetMostRecentSaveFile();
         if (mostRecentSave != null)
         {
+            LoadingScene.Instance.LoadScene(2); // Loading Screen
+
             GameData gameData = storageManager.LoadGame(mostRecentSave);
 
             if (gameData != null)
                 GameStateManager.Instance.SetLoadedGameData(gameData);
             else Debug.LogWarning("Failed to load the most recent savefile.");
         }
-        else continueButton.enabled = false;
     }
 
     // ::::: New Game

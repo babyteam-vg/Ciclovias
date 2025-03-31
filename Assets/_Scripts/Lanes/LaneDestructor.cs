@@ -17,6 +17,7 @@ public class LaneDestructor : MonoBehaviour
     private bool isDestroying = false;
     private Vector2Int? lastCellPosition = null;
     private List<Vector2Int> lastNeighbors = new List<Vector2Int>();
+    private Coroutine destroySFXCoroutine;
 
     public event Action<Vector2Int> OnDestroyStarted;
     public event Action<Vector2Int> OnLaneDestroyed;
@@ -109,6 +110,7 @@ public class LaneDestructor : MonoBehaviour
         isDestroying = false;
         lastCellPosition = null;
         lastNeighbors = null;
+        AudioManager.Instance.ResetSFXPitch();
         OnDestroyFinished?.Invoke(gridPosition); // !
     }
 
@@ -119,8 +121,10 @@ public class LaneDestructor : MonoBehaviour
         if (node != null)
         {
             int edgeCount = node.neighbors.Count;
-            GameManager.Instance.AddMaterial(edgeCount);
+            MaterialManager.Instance.AddMaterial(edgeCount);
             graph.RemoveNode(gridPosition);
+            if (destroySFXCoroutine == null)
+                destroySFXCoroutine = StartCoroutine(PlayDstroySFX());
             OnLaneDestroyed?.Invoke(gridPosition);
         }
     }
@@ -182,6 +186,14 @@ public class LaneDestructor : MonoBehaviour
 
             return isInside;
         }
+    }
+
+    private IEnumerator PlayDstroySFX()
+    {
+        AudioManager.Instance.SetSFXPitch(UnityEngine.Random.Range(0.98f, 1.02f));
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[5]);
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.15f, 0.2f));
+        destroySFXCoroutine = null;
     }
 
     // ::::: Menu? Allowing

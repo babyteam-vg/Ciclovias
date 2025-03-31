@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -7,6 +8,8 @@ using UnityEngine.Splines;
 public class SplineRenderer : MonoBehaviour
 {
     [Header("Dependencies")]
+    [SerializeField] private Grid grid;
+    [SerializeField] private TaskManager taskManager;
     [SerializeField] private SplineManager splineManager;
     [SerializeField] private GameObject plane;
 
@@ -21,17 +24,24 @@ public class SplineRenderer : MonoBehaviour
     private int segmentsPerUnit = 15;
 
     private Dictionary<Spline, MeshFilter> splineMeshes = new Dictionary<Spline, MeshFilter>();
+    private HashSet<Spline> activeSplines = new HashSet<Spline>();
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake() { rendererUtility = new RendererUtility(); }
 
     private void OnEnable()
     {
+        taskManager.ActiveTaskScoresUpdated += UpdateActiveSplines;
+        taskManager.TaskSealed += ClearActiveSplines;
+
         splineManager.SplineUpdated += UpdateSplineMesh;
         splineManager.SplineSealed += SealSpline;
     }
     private void OnDisable()
     {
+        taskManager.ActiveTaskScoresUpdated -= UpdateActiveSplines;
+        taskManager.TaskSealed -= ClearActiveSplines;
+
         splineManager.SplineUpdated -= UpdateSplineMesh;
         splineManager.SplineSealed -= SealSpline;
 
@@ -172,5 +182,38 @@ public class SplineRenderer : MonoBehaviour
         mesh.uv = uvs.ToArray();
 
         mesh.RecalculateNormals();
+    }
+
+    // :::::::::: ACTIVE SPLINES METHODS ::::::::::
+    // ::::: 
+    private void UpdateActiveSplines(List<Vector2Int> path)
+    {
+        activeSplines.Clear();
+
+        foreach (Vector2Int position in path)
+            activeSplines.Add(FindSplineSimplified(position));
+    }
+
+    // ::::: 
+    private void ClearActiveSplines(Task _)
+    {
+        activeSplines.Clear();
+    }
+
+    // ::::: 
+    private Spline FindSplineSimplified(Vector2Int gridPosition)
+    {
+        Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
+
+        foreach (Spline spline in splineManager.splineContainer.Splines)
+        {
+            Vector3 p0 = spline.ElementAt(0).Position;
+            Vector3 p1 = spline.ElementAt(1).Position;
+
+            if (p0.Equals(worldPosition) || p1.Equals(worldPosition))
+                return spline;
+        }
+
+        return null;
     }
 }

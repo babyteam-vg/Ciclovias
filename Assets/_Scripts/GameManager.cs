@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public int MapState { get; private set; } = -1;
     public int SmokeState { get; private set; } = -1;
-    public int MaterialAmount { get; private set; } = -1;
 
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
@@ -18,10 +17,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private SplineManager splineManager;
     private StorageManager storageManager = new StorageManager();
-
-    [Header("UI References")]
-    [SerializeField] private GameObject materialCounter;
-    [SerializeField] private TextMeshProUGUI amountText;
 
     private bool pendingSave = false;
 
@@ -49,9 +44,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         ApplyLoadedGameData(GameStateManager.Instance.LoadedGameData);
-
-        amountText.text = MaterialAmount.ToString();
-
         StartCoroutine(DelayedInitialize());
     }
 
@@ -78,23 +70,6 @@ public class GameManager : MonoBehaviour
         SmokeStateReduced?.Invoke(SmokeState); // !
     }
 
-    // ::::: Material
-    public void AddMaterial(int amount)
-    {
-        MaterialAmount += amount;
-        amountText.text = MaterialAmount.ToString();
-    }
-    public bool ConsumeMaterial(int amount)
-    {
-        if (MaterialAmount >= amount)
-        {
-            MaterialAmount -= amount;
-            amountText.text = MaterialAmount.ToString();
-            return true;
-        }
-        else return false;
-    }
-
     // :::::::::: PRIVATE METHODS ::::::::::
     private IEnumerator DelayedInitialize()
     {
@@ -108,9 +83,12 @@ public class GameManager : MonoBehaviour
         foreach (Task acceptedTask in unlockedTasks)
             acceptedTask.from.GetNextAvailableTask(MapState);
 
-        if (MapState == -1) AdvanceMapState();
-        if (SmokeState == -1) ReduceSmokeState();
-        if (MaterialAmount == -1) AddMaterial(61);
+        if (MapState == -1)
+        {
+            AdvanceMapState();
+            ReduceSmokeState();
+            MaterialManager.Instance.AddMaterial(100);
+        }
     }
 
     private void OnTaskSealed(Task _) { pendingSave = true; } // Auto Save
@@ -122,9 +100,9 @@ public class GameManager : MonoBehaviour
     {
         GameData gameData = new GameData
         {
-            MapState = MapState,
-            SmokeState = SmokeState,
-            MaterialAmount = MaterialAmount,
+            mapState = MapState,
+            smokeState = SmokeState,
+            materialAmount = MaterialManager.Instance.MaterialAmount,
             graph = graph.SaveGraph(),
             tasks = TaskDiary.Instance.SaveTasks(),
             tutorials = TutorialManager.Instance.SaveTutorials(),
@@ -144,16 +122,14 @@ public class GameManager : MonoBehaviour
     {
         if (gameData != null)
         {
-            MapState = gameData.MapState;
-            SmokeState = gameData.SmokeState;
-            MaterialAmount = gameData.MaterialAmount;
+            MapState = gameData.mapState;
+            SmokeState = gameData.smokeState;
+            MaterialManager.Instance.LoadMaterial(gameData.materialAmount);
             graph.LoadGraph(gameData.graph);
             TaskDiary.Instance.LoadTasks(gameData.tasks);
             TutorialManager.Instance.LoadTutorials(gameData.tutorials);
             TipManager.Instance.LoadTips(gameData.tips);
             splineManager.LoadSplines(gameData.splines);
-
-            amountText.text = MaterialAmount.ToString();
 
             Debug.Log("GAME LOADED");
         }
