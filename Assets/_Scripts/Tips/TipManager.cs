@@ -30,7 +30,11 @@ public class TipManager : MonoBehaviour
         tipTMP = tipUI.GetComponentInChildren<TextMeshProUGUI>();
     }
 
-    private void OnEnable() { SubscribeToTriggers(); }
+    private void Start()
+    {
+        if (tips.Count > 0)
+            SubscribeToTriggers();
+    }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: 

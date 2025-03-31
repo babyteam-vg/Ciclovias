@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
+  m_Name: 0-3 Around the Pizza
+  m_EditorClassIdentifier: 
+  id: {x: 0, y: 3}
+  title: Around the Pizza
+  character: {fileID: 11400000, guid: 96c062a663aa1a047a55c7511bcc8dd2, type: 2}
+  dialogs:
+  - "Hi honey, I'm Mar\xEDa Magdalena Giorgina, founder of the famous Mama Gio's
+    pizzas. But you can just call me Mama Gio."
+  - Let me tell you, you did a spectacular job with that bike lane you built downtown.
+    We're delivering more than ever!
+  - That's why, my dear, I have an important request to make. It's very difficult
+    for us to bring the ingredients intact and on time here.
+  - Could you build a safe bike lane for my boys from the Pizzeria to the Market,
+    please?
+  context: Build a safe bike lane from Mama Gio's Pizzeria to the Market so that
+    the pizzeria can supply itself with ingredients.
+  safetyRequirement: 1
+  minSafety: 0.8
+  charmRequirement: 0
+  minCharm: 0
+  flowRequirement: 0
+  minFlow: 0
+  minMaterialRequirement: 0
+  minMaterial: 0
+  maxMaterialRequirement: 0
+  maxMaterial: 0
+  flavorDetails:
+    flavorType: 4
+    compound: {fileID: 0}
+    toCross: 0
+    numberToCross: 0
+  materialReward: 75
+  unlockedTasks:
+  - {x: 1, y: 1}
+  rewardDialogs:
+  - Oh, you're a real treasure, my love. The mayor was right about you; you know
+    how to meet the needs of the elderly!
+  - Now that we have a steady stream of ingredients, we'll be hands-down the best
+    pizzeria in town. Thank you very much, sweetheart.
+  - Next time you stop by the pizzeria, come in for something to eat, it's on me!
+  posts: []

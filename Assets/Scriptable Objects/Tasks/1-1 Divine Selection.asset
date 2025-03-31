@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
+  m_Name: 1-1 Divine Selection
+  m_EditorClassIdentifier: 
+  id: {x: 1, y: 1}
+  title: Divine Selection
+  character: {fileID: 11400000, guid: c419a43eea7d9e94fa4c5c81a1edb2ea, type: 2}
+  dialogs:
+  - Oh, finally, new faces are arriving in this city. Nice to meet you, I'm the Bishop
+    of the city,
+  - I couldn't help but notice the good works you've accomplished in the short time
+    you've been here.
+  - 'For that reason, God has entrusted me to give you the following task: build
+    a safe and charming route from the Church to the Local Park, son.'
+  - It would do our brothers good to breathe some fresh air. I'm sure their tithes
+    will pay for the costs of the material.
+  context: Build a safe and charming bike lane from the Church to the Local Park
+    so that parishioners can breathe fresh air.
+  safetyRequirement: 1
+  minSafety: 0.75
+  charmRequirement: 1
+  minCharm: 0.2
+  flowRequirement: 0
+  minFlow: 0
+  minMaterialRequirement: 0
+  minMaterial: 0
+  maxMaterialRequirement: 0
+  maxMaterial: 0
+  flavorDetails:
+    flavorType: 0
+    compound: {fileID: 0}
+    toCross: 0
+    numberToCross: 0
+  materialReward: 0
+  unlockedTasks: []
+  rewardDialogs:
+  - This is the end of the Build, my son.
+  - A tutorial was supposed to teach you about the charming score system...
+  - Unfortunately the Instructor was nowhere to be found.
+  posts: []

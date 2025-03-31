@@ -16,42 +16,43 @@ MonoBehaviour:
   title: A Treat Before Work
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
-  - "Gracias por venir, te cit\xE9 aqu\xED para... \xBFuh? Dame un momento..."
-  - "\xA1Ugh! Siempre ocurren problemas con los repartidores de <color=#F4C542>Mama
-    Gio</color>, no puedo creerlo\u2026"
-  - "Bueno, cambio de planes, \xBFpodr\xEDas construir una ruta desde la <color=#F4C542>Municipalidad</color>
-    hasta all\xED?"
-  - Los repartidores siempre llegan con mala cara y fatigados, hazles un y construye
-    una ruta <color=#62B4E8>segura</color> pero <color=#5DBB88>encantadora</color>
-    por favor.
-  - "De seguro te lo agradecer\xE1n\u2026 \xA1y yo en particular <i>hahaha</i>!"
-  context: "Construye una ciclov\xEDa <color=#62B4E8>segura</color> y atractiva para
-    que los repartidores de <color=#F4C542>Mama Gio</color> puedan llegar a la <color=#F4C542>Municipalidad</color>
-    bien y sin mala cara."
+  - Okay, let's get to work... huh? Give me a moment...
+  - <i>The delivery guy? Again!? It's the third time this week!</i> I can't believe
+    it...
+  - Well, change of plans, you're already here, so why don't you do this old man
+    in town a favor?
+  - Mama Gio's delivery drivers are always getting lost or messed up due to the smoke
+    that fills the city.
+  - Please build a safe bike lane so they can deliver their orders without so many
+    incidents, okay?
+  context: Build a safe bike lane from the Municipality to Mama Gio's Pizzeria so
+    that the Mayor can eat his pizza.
   safetyRequirement: 1
-  minSafetyCount: 42
-  charmRequirement: 1
-  minCharmCount: 12
+  minSafety: 0.85
+  charmRequirement: 0
+  minCharm: 0
   flowRequirement: 0
-  minFlowPercentage: 0
+  minFlow: 0
   minMaterialRequirement: 0
   minMaterial: 0
   maxMaterialRequirement: 0
   maxMaterial: 0
-  flavourDetails:
-    flavorType: 1
-    compound: {fileID: 11400000, guid: 776c584773438fd4388e19020ee0df1a, type: 2}
+  flavorDetails:
+    flavorType: 0
+    compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-    flavorMessage: Visit the Central Park
   materialReward: 20
   unlockedTasks:
   - {x: 0, y: 3}
   rewardDialogs:
-  - Genial, ahora no hay como perderse e incluso puedo ir a pedirlas en mi propia
-    bicicleta.
-  - "Tienes talento para esto, te llover\xE1n las peticiones de construcci\xF3n,
-    \xA1te lo aseguro!"
+  - Mhmm, the pizza is delicious... Oh, sorry, I shouldn't eat at work, but Mama
+    Gio's pizzas are my weakness.
+  - It's clear you have what it takes to elevate this city into the cycling paradise
+    I dream of. But we can't do it alone.
+  - There will be more people and institutions with needs that a good bike path can
+    meet. Please help them, I'll give you the resources.
+  - Now if you'll excuse me, I have a pizza to finish!
   posts:
   - {fileID: 11400000, guid: ef851d0fa1d96504a8af3d1f703f6bc1, type: 2}
   - {fileID: 11400000, guid: 0177152e17921894dae46bd2e712982d, type: 2}

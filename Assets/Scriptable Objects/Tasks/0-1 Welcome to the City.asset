@@ -26,7 +26,7 @@ MonoBehaviour:
   context: Finish building the bike lane from the Bike Store to the Municipality
     to meet the Mayor.
   safetyRequirement: 1
-  minSafety: 0.6
+  minSafety: 0.75
   charmRequirement: 0
   minCharm: 0
   flowRequirement: 0
@@ -36,15 +36,20 @@ MonoBehaviour:
   maxMaterialRequirement: 0
   maxMaterial: 0
   flavorDetails:
-    flavorType: 4
+    flavorType: 0
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-  materialReward: 20
+  materialReward: 30
   unlockedTasks:
   - {x: 0, y: 2}
   rewardDialogs:
-  - Wonderful work, trully wonderful!
+  - Great job on the bike lane! Now that we're face to face, we can really talk.
+  - I have dream, dear {player}. So much traffic has polluted the air of this beautiful
+    city too much.
+  - I want to make this city a paradise for cyclists to reduce pollution from exhaust
+    pipes.
+  - Do you think you can help me with that? I'm sure you can.
   posts:
   - {fileID: 11400000, guid: 8c83df947b897fd45b44c5ef636d1c93, type: 2}
   - {fileID: 11400000, guid: 4138f0ec5edb0184092b86ddc8dbcb23, type: 2}

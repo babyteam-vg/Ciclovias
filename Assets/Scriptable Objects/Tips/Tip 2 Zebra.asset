@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 148769a9c88d8dd48aa888467455cf12, type: 3}
-  m_Name: Building 1
+  m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
+  m_Name: Tip 2 Zebra
   m_EditorClassIdentifier: 
-  compoundName: Building 1
-  surroundings:
-  - {x: 90, y: 58}
+  id: 2
+  tipText: A zebra crossing reduces safety minimally, don't be afraid to cross them!

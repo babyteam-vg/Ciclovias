@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 148769a9c88d8dd48aa888467455cf12, type: 3}
-  m_Name: Market
+  m_Name: Central Building
   m_EditorClassIdentifier: 
-  compoundName: Market
+  compoundName: Building 1
   surroundings:
-  - {x: 69, y: 51}
+  - {x: 90, y: 58}

@@ -45,6 +45,8 @@ public class Compound : MonoBehaviour
     private void Start()
     {
         givingTaskButton = givingTaskUI.GetComponentInChildren<Button>();
+        givingTaskButton.onClick.AddListener(AcceptTaskFromButton);
+
         full = givingTaskButton.GetComponentInChildren<Image>(true);
         //portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
     }
@@ -86,7 +88,7 @@ public class Compound : MonoBehaviour
             .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
-        givingTaskUI.gameObject.SetActive(true);
+        if (IsGivingTask()) givingTaskUI.gameObject.SetActive(true);
     }
 
     public void OnAcceptedTask(Task task, bool isManualAccept)
@@ -100,7 +102,7 @@ public class Compound : MonoBehaviour
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    // ::::: Click on Compound (Mesh)
+    // ::::: Click on GivingTaskUI
     public void AcceptTaskFromButton()
     {
         if (IsGivingTask())

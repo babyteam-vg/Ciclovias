@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
   m_Name: Tip 1 Material
   m_EditorClassIdentifier: 
-  id: 0
+  id: 1
   tipText: You need <color=#F4C542>material</color> to build bike lanes!

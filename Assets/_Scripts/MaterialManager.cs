@@ -15,12 +15,10 @@ public class MaterialManager : MonoBehaviour
     [SerializeField] private InputManager inputManager;
 
     [Header("UI References")]
-    public GameObject materialUI;
+    public Image materialIcon;
+    public TextMeshProUGUI materialTMP;
     public Sprite buildImg;
     public Sprite destroyImg;
-
-    private Image materialIcon;
-    private TextMeshProUGUI materialTMP;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -38,12 +36,6 @@ public class MaterialManager : MonoBehaviour
     {
         inputManager.OnRightClickDown -= ChangeToDestroy;
         inputManager.OnRightClickUp -= ChangeToBuild;
-    }
-
-    private void Start()
-    {
-        materialIcon = materialUI.GetComponentInChildren<Image>();
-        materialTMP = materialUI.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
@@ -67,6 +59,7 @@ public class MaterialManager : MonoBehaviour
     public void LoadMaterial(int amount)
     {
         MaterialAmount = amount;
+        materialTMP.text = MaterialAmount.ToString();
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::

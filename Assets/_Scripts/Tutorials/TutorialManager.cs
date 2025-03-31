@@ -206,8 +206,10 @@ public class TutorialManager : MonoBehaviour
     {
         var nextTutorials = tutorials.Where(t => t.info.id.x == currentMapState && t.completed == false)
             .OrderBy(t => t.info.id.y).ToList();
+
         Tutorial nextTutorial = nextTutorials.FirstOrDefault();
-        PlayTutorial(nextTutorial.info.id);
+        if (nextTutorial != null)
+            PlayTutorial(nextTutorial.info.id);
     }
 
     // ::::: Every Section Dialog Saw

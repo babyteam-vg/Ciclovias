@@ -103,6 +103,12 @@ public class IsometricCameraController : MonoBehaviour
             CameraZoom();
             CameraRotation();
         }
+
+        if (Input.GetKeyDown(KeyCode.T)) // DEBUG, DELETE LATER!!!
+        {
+            panHorLimit = new Vector2(-Mathf.Infinity, Mathf.Infinity);
+            panVertLimit = new Vector2(-Mathf.Infinity, Mathf.Infinity);
+        }
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

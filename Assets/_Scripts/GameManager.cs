@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
     // ::::: Map
     public void AdvanceMapState() {
         MapState++;
+        Debug.Log($"MapState Advanced to {MapState}");
         MapStateAdvanced?.Invoke(MapState); // !
     }
 
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour
         InitializeState();
     }
 
+    // :::::
     private void InitializeState()
     {
         List<Task> unlockedTasks = TaskDiary.Instance.tasks.Where(t => t.state == TaskState.Unlocked).ToList();
@@ -91,7 +93,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnTaskSealed(Task _) { pendingSave = true; } // Auto Save
+    // ::::: Advancing Map State Conditions
+    private bool CheckNewStateReached()
+    {
+        List<Task> necessaryTasks = TaskDiary.Instance.tasks.Where(t => t.info.id.x == MapState).ToList();
+        foreach (Task necessaryTask in necessaryTasks)
+        {
+            if (necessaryTask.state != TaskState.Sealed)
+                return false;
+        }
+        return true;
+    }
+
+    // ::::: Event Methods (Save Game)
+    private void OnTaskSealed(Task task)
+    {
+        if (CheckNewStateReached())
+        {
+            AdvanceMapState();
+            //ReduceSmokeState();
+        }
+
+        pendingSave = true; // Auto Save
+    }
     private void OnTutorialCompleted() { pendingSave = true; } // Auto Save
 
     // :::::::::: STORAGE METHODS ::::::::::

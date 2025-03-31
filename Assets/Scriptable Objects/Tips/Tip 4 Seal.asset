@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
   m_Name: Tip 4 Seal
   m_EditorClassIdentifier: 
-  id: 3
+  id: 4
   tipText: <color=#5DBB88>Confirming</color> a task will <color=#F4C542>seal</color>
     the bike lane used to meet the task requirements.
