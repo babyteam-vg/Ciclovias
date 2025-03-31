@@ -16,6 +16,7 @@ MonoBehaviour:
   title: Welcome to the City
   character: {fileID: 11400000, guid: 58b45cfffc38156479cea62c5292fc8e, type: 2}
   dialogs:
+  - Oh, you must be the new Chief Engineer in Bike Lines. Congratulations!
   - Let me introduce myself, I'm the Mayor. I'll provide you with construction material...
     at least within our budget.
   - Finish building that bike lane on the way to the Municipality. We have a lot

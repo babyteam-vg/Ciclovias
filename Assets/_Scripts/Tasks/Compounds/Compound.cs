@@ -15,11 +15,12 @@ public class Compound : MonoBehaviour
     [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References")]
-    [SerializeField] private Button givingTaskButton;
+    public GameObject givingTaskUI;
     public Vector3 offset = new Vector3(0, 2, 0);
 
-    private Task givingTask;
+    private Button givingTaskButton;
     private Image full, portrait;
+    private Task givingTask;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -43,18 +44,19 @@ public class Compound : MonoBehaviour
 
     private void Start()
     {
+        givingTaskButton = givingTaskUI.GetComponentInChildren<Button>();
         full = givingTaskButton.GetComponentInChildren<Image>(true);
-        //portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
+        //portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
     }
 
     private void Update()
     {
         // Get Screen Borders
-        float minX = full.GetPixelAdjustedRect().width / 3;
+        float minX = full.GetPixelAdjustedRect().width / 4;
         float maxX = Screen.width - minX;
 
-        float minY = -full.GetPixelAdjustedRect().height / 3;
-        float maxY = Screen.height + minY;
+        float minY = full.GetPixelAdjustedRect().height / 8;
+        float maxY = Screen.height - full.GetPixelAdjustedRect().height * 0.88f;
 
         if (IsGivingTask())
         {
@@ -65,7 +67,7 @@ public class Compound : MonoBehaviour
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
             newTaskPos.y = Mathf.Clamp(newTaskPos.y, minY, maxY);
 
-            givingTaskButton.transform.position = newTaskPos;
+            givingTaskUI.transform.position = newTaskPos;
 
             bool isOutOfBounds = newTaskPos.x <= minX || newTaskPos.x >= maxX || newTaskPos.y <= minY || newTaskPos.y >= maxY;
             givingTaskButton.interactable = !isOutOfBounds; // Deactivate if Out of Bounds
@@ -84,7 +86,7 @@ public class Compound : MonoBehaviour
             .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
-        givingTaskButton.gameObject.SetActive(true);
+        givingTaskUI.gameObject.SetActive(true);
     }
 
     public void OnAcceptedTask(Task task, bool isManualAccept)
@@ -92,7 +94,7 @@ public class Compound : MonoBehaviour
         if (IsGivingTask())
             if (task == givingTask)
             {
-                givingTaskButton.gameObject.SetActive(false);
+                givingTaskUI.gameObject.SetActive(false);
                 givingTask = null;
             }
     }
@@ -109,10 +111,10 @@ public class Compound : MonoBehaviour
     private void RecoverGivingTask()
     {
         if (IsGivingTask())
-            givingTaskButton.gameObject.SetActive(true);
+            givingTaskUI.gameObject.SetActive(true);
     }
     private void HideGivingTask(Tutorial _)
     {
-        givingTaskButton.gameObject.SetActive(false);
+        givingTaskUI.gameObject.SetActive(false);
     }
 }

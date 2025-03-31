@@ -21,7 +21,7 @@ public class IntroManager : MonoBehaviour
         cardTMP.text =
             $"      Dear {PlayerNameManager.Instance.GetPlayerName()}," +
             $"\n\n" +
-            $"      We are pleased to announce that you have been appointed as the new Chief Engineer for Bike Lanes Construction of our city." +
+            $"      We are pleased to announce that you have been appointed as the new Chief Engineer in Bike Lanes of our city." +
             $"\n\n" +
             $"      An inspector will be expecting you at the Bike Store tomorrow morning to assist you in becoming acquainted with your new role." +
             $"\n\n" +
