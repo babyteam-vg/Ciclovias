@@ -21,6 +21,7 @@ public class TaskReceiver : MonoBehaviour
     public TextMeshProUGUI flow;
     public TextMeshProUGUI minMat;
     public TextMeshProUGUI maxMat;
+    public Image portrait;
 
     [Header("UI Variants")]
     public Sprite safetyVariant;
@@ -94,6 +95,8 @@ public class TaskReceiver : MonoBehaviour
             maxMat.text = task.info.maxMaterialRequirement
                 ? laneScores.ConvertToUI(ScoreType.MaximumMaterial, task.info.maxMaterial)
                 : "-";
+
+            portrait.sprite = task.info.character.portrait;
         }
         else
         {

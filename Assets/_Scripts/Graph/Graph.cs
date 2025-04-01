@@ -16,14 +16,13 @@ public class Graph : MonoBehaviour
     public event Action<Vector2Int, Vector2Int> EdgeRemoved;
     public event Action<Vector2Int> LonelyNodeRemoved;
 
-    // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Constructor
     public Graph()
     {
         nodes = new Dictionary<Vector2Int, Node>();
         nodePositions = new HashSet<Vector2Int>();
     }
 
+    // :::::::::: GETTERS METHODS ::::::::::
     // ::::: Get a Node
     public Node GetNode(Vector2Int position)
     {
@@ -67,6 +66,7 @@ public class Graph : MonoBehaviour
         return new List<Vector2Int>();
     }
 
+    // :::::::::: EXPANSION METHODS ::::::::::
     // ::::: Add a Node
     public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
     {
@@ -133,6 +133,7 @@ public class Graph : MonoBehaviour
         }
     }
 
+    // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Check If 2 Nodes Are Neighbors
     public bool AreNeighbors(Vector2Int positionA, Vector2Int positionB)
     {

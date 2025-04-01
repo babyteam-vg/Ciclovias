@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 0-1 Build & Safety
   m_EditorClassIdentifier: 
   id: {x: 0, y: 1}
-  title: Safety Tutorial
+  title: Build & Safety Tutorial
   character: {fileID: 11400000, guid: ad7cc760df277b14a84088d90042607a, type: 2}
   sections:
   - type: 0

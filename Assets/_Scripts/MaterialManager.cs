@@ -20,6 +20,8 @@ public class MaterialManager : MonoBehaviour
     public Sprite buildImg;
     public Sprite destroyImg;
 
+    public event Action NotEnoughMaterial;
+
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
     {
@@ -52,7 +54,11 @@ public class MaterialManager : MonoBehaviour
             materialTMP.text = MaterialAmount.ToString();
             return true;
         }
-        else return false;
+        else
+        {
+            NotEnoughMaterial?.Invoke();
+            return false;
+        }
     }
 
     // ::::: Load Game

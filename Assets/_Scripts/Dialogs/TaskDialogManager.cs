@@ -10,6 +10,7 @@ public class TaskDialogManager : DialogManager
 
     public event Action StrictDialogOpened;
     public event Action StrictDialogClosed;
+    public event Action DialogEnded;
 
     // :::::::::: MONO METHODS ::::::::::
     protected override void OnEnable()
@@ -56,6 +57,7 @@ public class TaskDialogManager : DialogManager
         if (TaskReceiver.Instance.ThereIsReceived())
             InGameMenuManager.Instance.OnReceiveTaskPress();
 
+        DialogEnded?.Invoke();
         base.EndDialog();
     }
 }

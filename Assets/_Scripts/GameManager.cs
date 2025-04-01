@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private Graph graph;
     [SerializeField] private TaskManager taskManager;
+    [SerializeField] private TaskDialogManager taskDialogManager;
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private SplineManager splineManager;
     private StorageManager storageManager = new StorageManager();
@@ -33,11 +34,13 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         taskManager.TaskSealed += OnTaskSealed;
+        taskDialogManager.DialogEnded += OnDialogEnded;
         tutorialManager.TutorialCompleted += OnTutorialCompleted;
     }
     private void OnDisable()
     {
         taskManager.TaskSealed -= OnTaskSealed;
+        taskDialogManager.DialogEnded -= OnDialogEnded;
         tutorialManager.TutorialCompleted -= OnTutorialCompleted;
     }
 
@@ -68,6 +71,7 @@ public class GameManager : MonoBehaviour
     public void ReduceSmokeState()
     {
         SmokeState++;
+        Debug.Log($"SmokeState Reduced to {SmokeState}");
         SmokeStateReduced?.Invoke(SmokeState); // !
     }
 
@@ -77,7 +81,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         InitializeState();
     }
-
     // :::::
     private void InitializeState()
     {
@@ -90,6 +93,12 @@ public class GameManager : MonoBehaviour
             AdvanceMapState();
             ReduceSmokeState();
             MaterialManager.Instance.AddMaterial(100);
+        }
+
+        if (CheckNewStateReached())
+        {
+            AdvanceMapState();
+            //ReduceSmokeState();
         }
     }
 
@@ -105,22 +114,23 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    // :::::::::: EVENT METHODS ::::::::::
     // ::::: Event Methods (Save Game)
-    private void OnTaskSealed(Task task)
+    private void OnTaskSealed(Task task) { pendingSave = true; } // Auto Save
+    private void OnTutorialCompleted() { pendingSave = true; } // Auto Save
+
+    private void OnDialogEnded()
     {
         if (CheckNewStateReached())
         {
             AdvanceMapState();
             //ReduceSmokeState();
         }
-
-        pendingSave = true; // Auto Save
     }
-    private void OnTutorialCompleted() { pendingSave = true; } // Auto Save
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Save
-    private void SaveGame(string fileName = null)
+    private void SaveGame(string fileName = null, Action onComplete = null)
     {
         GameData gameData = new GameData
         {
@@ -137,7 +147,12 @@ public class GameManager : MonoBehaviour
         bool success = fileName == null
             ? storageManager.AutoSaveGame(gameData)
             : storageManager.ManualSaveGame(fileName, gameData);
-        if (success) Debug.Log("GAME SAVED");
+
+        if (success)
+        {
+            Debug.Log("GAME SAVED");
+            onComplete?.Invoke();
+        }
         else Debug.LogError("ERROR SAVING");
     }
 

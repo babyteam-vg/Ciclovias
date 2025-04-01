@@ -10,6 +10,7 @@ public class TipManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private LaneDestructor laneDestructor;
+    [SerializeField] private MaterialManager materialManager;
 
     [Header("")]
     public GameObject tipUI;
@@ -83,11 +84,12 @@ public class TipManager : MonoBehaviour
 
             switch (tip.info.id)
             {
-                case 0:
+                case 0: // Destroy
                     laneDestructor.OnTryDestroySealed += () => AddTip(tip);
                     break;
-                case 1: // OnGameStart
-                    //GameManager.OnGameStart += () => AddTip(tip);
+
+                case 1: // Material
+                    materialManager.NotEnoughMaterial += () => AddTip(tip);
                     break;
 
                 case 2: // OnLevelComplete
@@ -110,12 +112,12 @@ public class TipManager : MonoBehaviour
 
         switch (tip.info.id)
         {
-            case 1:
-                //GameManager.OnGameStart -= action;
+            case 0: // Destro
+                laneDestructor.OnTryDestroySealed -= () => AddTip(tip);
                 break;
 
-            case 2:
-                //LevelManager.OnLevelComplete -= action;
+            case 1: // Material
+                materialManager.NotEnoughMaterial -= () => AddTip(tip);
                 break;
 
             case 3:
