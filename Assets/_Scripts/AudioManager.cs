@@ -110,10 +110,14 @@ public class AudioManager : MonoBehaviour
     // :::::::::: PRIVATE METHODS ::::::::::
     private void NewSceneMusic(int sceneId)
     {
+        StopMusic();
+
         if (sceneId == 0) // Main Menu
             StopMusic();
         else if (sceneId == 2) // GameMap
-            PlaySong(0); // Train to the Sky City
+            PlaySong(0); // Train to the Sky City (Slowed)
+        else if (sceneId == 3)
+            PlaySong(1); // Train to the Sky City
     }
 
     private void PlaySong(int index)

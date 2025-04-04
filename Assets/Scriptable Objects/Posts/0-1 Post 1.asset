@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: 0-1 Post 1
   m_EditorClassIdentifier: 
   isRepeatable: 1
-  text: Hey, have you seen the new <i><color=#62B4E8>#bikelane</color></i>? <sprite=4>
+  text: Hey, have you seen the new <i><color=#62B4E8>#bikelane</color></i>? <sprite=9>
   illustration: {fileID: 0}

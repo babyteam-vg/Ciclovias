@@ -140,18 +140,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 74
+        y: 111
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0682d793a91ddc54a99ca5bd20be0dd8
-      internalID: -489468790
+      spriteID: 16d9cbfbab45c9944b78e1f4e87400fb
+      internalID: -167669923
       vertices: []
       indices: 
       edges: []
@@ -161,18 +161,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 37
-        y: 74
+        y: 111
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 549cd96fc29107e429073799b1f2d515
-      internalID: 1919791108
+      spriteID: f1ebb7ee05f85554c8c4a8f060eb0075
+      internalID: 1566768105
       vertices: []
       indices: 
       edges: []
@@ -181,19 +181,19 @@ TextureImporter:
       name: emojis_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 37
+        x: 74
+        y: 111
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ce899a759c7cdea4bbc23595e20050c4
-      internalID: -578603476
+      spriteID: 31d90f64b6a49de4bb1b4dce50c9a1e0
+      internalID: 1820747630
       vertices: []
       indices: 
       edges: []
@@ -202,19 +202,19 @@ TextureImporter:
       name: emojis_3
       rect:
         serializedVersion: 2
-        x: 37
-        y: 37
+        x: 111
+        y: 111
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 24626bcb40a6e0d4f89e9ba86f17d1e0
-      internalID: -962509117
+      spriteID: f0d8151bf740f0442aa661824057b3d2
+      internalID: -1927677486
       vertices: []
       indices: 
       edges: []
@@ -224,18 +224,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 74
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49317f965da34b94f9b5a7af8cc31a07
-      internalID: 635178962
+      spriteID: 0fba1f5cb9ffd0945bd3dc60e1ff0eae
+      internalID: 1541351884
       vertices: []
       indices: 
       edges: []
@@ -245,18 +245,186 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 37
-        y: 0
+        y: 74
         width: 36
         height: 36
-      alignment: 1
-      pivot: {x: 0, y: 1}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 956e188cb70f309439c6a3b2f1fd9040
-      internalID: -1123153426
+      spriteID: 483e851e87c25ce4693c492b740ead5a
+      internalID: -1696639739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_6
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 74
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abe6c1312b5fed1479124a55122052ec
+      internalID: -1784970806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_7
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 74
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13d9e31b2756d734ebbd457a307077ed
+      internalID: 1214732762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 37
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d4217c2b164bbf40b48dcd158a6620d
+      internalID: 824366594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_9
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 37
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e712362918b75a5438a88b7ed19ebb56
+      internalID: -473499323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_10
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 37
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a708ddb18b4e91a46bea2a12e370b04d
+      internalID: -450228454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_11
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 37
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29cdcf9d3756c344eb4ad229eb2c6e2e
+      internalID: 1648818433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 78
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 321cdf1cb42f93a458ff60c601629dac
+      internalID: -748801835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: emojis_15
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 0
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9171696cea414d64d8c758ad6db5fe86
+      internalID: 1425371692
       vertices: []
       indices: 
       edges: []
@@ -264,7 +432,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: a9f9d3bcb54641345a119508d7c0e842
     internalID: 0
     vertices: []
     indices: 
@@ -272,12 +440,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      emojis_0: -489468790
-      emojis_1: 1919791108
-      emojis_2: -578603476
-      emojis_3: -962509117
-      emojis_4: 635178962
-      emojis_5: -1123153426
+      emojis_0: -167669923
+      emojis_1: 1566768105
+      emojis_10: -450228454
+      emojis_11: 1648818433
+      emojis_12: -748801835
+      emojis_13: 1655008464
+      emojis_14: -1717784999
+      emojis_15: 1425371692
+      emojis_2: 1820747630
+      emojis_3: -1927677486
+      emojis_4: 1541351884
+      emojis_5: -1696639739
+      emojis_6: -1784970806
+      emojis_7: 1214732762
+      emojis_8: 824366594
+      emojis_9: -473499323
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

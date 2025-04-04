@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Tip 2 Zebra
   m_EditorClassIdentifier: 
   id: 2
-  tipText: A zebra crossing reduces safety minimally, don't be afraid to cross them!
+  tipText: A <color=#F4C542>zebra crossing</color> reduces safety minimally, don't
+    be afraid to cross them!

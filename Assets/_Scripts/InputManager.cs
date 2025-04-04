@@ -27,6 +27,8 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2Int> OnMiddleClickHold;
     public event Action<Vector2Int> OnMiddleClickUp;
 
+    public event Action<Vector2Int> InputBlocked;
+
     //public event Action OnHighlightToggleDown;
 
     private bool isLeftMouseButtonDown = false;
@@ -184,6 +186,10 @@ public class InputManager : MonoBehaviour
     //}
 
     // ::::: Menu? Allowing
-    private void LockInput() { isAllowed = false; }
+    private void LockInput()
+    {
+        InputBlocked?.Invoke(Vector2Int.zero);
+        isAllowed = false;
+    }
     private void UnlockInput() { isAllowed = true; }
 }

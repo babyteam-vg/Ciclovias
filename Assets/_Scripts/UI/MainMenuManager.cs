@@ -53,6 +53,7 @@ public class MainMenuManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(playerName))
         {
+            //AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[1]);
             PlayerNameManager.Instance.SetPlayerName(playerName);
             LoadingScene.Instance.LoadScene(1);
             GameStateManager.Instance.ResetLoadedGameData();
@@ -67,6 +68,12 @@ public class MainMenuManager : MonoBehaviour
     public void OnSettingsPress()
     {
         SettingsPanel.Instance.OnSettingsOpen();
+    }
+
+    // ::::: Credits
+    public void OnCreditsPress()
+    {
+        LoadingScene.Instance.LoadScene(3);
     }
 
     // ::::: Exit

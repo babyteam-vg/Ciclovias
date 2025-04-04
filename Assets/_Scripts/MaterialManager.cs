@@ -33,11 +33,13 @@ public class MaterialManager : MonoBehaviour
     {
         inputManager.OnRightClickDown += ChangeToDestroy;
         inputManager.OnRightClickUp += ChangeToBuild;
+        inputManager.InputBlocked += ChangeToBuild;
     }
     private void OnDisable()
     {
         inputManager.OnRightClickDown -= ChangeToDestroy;
         inputManager.OnRightClickUp -= ChangeToBuild;
+        inputManager.InputBlocked -= ChangeToBuild;
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::

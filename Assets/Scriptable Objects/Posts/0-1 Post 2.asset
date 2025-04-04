@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: 0-1 Post 2
   m_EditorClassIdentifier: 
   isRepeatable: 0
-  text: Bike lanes? The mayor was serious! <sprite=5>
+  text: Bike lanes? The mayor was serious! <sprite=2>
   illustration: {fileID: 0}

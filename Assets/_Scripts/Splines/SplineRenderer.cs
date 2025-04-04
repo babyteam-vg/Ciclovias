@@ -20,7 +20,7 @@ public class SplineRenderer : MonoBehaviour
 
     private float laneWidth = 0.4f;
     private float laneHeight = 0.05f;
-    private int segmentsPerUnit = 27;
+    private int segmentsPerUnit = 39;
 
     private Dictionary<Spline, MeshFilter> splineMeshes = new Dictionary<Spline, MeshFilter>();
     private HashSet<Spline> activeSplines = new HashSet<Spline>();

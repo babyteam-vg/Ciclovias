@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Tip 4 Seal
   m_EditorClassIdentifier: 
   id: 4
-  tipText: <color=#5DBB88>Confirming</color> a task will <color=#F4C542>seal</color>
-    the bike lane used to meet the task requirements.
+  tipText: Confirming<sprite=12> a task will <color=#F4C542>seal</color> the bike
+    lane used to meet the task requirements.

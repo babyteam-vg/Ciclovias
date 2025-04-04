@@ -15,5 +15,5 @@ MonoBehaviour:
   isRepeatable: 1
   text: The <i><color=#62B4E8>#Super</color></i> <i><color=#62B4E8>#Green</color></i>
     <i><color=#62B4E8>#Urban</color></i> <i><color=#62B4E8>#City</color></i> 4 the
-    <i><color=#62B4E8>#Bikes</color></i>
+    <i><color=#62B4E8>#Bikes</color></i>!
   illustration: {fileID: 0}

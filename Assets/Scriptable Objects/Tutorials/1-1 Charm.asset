@@ -24,8 +24,8 @@ MonoBehaviour:
       we must give them an incentive to use them."</i>'
     - <i>"A charming route can be the differentiating factor we need so that people
       choose to travel by bike instead of by car."</i>
-    - In short, a charming route includes a percentage of charming areas visited,
-      such as parks or rivers. Give it a try...
+    - In short, a charming<sprite=0> route includes a percentage of charming areas
+      visited, such as parks or rivers. Give it a try...
     checkRequirements: 0
     start: {x: 101, y: 11}
     end: {x: 95, y: 21}

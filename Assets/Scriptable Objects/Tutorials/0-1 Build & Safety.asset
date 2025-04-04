@@ -53,7 +53,7 @@ MonoBehaviour:
   - type: 0
     dialogs:
     - Congratulations... Please prefer intersections with <color=#F4C542>traffic
-      lights</color> or <color=#F4C542>zebra crossings</color> to ensure the <color=#62B4E8>safety</color>
+      lights</color> or <color=#F4C542>zebra crossings</color> to ensure the safety<sprite=5>
       of cyclists.
     checkRequirements: 0
     start: {x: 102, y: 42}
@@ -72,7 +72,7 @@ MonoBehaviour:
     - The Municipality obliges me to evaluate you in order to grant you the license
       to build bike lanes...
     - 'Please complete the following test to pass the course: build a completely
-      <color=#62B4E8>safe</color> bike lane to the building...'
+      safe bike lane to the building...'
     checkRequirements: 1
     start: {x: 95, y: 42}
     end: {x: 90, y: 58}
@@ -87,8 +87,8 @@ MonoBehaviour:
       duration: 1.5
   - type: 2
     dialogs:
-    - Congratulations... You're now eligible to accept tasks from the Municipality
-      and other entities.
+    - Congratulations... You're now eligible to accept tasks<sprite=11> from the
+      Municipality and other entities.
     - The Municipality obliges me to remind you that this is a modular course...
     - We will see each other as the complexity of your tasks increases. Have a nice
       day...

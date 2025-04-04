@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08d121549799a8e41bcf48558b96e887, type: 3}
-  m_Name: 0-2 Post 2
+  m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
+  m_Name: Tip 6 Diary
   m_EditorClassIdentifier: 
-  isRepeatable: 0
-  text: Delivering pizza in my bike! <sprite=10>
-  illustration: {fileID: 0}
+  id: 0
+  tipText: Use the diary<sprite=8> to see all your tasks. You can also pin<sprite=13>
+    the task you want to follow.
