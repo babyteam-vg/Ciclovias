@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Municipality
   m_EditorClassIdentifier: 
   compoundName: Municipality
+  illustration: {fileID: 21300000, guid: 6a612cd628a37364b97cb92ecb5af21d, type: 3}
   surroundings:
   - {x: 77, y: 57}

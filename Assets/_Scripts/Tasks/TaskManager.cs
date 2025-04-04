@@ -16,12 +16,16 @@ public class TaskManager : MonoBehaviour
     private Pathfinder pathfinder;
     private CellScoresCalculator cellScoresCalculator;
 
-    public event Action<List<Vector2Int>> ActiveTaskScoresUpdated;
     public event Action<Task> TaskUnlocked;
     public event Action<Task, bool> TaskAccepted;
     public event Action<Task, bool> TaskActivated;
     public event Action<Task> TaskCompleted;
     public event Action<Task> TaskSealed;
+
+    public event Action<List<Vector2Int>> ActiveTaskScoresUpdated;
+
+    public event Action<Task> TaskLaneConnected;
+    public event Action TaskLaneDisconnected;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -98,10 +102,12 @@ public class TaskManager : MonoBehaviour
             if (pathFound)
             {
                 activeTask.path = path;
+                TaskLaneConnected?.Invoke(activeTask);
 
                 if (activeTask.MeetsRequirements())
                     ChangeTaskState(TaskState.Completed, activeTask); // Complete the Task
             }
+            else TaskLaneDisconnected?.Invoke();
         }
     }
 

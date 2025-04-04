@@ -6,7 +6,7 @@ using UnityEngine.Splines;
 public class SplinesRenderer : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private SplinesManager splinesManager;
+    //[SerializeField] private SplinesManager splinesManager;
     [SerializeField] private GameObject plane;
 
     private RendererUtility rendererUtility;
@@ -21,13 +21,13 @@ public class SplinesRenderer : MonoBehaviour
     // :::::::::: MONO METHODS ::::::::::
     private void Awake() { rendererUtility = new RendererUtility(); }
 
-    private void OnEnable() { splinesManager.SplineChanged += UpdateSplineMesh; }
-    private void OnDisable() { splinesManager.SplineChanged -= UpdateSplineMesh; }
+    //private void OnEnable() { splinesManager.SplineChanged += UpdateSplineMesh; }
+    //private void OnDisable() { splinesManager.SplineChanged -= UpdateSplineMesh; }
 
     private void Start()
     {
-        foreach (var spline in splinesManager.splineContainer.Splines)
-            UpdateSplineMesh(spline);
+        //foreach (var spline in splinesManager.splineContainer.Splines)
+        //    UpdateSplineMesh(spline);
     }
 
     // :::::::::: EVENT METHODS ::::::::::

@@ -6,5 +6,6 @@ public class CompoundInfo : ScriptableObject
 {
     [Header("Basic")]
     public string compoundName;
+    public Sprite illustration;
     public List<Vector2Int> surroundings;
 }

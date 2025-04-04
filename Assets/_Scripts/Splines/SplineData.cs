@@ -16,7 +16,6 @@ public class SplineData
     [Serializable]
     public class SerializableSpline
     {
-        public bool isSealed;
         public List<SerializableKnot> knots = new List<SerializableKnot>();
     }
 

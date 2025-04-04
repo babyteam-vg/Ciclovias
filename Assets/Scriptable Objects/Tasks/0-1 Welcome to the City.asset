@@ -40,7 +40,7 @@ MonoBehaviour:
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-  materialReward: 30
+  materialReward: 40
   unlockedTasks:
   - {x: 0, y: 2}
   rewardDialogs:

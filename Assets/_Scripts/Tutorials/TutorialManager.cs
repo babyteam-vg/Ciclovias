@@ -36,6 +36,9 @@ public class TutorialManager : MonoBehaviour
     public event Action<Tutorial> TutorialStarted;
     public event Action TutorialCompleted;
 
+    public event Action<Tutorial> TutorialLaneConnected;
+    public event Action TutorialLaneDisconnected;
+
     public event Action<TutorialSection> TutorialSectionStarted;
     public event Action<TutorialSection> TutorialSectionReadyToCompleteStarted;
     public event Action TutorialSectionPresentationStarted;
@@ -116,8 +119,10 @@ public class TutorialManager : MonoBehaviour
             }
             else if (currentSection.type == SectionType.Build) // Build Section
             {
-                if (graph.AreConnectedByPath(currentSection.start, currentSection.end))
+                if (pathFound)
                 {
+                    TutorialLaneConnected?.Invoke(activeTutorial);
+
                     if (currentSection.checkRequirements)
                     {
                         if (activeTutorial.MeetsRequirements(
@@ -128,6 +133,7 @@ public class TutorialManager : MonoBehaviour
                     }
                     else CompleteSection(path);
                 }
+                else TutorialLaneDisconnected?.Invoke();
             }
             else CompleteSection();
         }

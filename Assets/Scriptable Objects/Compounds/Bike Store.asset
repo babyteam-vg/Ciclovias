@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Bike Store
   m_EditorClassIdentifier: 
   compoundName: Bike Store
+  illustration: {fileID: 21300000, guid: 4fe5e6806f53e2c42bfae876a676780a, type: 3}
   surroundings:
   - {x: 102, y: 42}

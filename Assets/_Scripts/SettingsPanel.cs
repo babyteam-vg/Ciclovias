@@ -11,6 +11,8 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
     public GameObject panelSettingsUI;
 
+    private float maxValue;
+
     public event Action SettingsClosed;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -26,9 +28,11 @@ public class SettingsPanel : MonoBehaviour
 
     private void Start()
     {
+        maxValue = sfxSlider.maxValue;
+
         // From PlayerPrefs
-        musicSlider.value = Mathf.Round(PlayerPrefs.GetFloat("MusicVolume", 1f) * 4);
-        sfxSlider.value = Mathf.Round(PlayerPrefs.GetFloat("SFXVolume", 1f) * 4);
+        musicSlider.value = Mathf.Round(PlayerPrefs.GetFloat("MusicVolume", 1f) * maxValue);
+        sfxSlider.value = Mathf.Round(PlayerPrefs.GetFloat("SFXVolume", 1f) * maxValue);
 
         musicSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
         sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
@@ -45,13 +49,13 @@ public class SettingsPanel : MonoBehaviour
     // :::::::::: PRIVATE METHODS ::::::::::
     private void OnMusicVolumeChanged(float value)
     {
-        float volume = value / 4f;
+        float volume = value / maxValue;
         AudioManager.Instance.SetMusicVolume(volume);
     }
 
     private void OnSFXVolumeChanged(float value)
     {
-        float volume = value / 4f;
+        float volume = value / maxValue;
         AudioManager.Instance.SetSFXVolume(volume);
     }
 }

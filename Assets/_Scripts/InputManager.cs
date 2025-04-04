@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2Int> OnMiddleClickHold;
     public event Action<Vector2Int> OnMiddleClickUp;
 
-    public event Action OnHighlightToggleDown;
+    //public event Action OnHighlightToggleDown;
 
     private bool isLeftMouseButtonDown = false;
     private bool isRightMouseButtonDown = false;
@@ -65,7 +65,7 @@ public class InputManager : MonoBehaviour
         if (isAllowed)
         {
             HandleMouseInput();
-            HandleHighlightInput();
+            //HandleHighlightInput();
         }
 
         if (!GameStateManager.Instance.InBrowser) HandleEscapeInput();
@@ -177,11 +177,11 @@ public class InputManager : MonoBehaviour
     }
 
     // ::::: Highlight the Cells
-    private void HandleHighlightInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            OnHighlightToggleDown?.Invoke();
-    }
+    //private void HandleHighlightInput()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //        OnHighlightToggleDown?.Invoke();
+    //}
 
     // ::::: Menu? Allowing
     private void LockInput() { isAllowed = false; }

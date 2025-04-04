@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Church
   m_EditorClassIdentifier: 
   compoundName: Church
+  illustration: {fileID: 21300000, guid: 3ce3fd278fe77e1438ecc0f3bce5fdce, type: 3}
   surroundings:
   - {x: 115, y: 28}

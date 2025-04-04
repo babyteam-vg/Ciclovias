@@ -19,7 +19,7 @@ public class Compound : MonoBehaviour
     public Vector3 offset = new Vector3(0, 2, 0);
 
     private Button givingTaskButton;
-    private Image full, portrait;
+    private Image portrait, full, border;
     private Task givingTask;
 
     // :::::::::: MONO METHODS ::::::::::
@@ -47,8 +47,9 @@ public class Compound : MonoBehaviour
         givingTaskButton = givingTaskUI.GetComponentInChildren<Button>();
         givingTaskButton.onClick.AddListener(AcceptTaskFromButton);
 
-        full = givingTaskButton.GetComponentInChildren<Image>(true);
-        //portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
+        portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[1];
+        full = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
+        border = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
     }
 
     private void Update()
@@ -62,7 +63,7 @@ public class Compound : MonoBehaviour
 
         if (IsGivingTask())
         {
-            //portrait.sprite = givingTask.info.character.portrait;
+            portrait.sprite = givingTask.info.character.portrait;
 
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
@@ -72,7 +73,8 @@ public class Compound : MonoBehaviour
             givingTaskUI.transform.position = newTaskPos;
 
             bool isOutOfBounds = newTaskPos.x <= minX || newTaskPos.x >= maxX || newTaskPos.y <= minY || newTaskPos.y >= maxY;
-            givingTaskButton.interactable = !isOutOfBounds; // Deactivate if Out of Bounds
+            givingTaskButton.gameObject.SetActive(!isOutOfBounds); // Deactivate if Out of Bounds
+            border.gameObject.SetActive(isOutOfBounds);
         }
     }
 

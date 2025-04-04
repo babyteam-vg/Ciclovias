@@ -15,9 +15,8 @@ public class SplineRenderer : MonoBehaviour
 
     private RendererUtility rendererUtility;
 
-    [Header("Materials")]
-    [SerializeField] private Material normalMaterial;
-    [SerializeField] private Material sealedMaterial;
+    [Header("Material")]
+    [SerializeField] private Material splineMaterial;
 
     private float laneWidth = 0.4f;
     private float laneHeight = 0.05f;
@@ -33,17 +32,13 @@ public class SplineRenderer : MonoBehaviour
     {
         taskManager.ActiveTaskScoresUpdated += UpdateActiveSplines;
         taskManager.TaskSealed += ClearActiveSplines;
-
         splineManager.SplineUpdated += UpdateSplineMesh;
-        splineManager.SplineSealed += SealSpline;
     }
     private void OnDisable()
     {
         taskManager.ActiveTaskScoresUpdated -= UpdateActiveSplines;
         taskManager.TaskSealed -= ClearActiveSplines;
-
         splineManager.SplineUpdated -= UpdateSplineMesh;
-        splineManager.SplineSealed -= SealSpline;
 
         foreach (var mesh in splineMeshes.Values)
         {
@@ -60,7 +55,6 @@ public class SplineRenderer : MonoBehaviour
     }
 
     // :::::::::: EVENT METHODS ::::::::::
-    // :::::
     private void UpdateSplineMesh(Spline spline)
     {
         if (!splineMeshes.TryGetValue(spline, out MeshFilter meshFilter))
@@ -70,33 +64,22 @@ public class SplineRenderer : MonoBehaviour
         }
 
         BuildMesh(spline, meshFilter.mesh);
-
-        meshFilter.GetComponent<MeshRenderer>().material =
-            splineManager.IsSplineSealed(spline) ? sealedMaterial : normalMaterial;
-    }
-
-    // :::::
-    private void SealSpline(Spline spline)
-    {
-        if (splineMeshes.TryGetValue(spline, out MeshFilter meshFilter))
-            meshFilter.GetComponent<MeshRenderer>().material = sealedMaterial;
+        meshFilter.GetComponent<MeshRenderer>().material = splineMaterial;
     }
 
     // :::::::::: PRIVATE METHODS ::::::::::
-    // :::::
     private MeshFilter CreateSplineMesh(Spline spline)
     {
         GameObject splineObject = new GameObject("SplineMesh");
         splineObject.transform.SetParent(transform);
 
         MeshFilter meshFilter = splineObject.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = splineObject.AddComponent<MeshRenderer>();
+        splineObject.AddComponent<MeshRenderer>();
 
         meshFilter.mesh = new Mesh();
         return meshFilter;
     }
 
-    // :::::
     private void BuildMesh(Spline spline, Mesh mesh)
     {
         mesh.Clear();
@@ -116,20 +99,17 @@ public class SplineRenderer : MonoBehaviour
 
             float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) - laneHeight / 2;
 
-            // Upper Vertex
             Vector3 topLeft = position + normal * (laneWidth * 0.5f) + Vector3.up * (elevation + laneHeight);
             Vector3 topRight = position - normal * (laneWidth * 0.5f) + Vector3.up * (elevation + laneHeight);
-
-            // Bottom Vertex
             Vector3 bottomLeft = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
             Vector3 bottomRight = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
 
             int baseIndex = vertices.Count;
 
-            vertices.Add(topLeft);    // 0
-            vertices.Add(topRight);   // 1
-            vertices.Add(bottomLeft); // 2
-            vertices.Add(bottomRight);// 3
+            vertices.Add(topLeft);
+            vertices.Add(topRight);
+            vertices.Add(bottomLeft);
+            vertices.Add(bottomRight);
 
             float uvY = t * spline.GetLength();
             uvs.Add(new Vector2(0, uvY));
@@ -139,38 +119,30 @@ public class SplineRenderer : MonoBehaviour
 
             if (i > 0)
             {
-                // Upper Face
                 triangles.Add(baseIndex - 4);
                 triangles.Add(baseIndex - 3);
                 triangles.Add(baseIndex + 1);
-
                 triangles.Add(baseIndex - 4);
                 triangles.Add(baseIndex + 1);
                 triangles.Add(baseIndex);
 
-                // Bottom Face
                 triangles.Add(baseIndex - 2);
                 triangles.Add(baseIndex + 2);
                 triangles.Add(baseIndex + 3);
-
                 triangles.Add(baseIndex - 2);
                 triangles.Add(baseIndex + 3);
                 triangles.Add(baseIndex - 1);
 
-                // Left Side
                 triangles.Add(baseIndex - 4);
                 triangles.Add(baseIndex);
                 triangles.Add(baseIndex - 2);
-
                 triangles.Add(baseIndex - 2);
                 triangles.Add(baseIndex);
                 triangles.Add(baseIndex + 2);
 
-                // Right Side
                 triangles.Add(baseIndex - 3);
                 triangles.Add(baseIndex - 1);
                 triangles.Add(baseIndex + 1);
-
                 triangles.Add(baseIndex - 1);
                 triangles.Add(baseIndex + 3);
                 triangles.Add(baseIndex + 1);
@@ -180,12 +152,10 @@ public class SplineRenderer : MonoBehaviour
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
-
         mesh.RecalculateNormals();
     }
 
     // :::::::::: ACTIVE SPLINES METHODS ::::::::::
-    // ::::: 
     private void UpdateActiveSplines(List<Vector2Int> path)
     {
         activeSplines.Clear();
@@ -194,13 +164,11 @@ public class SplineRenderer : MonoBehaviour
             activeSplines.Add(FindSplineSimplified(position));
     }
 
-    // ::::: 
     private void ClearActiveSplines(Task _)
     {
         activeSplines.Clear();
     }
 
-    // ::::: 
     private Spline FindSplineSimplified(Vector2Int gridPosition)
     {
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);

@@ -10,7 +10,6 @@ public class MainMenuManager : MonoBehaviour
     public Button continueButton;
     public GameObject playerNameUI;
     public TMP_InputField nameInputField;
-    public Button confirmButton;
 
     private string mostRecentSave;
 
@@ -58,6 +57,10 @@ public class MainMenuManager : MonoBehaviour
             LoadingScene.Instance.LoadScene(1);
             GameStateManager.Instance.ResetLoadedGameData();
         }
+    }
+    public void OnNameClose()
+    {
+        playerNameUI.SetActive(false);
     }
 
     // ::::: Settings

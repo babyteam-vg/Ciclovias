@@ -10,13 +10,15 @@ public class TaskWaypoint : MonoBehaviour
     [SerializeField] private CurrentTask currentTask;
     [SerializeField] private TutorialManager tutorialManager;
 
-    [Header("UI References")]
-    [SerializeField] private GameObject from;
-    [SerializeField] private GameObject to;
+    [Header("UI References - From")]
+    public GameObject from;
+
+    [Header("UI References - To")]
+    public GameObject to;
 
     private Vector3 fromOffset, toOffset;
     private Transform fromCompoundPos, toCompundPos;
-    private Image fromImg, toImg;
+    private Image fromFull, fromBorder, fromIll, toFull, toBorder, toIll;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -38,18 +40,23 @@ public class TaskWaypoint : MonoBehaviour
 
     private void Start()
     {
-        fromImg = from.GetComponentInChildren<Image>(true);
-        toImg = to.GetComponentInChildren<Image>(true);
+        fromFull = from.GetComponentsInChildren<Image>(true)[0];
+        fromBorder = from.GetComponentsInChildren<Image>(true)[1];
+        fromIll = from.GetComponentsInChildren<Image>(true)[2];
+
+        toFull = to.GetComponentsInChildren<Image>(true)[0];
+        toBorder = to.GetComponentsInChildren<Image>(true)[1];
+        toIll = to.GetComponentsInChildren<Image>(true)[2];
     }
 
     public void Update()
     {
         // Get Screen Borders
-        float minX = fromImg.GetPixelAdjustedRect().width / 3;
+        float minX = fromFull.GetPixelAdjustedRect().width / 3;
         float maxX = Screen.width - minX;
 
-        float minY = -fromImg.GetPixelAdjustedRect().height / 3;
-        float maxY = Screen.height - fromImg.GetPixelAdjustedRect().height;
+        float minY = -fromFull.GetPixelAdjustedRect().height / 3;
+        float maxY = Screen.height - fromFull.GetPixelAdjustedRect().height;
 
         if (CurrentTask.Instance.ThereIsPinned())
         {
@@ -69,10 +76,12 @@ public class TaskWaypoint : MonoBehaviour
             to.transform.position = toPos;
 
             bool isFromOutOfBounds = fromPos.x <= minX || fromPos.x >= maxX || fromPos.y <= minY || fromPos.y >= maxY;
-            fromImg.gameObject.SetActive(!isFromOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            fromFull.gameObject.SetActive(!isFromOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            fromBorder.gameObject.SetActive(isFromOutOfBounds);
 
             bool isToOutOfBounds = toPos.x <= minX || toPos.x >= maxX || toPos.y <= minY || toPos.y >= maxY;
-            toImg.gameObject.SetActive(!isToOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            toFull.gameObject.SetActive(!isToOutOfBounds); // Deactivate 'Full' if Out of Bounds
+            toBorder.gameObject.SetActive(isToOutOfBounds);
         }
     }
 
@@ -88,6 +97,9 @@ public class TaskWaypoint : MonoBehaviour
 
         from.gameObject.SetActive(true);
         to.gameObject.SetActive(true);
+
+        fromIll.sprite = task.from.info.illustration;
+        toIll.sprite = task.to.info.illustration;
     }
 
     // ::::: When a Tutorial is Completed

@@ -11,7 +11,7 @@ public class MaterialManager : MonoBehaviour
     public static MaterialManager Instance { get; private set; }
     public int MaterialAmount { get; private set; } = 0;
 
-    [Header("UI References")]
+    [Header("Dependencies")]
     [SerializeField] private InputManager inputManager;
 
     [Header("UI References")]

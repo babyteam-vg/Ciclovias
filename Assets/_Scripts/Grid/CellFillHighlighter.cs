@@ -27,9 +27,9 @@ public class CellFillHighlighter : MonoBehaviour
             contentMaterialMap[mesh.content] = mesh.material;
     }
 
-    private void OnEnable() { inputManager.OnHighlightToggleDown += ToggleHighlight; }
+    //private void OnEnable() { inputManager.OnHighlightToggleDown += ToggleHighlight; }
 
-    private void OnDisable() { inputManager.OnHighlightToggleDown -= ToggleHighlight; }
+    //private void OnDisable() { inputManager.OnHighlightToggleDown -= ToggleHighlight; }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     public void ToggleHighlight()

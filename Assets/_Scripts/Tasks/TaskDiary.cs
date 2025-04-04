@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,12 @@ public class TaskDiary : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
+    [SerializeField] private LaneScores laneScores;
     [SerializeField] private TaskManager taskManager;
 
     [Header("UI References")]
     [SerializeField] private Transform contentTransform;
-    [SerializeField] private GameObject acceptedTaskPrefab;
+    [SerializeField] private GameObject taskPrefab;
 
     public List<Task> tasks = new List<Task>();
 
@@ -31,7 +33,6 @@ public class TaskDiary : MonoBehaviour
         laneConstructor.OnLaneBuilt += HandleLaneUpdated;
         laneDestructor.OnLaneDestroyed += HandleLaneUpdated;
     }
-
     private void OnDisable()
     {
         laneConstructor.OnLaneBuilt -= HandleLaneUpdated;
@@ -49,37 +50,46 @@ public class TaskDiary : MonoBehaviour
         { //       Accepted <¬          Active <¬
             if (task.state == TaskState.Accepted || task.state == TaskState.Active)
             {
-                GameObject newItem = Instantiate(acceptedTaskPrefab, contentTransform);
+                GameObject newItem = Instantiate(taskPrefab, contentTransform);
                 newItem.gameObject.SetActive(true);
 
-                // Find Each Element
-                TextMeshProUGUI taskTitle = newItem.transform.Find("Header/Task Title").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI taskFrom = newItem.transform.Find("Body/From/Compound Name").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI taskTo = newItem.transform.Find("Body/To/Compound Name").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI requirementsSafety = newItem.transform.Find("Body/Requirements/Safety/Text (TMP)").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI requirementsCharm = newItem.transform.Find("Body/Requirements/Charm/Text (TMP)").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI requirementsFlow = newItem.transform.Find("Body/Requirements/Flow/Text (TMP)").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI minimumMaterial = newItem.transform.Find("Body/Requirements/Material/Minimum").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI maximumMaterial = newItem.transform.Find("Body/Requirements/Material/Maximum").GetComponent<TextMeshProUGUI>();
-                Button pinButton = newItem.transform.Find("Body/Button").GetComponent<Button>();
+                // Info
+                TextMeshProUGUI taskTitle = newItem.transform.Find("Info/Title TMP").GetComponent<TextMeshProUGUI>();
+                Image portrait = newItem.transform.Find("Info/Portrait").GetComponent<Image>();
+                TextMeshProUGUI characterName = newItem.transform.Find("Info/Character TMP").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI context = newItem.transform.Find("Info/Context TMP").GetComponent<TextMeshProUGUI>();
+
+                // Requirements
+                TextMeshProUGUI requirementsSafety = newItem.transform.Find("Requirements/Safety/Safety TMP").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI requirementsCharm = newItem.transform.Find("Requirements/Charm/Charm TMP").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI requirementsFlow = newItem.transform.Find("Requirements/Flow/Flow TMP").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI minimumMaterial = newItem.transform.Find("Requirements/Material/Minimum TMP").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI maximumMaterial = newItem.transform.Find("Requirements/Material/Maximum TMP").GetComponent<TextMeshProUGUI>();
+
+                Button pinButton = newItem.transform.Find("Pin").GetComponent<Button>();
 
                 // Set the Values
                 taskTitle.text = task.info.title;
-                taskFrom.text = task.from.info.compoundName;
-                taskTo.text = task.to.info.compoundName;
+                portrait.sprite = task.info.character.portrait;
+                characterName.text = task.info.character.characterName;
+                context.text = task.info.context;
 
-                requirementsSafety.text = task.info.minSafety.ToString();
-                requirementsCharm.text = task.info.minCharm.ToString();
-                requirementsFlow.text = task.info.minFlow.ToString() + "%";
-                minimumMaterial.text = "Min. " + task.info.minMaterial.ToString();
-                maximumMaterial.text = "Max. " + task.info.maxMaterial.ToString();
+                requirementsSafety.text = task.info.safetyRequirement
+                    ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minSafety) : "-";
+                requirementsCharm.text = task.info.charmRequirement
+                    ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minCharm) : "-";
+                requirementsFlow.text = task.info.flowRequirement
+                    ? laneScores.ConvertToUI(ScoreType.RequirementPercentage, task.info.minFlow) : "-";
+                minimumMaterial.text = task.info.minMaterialRequirement
+                    ? laneScores.ConvertToUI(ScoreType.MinimumMaterial, task.info.minMaterial) : "-";
+                maximumMaterial.text = task.info.maxMaterialRequirement
+                    ? laneScores.ConvertToUI(ScoreType.MaximumMaterial, task.info.maxMaterial) : "-";
 
                 pinButton.onClick.AddListener(() => {
                     CurrentTask.Instance.PinTask(task, true);
+                    UpdatePinButtons();
                 });
-
-                //taskCharacter.text = task.info.character.characterName;
-                //taskDialog.text = task.info.dialog;
+                UpdatePinButton(pinButton, task);
             }
         }
     }
@@ -92,7 +102,24 @@ public class TaskDiary : MonoBehaviour
         taskManager.TaskInProgress(newNode);
     }
 
-    // :::::::::: STORAGE ::::::::::
+    // ::::: Pin Tasks in the Diary
+    private void UpdatePinButton(Button pinButton, Task task)
+    {
+        pinButton.enabled = CurrentTask.Instance.PinnedTask != task;
+    }
+    private void UpdatePinButtons()
+    {
+        foreach (Transform child in contentTransform)
+        {
+            Button pinButton = child.Find("Pin").GetComponent<Button>();
+            Task task = tasks.Find(t => t.info.title == child.Find("Info/Title TMP").GetComponent<TextMeshProUGUI>().text);
+
+            if (task != null)
+                UpdatePinButton(pinButton, task);
+        }
+    }
+
+    // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Tasks -> TasksData
     public List<TaskData> SaveTasks()
     {

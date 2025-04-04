@@ -42,7 +42,7 @@ MonoBehaviour:
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
-  materialReward: 20
+  materialReward: 40
   unlockedTasks:
   - {x: 0, y: 3}
   rewardDialogs:
@@ -50,7 +50,7 @@ MonoBehaviour:
     Gio's pizzas are my weakness.
   - It's clear you have what it takes to elevate this city into the cycling paradise
     I dream of. But we can't do it alone.
-  - There will be more people and institutions with needs that a good bike path can
+  - There will be more people and institutions with needs that a good bike lane can
     meet. Please help them, I'll give you the resources.
   - Now if you'll excuse me, I have a pizza to finish!
   posts:
