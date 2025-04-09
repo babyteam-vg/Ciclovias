@@ -115,6 +115,29 @@ public class IsometricCameraController : MonoBehaviour
         mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, currentZoom, zoomSmoothness * Time.deltaTime);
     }
 
+    // ::::: Cinematic Camera Movement
+    public IEnumerator MoveCamera(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
+    {
+        LockCamera();
+
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
+        float startZoom = currentZoom;
+
+        for (float elapsedTime = 0f; elapsedTime < duration; elapsedTime += Time.deltaTime)
+        {
+            float t = elapsedTime / duration;
+
+            if (position.HasValue) transform.position = Vector3.Lerp(startPosition, position.Value, t);
+            if (rotation.HasValue) transform.rotation = Quaternion.Slerp(startRotation, rotation.Value, t);
+            if (zoom.HasValue) SetZoom(Mathf.Lerp(startZoom, zoom.Value, t));
+
+            yield return null;
+        }
+
+        UnlockCamera();
+    }
+
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Pan
     private void CameraPan()
@@ -197,29 +220,6 @@ public class IsometricCameraController : MonoBehaviour
 
         transform.rotation = endRotation;
         isRotating = false;
-    }
-
-    // ::::: Cinematic Camera Movement
-    public IEnumerator MoveCamera(float duration, Vector3? position = null, Quaternion? rotation = null, float? zoom = null)
-    {
-        LockCamera();
-
-        Vector3 startPosition = transform.position;
-        Quaternion startRotation = transform.rotation;
-        float startZoom = currentZoom;
-
-        for (float elapsedTime = 0f;  elapsedTime < duration; elapsedTime += Time.deltaTime)
-        {
-            float t = elapsedTime / duration;
-
-            if (position.HasValue) transform.position = Vector3.Lerp(startPosition, position.Value, t);
-            if (rotation.HasValue) transform.rotation = Quaternion.Slerp(startRotation, rotation.Value, t);
-            if (zoom.HasValue) SetZoom(Mathf.Lerp(startZoom, zoom.Value, t));
-
-            yield return null;
-        }
-
-        UnlockCamera();
     }
 
     // :::::::::: EVENT METHODS ::::::::::

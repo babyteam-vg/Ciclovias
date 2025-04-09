@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 public class CellBorderHighlighter : MonoBehaviour
 {
@@ -14,8 +15,7 @@ public class CellBorderHighlighter : MonoBehaviour
     private RendererUtility rendererUtility;
 
     [Header("Varibles")]
-    [SerializeField] private Material fromMaterial;
-    [SerializeField] private Material toMaterial;
+    [SerializeField] private Material material;
 
     private List<GameObject> highlights = new List<GameObject>();
 
@@ -54,26 +54,35 @@ public class CellBorderHighlighter : MonoBehaviour
         {
             Cell cell = grid.GetCell(pos.x, pos.y);
             if (cell == null || !cell.GetBuildable()) continue;
-            CreateHighlightCorners(new Vector2Int(cell.x, cell.y), fromMaterial);
+            CreateHighlightCorners(new Vector2Int(cell.x, cell.y), material);
         }
 
         foreach (Vector2Int pos in task.to.info.surroundings)
         {
             Cell cell = grid.GetCell(pos.x, pos.y);
             if (cell == null || !cell.GetBuildable()) continue;
-            CreateHighlightCorners(new Vector2Int(cell.x, cell.y), toMaterial);
+            CreateHighlightCorners(new Vector2Int(cell.x, cell.y), material);
         }
+
+        if (task.info.flavorDetails.flavorType == FlavorType.Visit
+            || task.info.flavorDetails.flavorType == FlavorType.Avoid)
+            foreach (Vector2Int pos in task.info.flavorDetails.compound.surroundings)
+            {
+                Cell cell = grid.GetCell(pos.x, pos.y);
+                if (cell == null || !cell.GetBuildable()) continue;
+                CreateHighlightCorners(new Vector2Int(cell.x, cell.y), material, 0.25f);
+            }
     }
 
     private void HighlightTutorialCells(TutorialSection section)
     {
         Cell start = grid.GetCell(section.start.x, section.start.y);
         if (start == null || !start.GetBuildable()) return;
-        CreateHighlightCorners(new Vector2Int(start.x, start.y), fromMaterial);
+        CreateHighlightCorners(new Vector2Int(start.x, start.y), material);
 
         Cell end = grid.GetCell(section.end.x, section.end.y);
         if (end == null || !end.GetBuildable()) return;
-        CreateHighlightCorners(new Vector2Int(end.x, end.y), toMaterial);
+        CreateHighlightCorners(new Vector2Int(end.x, end.y), material);
     }
 
     // ::::: Clear All teh Highlights
@@ -86,12 +95,12 @@ public class CellBorderHighlighter : MonoBehaviour
     }
 
     // ::::: 
-    private void CreateHighlightCorners(Vector2Int gridPosition, Material material)
+    private void CreateHighlightCorners(Vector2Int gridPosition, Material material, float thickness = 0.75f, float cornerSize = 0.25f)
     {
         Vector3 worldPosition = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
         float cellSize = grid.GetCellSize();
-        float cornerSize = cellSize * 0.25f;
-        float thickness = cornerSize * 0.5f;
+        cornerSize *= cellSize;
+        thickness *= cornerSize;
 
         float elevation = rendererUtility.GetMaxElevationAtPoint(worldPosition, plane) + 0.0001f;
         Vector3[] cornerOffsets = new Vector3[]

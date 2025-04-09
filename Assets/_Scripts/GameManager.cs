@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     private bool pendingSave = false;
 
     public event Action<int> MapStateAdvanced;
-    public event Action<int> SmokeStateReduced;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -67,14 +66,6 @@ public class GameManager : MonoBehaviour
         MapStateAdvanced?.Invoke(MapState); // !
     }
 
-    // ::::: Smoke
-    public void ReduceSmokeState()
-    {
-        SmokeState++;
-        Debug.Log($"SmokeState Reduced to {SmokeState}");
-        SmokeStateReduced?.Invoke(SmokeState); // !
-    }
-
     // :::::::::: PRIVATE METHODS ::::::::::
     private IEnumerator DelayedInitialize()
     {
@@ -91,15 +82,11 @@ public class GameManager : MonoBehaviour
         if (MapState == -1)
         {
             AdvanceMapState();
-            ReduceSmokeState();
             MaterialManager.Instance.AddMaterial(100);
         }
 
         if (CheckNewStateReached())
-        {
             AdvanceMapState();
-            //ReduceSmokeState();
-        }
     }
 
     // ::::: Advancing Map State Conditions

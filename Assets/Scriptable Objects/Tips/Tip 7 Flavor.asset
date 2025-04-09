@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Tip 7 Flavor
   m_EditorClassIdentifier: 
   id: 7
-  tipText: 
+  tipText: Sometimes, a <color=#F4C542>flavor</color> will appear under the pinned
+    task. Complete it for extra rewards!
