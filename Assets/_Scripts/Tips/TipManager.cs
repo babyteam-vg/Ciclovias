@@ -9,6 +9,9 @@ public class TipManager : MonoBehaviour
     public static TipManager Instance { get; private set; }
 
     [Header("Dependencies")]
+    [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private TaskManager taskManager;
+    [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private LaneDestructor laneDestructor;
     [SerializeField] private MaterialManager materialManager;
 
@@ -92,15 +95,28 @@ public class TipManager : MonoBehaviour
                     materialManager.NotEnoughMaterial += () => AddTip(tip);
                     break;
 
-                case 2: // OnLevelComplete
-                    //LevelManager.OnLevelComplete += () => AddTip(tip);
+                case 2: // Zebra
+                    laneConstructor.BuiltOnZebra += () => AddTip(tip);
                     break;
 
-                case 3: // OnFirstDeath
-                    //Player.OnDeath += () =>
-                    //{
-                    //    if (!tip.seen) AddTip(tip);
-                    //};
+                case 3: // Camera
+                    tutorialManager.TutorialCompleted += () => AddTip(tip);
+                    break;
+
+                case 4: // Seal
+                    taskManager.TaskCompleted += () => AddTip(tip);
+                    break;
+
+                case 5: // Dangerous
+                    laneConstructor.BuiltOnDangerous += () => AddTip(tip);
+                    break;
+
+                case 6: // Diary
+                    taskManager.TaskDiaryTip += () => AddTip(tip);
+                    break;
+
+                case 7: // Flavor
+                    taskManager.FirstTaskFlavor += () => AddTip(tip);
                     break;
             }
         }
@@ -120,8 +136,28 @@ public class TipManager : MonoBehaviour
                 materialManager.NotEnoughMaterial -= () => AddTip(tip);
                 break;
 
-            case 3:
-                //Player.OnDeath -= action;
+            case 2: // Zebra
+                laneConstructor.BuiltOnZebra -= () => AddTip(tip);
+                break;
+
+            case 3: // Camera
+                tutorialManager.TutorialCompleted -= () => AddTip(tip);
+                break;
+
+            case 4: // Seal
+                taskManager.TaskCompleted -= () => AddTip(tip);
+                break;
+
+            case 5: // Dangerous
+                laneConstructor.BuiltOnDangerous -= () => AddTip(tip);
+                break;
+
+            case 6: // Diary
+                taskManager.TaskDiaryTip -= () => AddTip(tip);
+                break;
+
+            case 7: // Flavor
+                taskManager.FirstTaskFlavor -= () => AddTip(tip);
                 break;
         }
 

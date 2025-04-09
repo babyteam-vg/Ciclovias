@@ -84,8 +84,8 @@ public class TutorialDialogManager : DialogManager
 
         if (currentSection.type == SectionType.Close)
         {
-            tutorialManager.StopTutorial();
             StrictDialogClosed?.Invoke();
+            tutorialManager.StopTutorial();
         }
 
         tutorialDialogUI.SetActive(false);

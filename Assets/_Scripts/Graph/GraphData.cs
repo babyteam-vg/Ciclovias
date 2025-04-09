@@ -10,8 +10,10 @@ public class GraphData
     {
         public Vector2Int position;
         public Vector2 worldPosition;
-        public bool indestructible;
         public List<Vector2Int> neighbors;
+        public bool indestructible;
+        public List<Vector2Int> intersectionEdges;
+        public List<Vector2Int> blockedPositions;
     }
 
     public List<SerializableNode> nodes = new List<SerializableNode>();

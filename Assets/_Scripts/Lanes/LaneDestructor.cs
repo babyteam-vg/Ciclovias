@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class LaneDestructor : MonoBehaviour
@@ -9,7 +10,6 @@ public class LaneDestructor : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Graph graph;
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private LaneConstructor laneConstructor;
     [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private InGameMenuManager inGameMenuManager;
 
@@ -19,7 +19,6 @@ public class LaneDestructor : MonoBehaviour
     private List<Vector2Int> lastNeighbors = new List<Vector2Int>();
     private Coroutine destroySFXCoroutine;
 
-    public event Action<Vector2Int> OnDestroyStarted;
     public event Action<Vector2Int> OnLaneDestroyed;
     public event Action<Vector2Int> OnDestroyFinished;
 
@@ -56,77 +55,89 @@ public class LaneDestructor : MonoBehaviour
     private void StartDestroying(Vector2Int gridPosition)
     {
         Node node = graph.GetNode(gridPosition);
+        if (node == null)
+            return;
 
-        if (node != null)
+        if (isAllowed               // Not in Menu
+        && !node.indestructible)    // Not Part of a Sealed Task
         {
-            if (isAllowed                   // Not in Menu
-            && !node.indestructible)    // Not Part of a Sealed Task
-            {
-                isDestroying = true;
-                OnDestroyStarted?.Invoke(gridPosition);
+            isDestroying = true;
+            lastNeighbors = graph.GetNeighborsPos(gridPosition);
 
-                lastNeighbors = graph.GetNeighborsPos(gridPosition);
-                DestroyNodeAndEdges(gridPosition);
-                lastCellPosition = gridPosition;
-            }
-            else if (node.indestructible)
-                OnTryDestroySealed?.Invoke();
+            List<Vector2Int> neighbors = graph.GetNeighborsPos(gridPosition);
+            foreach (Vector2Int neighbor in neighbors)
+                DestroyWaerfall(node, gridPosition, neighbors);
         }
+        else if (node.indestructible)
+            OnTryDestroySealed?.Invoke();
     }
 
     // ::::: Mouse Input: Hold
     private void ContinueDestroying(Vector2Int gridPosition)
     {
         Node node = graph.GetNode(gridPosition);
+        if (node == null)
+            return;
 
-        if (node != null) // Node's Existence
+        if (node.indestructible)
         {
-            if (!node.indestructible && node.neighbors.Count < 2)
-            {
-                if (isAllowed && isDestroying && lastCellPosition.HasValue) // Flags
-                {
-                    if (lastCellPosition.Value == gridPosition) return; // Prevent Duplicates
+            OnTryDestroySealed?.Invoke();
+            return;
+        }
 
-                    if (grid.IsAdjacent(lastCellPosition.Value, gridPosition) && IsInCriticalArea(gridPosition)) // Adjacency
-                    {
-                        if (lastNeighbors.Contains(gridPosition)) // Continued Destruction w/o Jumps
-                        {
-                            lastNeighbors = graph.GetNeighborsPos(gridPosition);
-                            DestroyNodeAndEdges(gridPosition);
-                            lastCellPosition = gridPosition;
-                        }
-                    }
-                }
-            }
-            else if (node.indestructible)
-                OnTryDestroySealed?.Invoke();
+        if (isAllowed && isDestroying && lastCellPosition.HasValue
+            && grid.IsAdjacent(lastCellPosition.Value, gridPosition)
+            && IsInCriticalArea(gridPosition)) // Flags
+        {
+            if (lastCellPosition.Value == gridPosition)
+                return; // Prevent Duplicates
+
+            if (!lastNeighbors.Contains(gridPosition)) // Continued Destruction w/o Jumps
+                return;
+
+            List<Vector2Int> neighbors = graph.GetNeighborsPos(gridPosition);
+            DestroyWaerfall(node, gridPosition, neighbors);
         }
     }
 
     // ::::: Mouse Input: Up
     private void StopDestroying(Vector2Int gridPosition)
     {
-        graph.CheckAndRemoveNode(gridPosition);
         isDestroying = false;
-        lastCellPosition = null;
-        lastNeighbors = null;
         AudioManager.Instance.ResetSFXPitch();
         OnDestroyFinished?.Invoke(gridPosition); // !
+        lastCellPosition = null;
     }
 
     // ::::: Destruction Waterfall
-    private void DestroyNodeAndEdges(Vector2Int gridPosition)
+    private void DestroyWaerfall(Node node, Vector2Int gridPosition, List<Vector2Int> neighbors)
     {
-        Node node = graph.GetNode(gridPosition);
-        if (node != null)
+        // Check Intersection
+        foreach (Vector2Int neighbor in neighbors)
         {
-            int edgeCount = node.neighbors.Count;
-            MaterialManager.Instance.AddMaterial(edgeCount);
-            graph.RemoveNode(gridPosition);
-            if (destroySFXCoroutine == null)
-                destroySFXCoroutine = StartCoroutine(PlayDstroySFX());
-            OnLaneDestroyed?.Invoke(gridPosition);
+            List<Vector2Int> neighbors2 = graph.GetNeighborsPos(neighbor);
+            foreach (Vector2Int neighbor2 in neighbors2)
+            {
+                Node node2 = graph.GetNode(neighbor2);
+                if (node2 != null)
+                {
+                    if (node2.intersectionEdges.Contains(gridPosition))
+                        graph.RemoveIntersection(node, gridPosition, node2, neighbor2);
+                }
+            }
         }
+
+        lastNeighbors = graph.GetNeighborsPos(gridPosition);
+
+        foreach (Vector2Int neighbor in neighbors)
+            graph.RemoveEdge(gridPosition, neighbor);
+
+        MaterialManager.Instance.AddMaterial(1);
+        if (destroySFXCoroutine == null)
+            destroySFXCoroutine = StartCoroutine(PlayDstroySFX());
+
+        OnLaneDestroyed?.Invoke(gridPosition);
+        lastCellPosition = gridPosition;
     }
 
     // ::::: Critical Areas

@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
-using UnityEngine.Splines;
 
 public class IsometricCameraController : MonoBehaviour
 {
@@ -34,12 +31,10 @@ public class IsometricCameraController : MonoBehaviour
     private Vector2 edgePanVelocity;
     private Vector2 panHorLimit, panVertLimit;
     private Vector2 screenSize;
-    private Coroutine cameraMovement;
 
     const float ZOOM_PAN_RATIO = 2f;
     const float ZOOM_OFFSET = 4f;
     const float EDGE_THRESHOLD = 5f;
-    const float DURATION = 3f;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()

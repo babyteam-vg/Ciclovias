@@ -27,27 +27,31 @@ MonoBehaviour:
     - In short, a charming<sprite=0> route includes a percentage of charming areas
       visited, such as parks or rivers. Give it a try...
     checkRequirements: 0
-    start: {x: 101, y: 11}
+    start: {x: 98, y: 11}
     end: {x: 95, y: 21}
     dontAddToPath: 1
+    auxStart: {x: 98, y: 11}
+    auxEnd: {x: 95, y: 21}
     tutorialMap:
       texture: {fileID: 2800000, guid: a6308db991a29894ab0beb14712d6bde, type: 3}
       coordinates: {x: 1, y: 0}
     keyframe:
-      position: {x: 96, y: 0, z: 15}
+      position: {x: 97, y: 0, z: 15}
       rotation: {x: 0, y: 0.70710677, z: 0, w: -0.70710677}
       zoom: 6
       duration: 2.5
-  - type: 1
+  - type: 0
     dialogs:
     - Charm, as well as safety, are percentage criteria...
     - That means the shortest the bike line, the most influence crossing a park will
       have on your charm.
     - Shorten the bike lane to increase the charm percentage...
     checkRequirements: 1
-    start: {x: 101, y: 11}
-    end: {x: 96, y: 11}
+    start: {x: 98, y: 11}
+    end: {x: 95, y: 21}
     dontAddToPath: 0
+    auxStart: {x: 95, y: 11}
+    auxEnd: {x: 95, y: 21}
     tutorialMap:
       texture: {fileID: 2800000, guid: a6308db991a29894ab0beb14712d6bde, type: 3}
       coordinates: {x: 1, y: 0}
@@ -67,6 +71,8 @@ MonoBehaviour:
     start: {x: 0, y: 0}
     end: {x: 0, y: 0}
     dontAddToPath: 0
+    auxStart: {x: 0, y: 0}
+    auxEnd: {x: 0, y: 0}
     tutorialMap:
       texture: {fileID: 0}
       coordinates: {x: 0, y: 0}
@@ -78,7 +84,7 @@ MonoBehaviour:
   safetyRequirement: 0
   minSafety: 0
   charmRequirement: 1
-  minCharm: 0.75
+  minCharm: 0.7
   flowRequirement: 0
   minFlow: 0
   minMaterialRequirement: 0

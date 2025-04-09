@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Tip 3 Camera
   m_EditorClassIdentifier: 
   id: 3
-  tipText: You can pan the camera with <color=#F4C542>WASD</color>, rotate it with
-    <color=#F4C542>QE</color> and zoom-in and out with the <color=#F4C542>mouse-wheel</color>.
+  tipText: Use <color=#F4C542>WASD</color>to pan the camera, <color=#F4C542>QE</color>
+    ro rotate and the <color=#F4C542>mouse-wheel</color> to zoom-in and out.

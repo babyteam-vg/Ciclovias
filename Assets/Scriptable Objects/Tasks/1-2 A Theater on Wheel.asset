@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
+  m_Name: 1-2 A Theater on Wheel
+  m_EditorClassIdentifier: 
+  id: {x: 1, y: 2}
+  title: A Theater on Wheel
+  character: {fileID: 11400000, guid: 45148329aabe15343ae52ce62db32040, type: 2}
+  dialogs:
+  - A pleasure to meet the newest member of the city's public officials. As Culture
+    Minister, I manage the Theater.
+  - There will be a play soon, sponsored by the Municipality, to promote bike transportation.
+  - 'Therefore, I have a task for you: a charming, but safe, bike lane from the Theater
+    to the Bike Store.'
+  - What could be better than buying a bike after a play, don't you agree?
+  - What do you mean you don't?
+  context: Build an attractive, but safe, bike lane from the Theater to the Bike
+    Store. Visit the river and give the Minister a surprise!
+  safetyRequirement: 1
+  minSafety: 0.5
+  charmRequirement: 1
+  minCharm: 0.4
+  flowRequirement: 0
+  minFlow: 0
+  minMaterialRequirement: 0
+  minMaterial: 0
+  maxMaterialRequirement: 0
+  maxMaterial: 0
+  flavorDetails:
+    flavorType: 1
+    compound: {fileID: 11400000, guid: 69e2e64c085136b4e8310b009030dc0f, type: 2}
+    toCross: 0
+    numberToCross: 0
+  extraDialog: Wow, never thought a bike lane would come with a river view. Not complaining
+    though!
+  materialReward: 0
+  unlockedTasks:
+  - {x: 1, y: 3}
+  rewardDialogs:
+  - Thank you so much for making the time to help me with this. I hope people appreciate
+    it.
+  - We're colleagues in a way, aren't we? Our methods may differ, but we both aim
+    to promote culture and good values to the city!
+  posts: []

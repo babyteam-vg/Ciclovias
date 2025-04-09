@@ -41,12 +41,16 @@ MonoBehaviour:
     compound: {fileID: 0}
     toCross: 0
     numberToCross: 0
+  extraDialog: How clever of you to use the existing bike lanes to save resources.
+    My employees could learn a thing or two from you.
+  extraDialogIndex: 1
   materialReward: 80
   unlockedTasks:
   - {x: 1, y: 1}
+  - {x: 1, y: 2}
   rewardDialogs:
-  - Oh, you're a real treasure, my love. The mayor was right about you; you know
-    how to meet the needs of the elderly!
+  - You're a real treasure, my love. The mayor was right about you; you know how
+    to meet the needs of the elderly!
   - Now that we have a steady stream of ingredients, we'll be hands-down the best
     pizzeria in town. Thank you very much, sweetheart.
   - Next time you stop by the pizzeria, come in for something to eat, it's on me!

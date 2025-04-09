@@ -25,6 +25,8 @@ public class TaskInfo : ScriptableObject
 
     [Header("Flavor")]
     public Flavor flavorDetails;
+    [TextArea(2, 4)] public string extraDialog;
+    public int extraDialogIndex;
 
     [Header("Rewards")]
     public int materialReward;
@@ -38,8 +40,7 @@ public class Flavor
 {
     public FlavorType flavorType;
     public CompoundInfo compound;
-    public CellContent toCross;
-    public int numberToCross;
+    public CellContent dontCross;
 }
 
 public enum FlavorType
@@ -47,7 +48,7 @@ public enum FlavorType
     None,
     Visit,      // Visit a Compound/Park
     Avoid,      // Avoid a Compound/Park
-    Cross,      // Cross an Amount of (Type of) Cells
+    DontCross,  // Don't Cross a Type of Cell
     UseLane,    // Use a Sealed Lane
     AvoidLane,  // Don't Use a Sealed Lane
     Perfect,    // Don't Lower the Safety/Charm/Flow

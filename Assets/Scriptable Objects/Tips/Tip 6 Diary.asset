@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864e6561fd6c0f646aa6b2fadb274f3f, type: 3}
   m_Name: Tip 6 Diary
   m_EditorClassIdentifier: 
-  id: 0
-  tipText: Use the diary<sprite=8> to see all your tasks. You can also pin<sprite=13>
-    the task you want to follow.
+  id: 6
+  tipText: Use the diary<sprite=8> to see all your tasks (top-left corner). You can
+    also pin<sprite=13> the task you want to follow.

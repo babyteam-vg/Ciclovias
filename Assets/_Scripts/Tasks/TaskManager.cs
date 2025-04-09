@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TaskManager : MonoBehaviour
@@ -19,13 +20,16 @@ public class TaskManager : MonoBehaviour
     public event Action<Task> TaskUnlocked;
     public event Action<Task, bool> TaskAccepted;
     public event Action<Task, bool> TaskActivated;
-    public event Action<Task> TaskCompleted;
+    public event Action TaskCompleted;
     public event Action<Task> TaskSealed;
 
     public event Action<List<Vector2Int>> ActiveTaskScoresUpdated;
 
     public event Action<Task> TaskLaneConnected;
     public event Action TaskLaneDisconnected;
+
+    public event Action TaskDiaryTip;
+    public event Action FirstTaskFlavor;
 
     // :::::::::: MONO METHODS ::::::::::
     private void Awake()
@@ -63,8 +67,8 @@ public class TaskManager : MonoBehaviour
     // ::::: Lane Relative to Task
     public bool TaskLaneStarted(Task task)
     {
-        return graph.ContainsAny(task.from.info.surroundings)
-            || graph.ContainsAny(task.to.info.surroundings);
+        return graph.AreBuilt(task.from.info.surroundings)
+            || graph.AreBuilt(task.to.info.surroundings);
     }
 
     // ::::: Lane Building Feedback
@@ -133,6 +137,9 @@ public class TaskManager : MonoBehaviour
 
             case TaskState.Accepted:
                 TaskAccepted?.Invoke(task, false);
+                // Tips
+                if (task.info.id == new Vector2Int(0, 3)) FirstTaskFlavor?.Invoke();
+                if (task.info.id == new Vector2Int(1, 1)) TaskDiaryTip?.Invoke();
                 break;
 
             case TaskState.Active:
@@ -142,7 +149,7 @@ public class TaskManager : MonoBehaviour
             case TaskState.Completed:
                 AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[1]);
                 confirmButton.SetActive(true);
-                TaskCompleted?.Invoke(task);
+                TaskCompleted?.Invoke();
                 break;
 
             case TaskState.Sealed:
@@ -167,7 +174,7 @@ public class TaskManager : MonoBehaviour
             int number = taskId.y;
 
             Task unlockedTask = TaskDiary.Instance.tasks.FirstOrDefault(t => t.info.id.x == map && t.info.id.y == number);
-            if (unlockedTask != null && unlockedTask.state == 0)
+            if (unlockedTask != null && unlockedTask.state == TaskState.Locked)
             {
                 ChangeTaskState(TaskState.Unlocked, unlockedTask); // Unlock
                 Compound compound = unlockedTask.from;
@@ -190,20 +197,8 @@ public class TaskManager : MonoBehaviour
                 List<Vector2Int> avoidSurroundings = task.info.flavorDetails.compound.surroundings;
                 return !avoidSurroundings.Intersect(path).Any();
 
-            case FlavorType.Cross:
-                if (path.Count > 1)
-                {
-                    int index = path.Count - 1;
-
-                    Cell lastCell = grid.GetCell(path[index - 1].x, path[index - 1].y);
-                    Cell currentCell = grid.GetCell(path[index].x, path[index].y);
-
-                    if (currentCell.GetContent() == task.info.flavorDetails.toCross
-                        && lastCell.GetContent() != currentCell.GetContent())
-                        task.currentToCross++;
-                }
-                if (task.currentToCross >= task.info.flavorDetails.numberToCross) return true;
-                break;
+            case FlavorType.DontCross:
+                return path.Where(p => grid.GetCellContent(p.x, p.y).Equals(task.info.flavorDetails.dontCross)).Count() == 0;
 
             case FlavorType.UseLane:
                 return graph.ContainsIndestructibleNode(path);

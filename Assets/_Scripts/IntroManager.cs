@@ -58,7 +58,7 @@ public class IntroManager : MonoBehaviour
         StartCoroutine(LoadingScene.Instance.FadeCanvasGroup(playerCanvasGroup, 1f, 0f, 2f));
         yield return StartCoroutine(LoadingScene.Instance.FadeCanvasGroup(cardCanvasGroup, 0f, 1f, 2f));
         yield return new WaitForSeconds(5f);
-        yield return StartCoroutine(LoadingScene.Instance.FadeCanvasGroup(nextCanvasGroup, 0f, 1f, 1f));
+        yield return StartCoroutine(LoadingScene.Instance.FadeCanvasGroup(nextCanvasGroup, 0f, 1f, 0.5f));
         isAllowed = true;
     }
 }

@@ -1,49 +1,33 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Graph : MonoBehaviour
 {
-    public Dictionary<Vector2Int, Node> nodes;
-    private HashSet<Vector2Int> nodePositions;
+    public Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
+    private HashSet<Vector2Int> nodePositions = new HashSet<Vector2Int>();
 
     public event Action<Vector2Int> NodeAdded;
     public event Action<Vector2Int, Vector2Int> EdgeAdded;
+    public event Action<Vector2Int, Vector2Int> IntersectionAdded;
+
     public event Action<Vector2Int> NodeRemoved;
     public event Action<Vector2Int, Vector2Int> EdgeRemoved;
+    public event Action<Vector2Int, Vector2Int> IntersectionRemoved;
+
     public event Action<Vector2Int> LonelyNodeRemoved;
 
-    public Graph()
-    {
-        nodes = new Dictionary<Vector2Int, Node>();
-        nodePositions = new HashSet<Vector2Int>();
-    }
-
     // :::::::::: GETTERS METHODS ::::::::::
+    // ::::: Get All Nodes
+    public HashSet<Node> GetAllNodes() { return new HashSet<Node>(nodes.Values); }
+    public HashSet<Vector2Int> GetAllNodesPosition() { return nodePositions; }
+
     // ::::: Get a Node
     public Node GetNode(Vector2Int position)
     {
         nodes.TryGetValue(position, out Node node);
         return node;
     }
-
-    // ::::: Get All Edges
-    public List<(Vector2Int, Vector2Int)> GetAllEdges()
-    {
-        List<(Vector2Int, Vector2Int)> edges = new List<(Vector2Int, Vector2Int)>();
-
-        foreach (var node in nodes.Values)
-            foreach (var neighbor in node.neighbors)
-                if (node.position.x < neighbor.position.x ||
-                    (node.position.x == neighbor.position.x && node.position.y < neighbor.position.y))
-                    edges.Add((node.position, neighbor.position));
-
-        return edges;
-    }
-
 
     // ::::: Get Node's Neighbors
     public int GetNeighborsCount(Vector2Int position)
@@ -68,17 +52,18 @@ public class Graph : MonoBehaviour
 
     // :::::::::: EXPANSION METHODS ::::::::::
     // ::::: Add a Node
-    public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false)
+    public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false, List<Vector2Int> intersectionEdges = null, List<Vector2Int> blockedPositions = null)
     {
         if (!nodes.ContainsKey(position))
         {
-            nodes[position] = new Node(position, worldPosition, indestructible);
+            intersectionEdges = intersectionEdges == null ? new List<Vector2Int>() : intersectionEdges;
+            blockedPositions = blockedPositions == null ? new List<Vector2Int>() : blockedPositions;
+            nodes[position] = new Node(position, worldPosition, indestructible, intersectionEdges, blockedPositions);
             nodePositions.Add(position);
-            NodeAdded?.Invoke(position);
         }
     }
 
-    // ::::: Remove a Node
+    // ::::: Remove a Node (Never)
     public void RemoveNode(Vector2Int position)
     {
         if (nodes.TryGetValue(position, out Node node))
@@ -88,83 +73,42 @@ public class Graph : MonoBehaviour
 
             nodes.Remove(position);
             nodePositions.Remove(position);
-            NodeRemoved?.Invoke(position);
         }
     }
 
     // ::::: Connect 2 Nodes
     public void AddEdge(Vector2Int positionA, Vector2Int positionB)
     {
-        if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
-        {
-            Node nodeA = nodes[positionA];
-            Node nodeB = nodes[positionB];
-            nodeA.AddNeighbor(nodeB);
-            EdgeAdded?.Invoke(positionA, positionB);
-        }
+        Node nodeA = GetNode(positionA);
+        Node nodeB = GetNode(positionB);
+        nodeA.AddNeighbor(nodeB);
+
+        EdgeAdded?.Invoke(positionA, positionB); // !
     }
 
     // ::::: Disconnect 2 Nodes
     public void RemoveEdge(Vector2Int positionA, Vector2Int positionB)
     {
-        if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
-        {
-            Node nodeA = nodes[positionA];
-            Node nodeB = nodes[positionB];
+        Node nodeA = GetNode(positionA);
+        Node nodeB = GetNode(positionB);
+        nodeA.RemoveNeighbor(nodeB);
+        nodeB.RemoveNeighbor(nodeA);
 
-            nodeA.RemoveNeighbor(nodeB);
-            nodeB.RemoveNeighbor(nodeA);
-
-            EdgeRemoved?.Invoke(positionA, positionB);
-
-            if (nodeA.neighbors.Count == 0) // Lonely Node
-            {
-                nodes.Remove(positionA);
-                nodePositions.Remove(positionA);
-                LonelyNodeRemoved?.Invoke(positionA);
-            }
-
-            if (nodeB.neighbors.Count == 0)
-            {
-                nodes.Remove(positionB);
-                nodePositions.Remove(positionB);
-                LonelyNodeRemoved?.Invoke(positionB);
-            }
-        }
+        EdgeRemoved?.Invoke(positionA, positionB);
     }
 
     // :::::::::: PUBLIC METHODS ::::::::::
-    // ::::: Check If 2 Nodes Are Neighbors
-    public bool AreNeighbors(Vector2Int positionA, Vector2Int positionB)
+    // ::::: Check If a Position is Part of a Bike Lane
+    public bool AreBuilt(List<Vector2Int> positions)
     {
-        if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
-            return nodes[positionA].neighbors.Contains(nodes[positionB]);
-
-        return false;
-    }
-
-    // ::::: Get All Nodes
-    public List<Node> GetAllNodes() { return new List<Node>(nodes.Values); }
-    public HashSet<Vector2Int> GetAllNodesPosition() { return nodePositions; }
-
-    // ::::: Is Any of These (x, y) in the Graph?
-    public bool ContainsAny(IEnumerable<Vector2Int> positions)
-    {
-        foreach (var position in positions)
-            if (nodePositions.Contains(position))
+        foreach (Vector2Int position in positions)
+        {
+            int neighbors = GetNeighborsCount(position);
+            if (neighbors > 0)
                 return true;
+        }
 
         return false;
-    }
-
-    // ::::: First Node (Coord) in Group of Cells
-    public Vector2Int? FindNodePosInCells(List<Vector2Int> cells)
-    {
-        foreach (var cell in cells)
-            if (nodePositions.Contains(cell))
-                return cell;
-
-        return null;
     }
 
     // ::::: 
@@ -192,16 +136,67 @@ public class Graph : MonoBehaviour
         return null;
     }
 
-    // ::::: Remove a Lonely Node
-    public void CheckAndRemoveNode(Vector2Int position)
+    // ::::: Blocked Positions Management (Intersections)
+    public void NewIntersection(Vector2Int edgePos, Vector2Int intersectionPos, Node inputNode, Vector2Int inputPos)
     {
-        Node node = GetNode(position);
+        Node edgeNode = GetNode(edgePos);
 
-        if (node != null && node.neighbors.Count == 0)
+        // Input Node (First Edge of the Intersection)
+        AddIntersectionsAndBlockPositions(edgePos, intersectionPos, inputNode, inputPos);
+
+        // Edge Node (Second Edge of the Intersection)
+        AddIntersectionsAndBlockPositions(inputPos, intersectionPos, edgeNode, edgePos);
+
+        IntersectionAdded?.Invoke(inputPos, edgePos); // !
+    }
+    private void AddIntersectionsAndBlockPositions(Vector2Int edgePos, Vector2Int intersectionPos, Node inputNode, Vector2Int inputPos)
+    {
+        // Intersection Edges
+        if (!inputNode.intersectionEdges.Contains(edgePos))
+            inputNode.intersectionEdges.Add(edgePos);
+
+        // Blocked Positions
+        List<Vector2Int> blocked = GetNonCollinearBlockedPositions(edgePos, intersectionPos, inputPos);
+        inputNode.blockedPositions = blocked;
+
+        foreach (Vector2Int blockedPosition in inputNode.blockedPositions)
         {
-            RemoveNode(position);
-            LonelyNodeRemoved?.Invoke(position);
+            Node blockedNode = GetNode(blockedPosition);
+            if (blockedNode != null)
+                blockedNode.blockedPositions.Add(inputNode.position); // Reciprocity (Input)
         }
+    }
+
+    public void RemoveIntersection(Node inputNode, Vector2Int inputPos, Node edgeNode, Vector2Int edgePos)
+    {
+        RemoveIntersectionsAndBlockedPositions(inputNode, inputPos, edgePos);
+        RemoveIntersectionsAndBlockedPositions(edgeNode, edgePos, inputPos);
+
+        IntersectionRemoved?.Invoke(inputPos, edgePos); // !
+    }
+    private void RemoveIntersectionsAndBlockedPositions(Node node, Vector2Int inputPos, Vector2Int edgePos)
+    {
+        node.intersectionEdges.Remove(edgePos);
+        if (node.intersectionEdges.Count == 0)
+        {
+            foreach (Vector2Int blockedPosition in node.blockedPositions)
+            {
+                Node blockedNode = GetNode(blockedPosition);
+                if (blockedNode != null)
+                    blockedNode.blockedPositions.Remove(node.position);
+            }
+
+            node.blockedPositions.Clear();
+        }
+    }
+
+    // ::::: Check If 2 Nodes Are Neighbors
+    public bool AreNeighbors(Vector2Int positionA, Vector2Int positionB)
+    {
+        if (nodes.ContainsKey(positionA) && nodes.ContainsKey(positionB))
+            return nodes[positionA].neighbors.Contains(nodes[positionB]);
+
+        return false;
     }
 
     // ::::: Check If 2 Separated Nodes are Connected
@@ -264,6 +259,33 @@ public class Graph : MonoBehaviour
         return false;
     }
 
+    // ::::: Intersection Management
+    public List<Vector2Int> GetNonCollinearBlockedPositions(Vector2Int edgePos, Vector2Int intersectionPos, Vector2Int inputPos)
+    {
+        List<Vector2Int> blocked = new List<Vector2Int>();
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(0, 1),   // Up
+            new Vector2Int(0, -1),  // Down
+            new Vector2Int(-1, 0),  // Left
+            new Vector2Int(1, 0),   // Right
+            new Vector2Int(1, 1),   // Up-Right
+            new Vector2Int(1, -1),  // Down-Right
+            new Vector2Int(-1, 1),  // Up-Left
+            new Vector2Int(-1, -1)  // Down-Left
+        };
+
+        foreach (Vector2Int dir in directions)
+        {
+            Vector2Int neighbor = inputPos + dir;
+            if (!IsCollinear(intersectionPos, inputPos, neighbor))
+                blocked.Add(neighbor);
+        }
+
+        return blocked;
+    }
+
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Graph -> GraphData
     public GraphData SaveGraph()
@@ -275,8 +297,10 @@ public class Graph : MonoBehaviour
             {
                 position = node.position,
                 worldPosition = node.worldPosition,
+                neighbors = node.neighbors.ConvertAll(neighbor => neighbor.position),
                 indestructible = node.indestructible,
-                neighbors = node.neighbors.ConvertAll(neighbor => neighbor.position)
+                intersectionEdges = node.intersectionEdges,
+                blockedPositions = node.blockedPositions
             });
 
         return graphData;
@@ -290,7 +314,7 @@ public class Graph : MonoBehaviour
 
         // Nodes
         foreach (var nodeData in graphData.nodes)
-            AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible);
+            AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible, nodeData.intersectionEdges, nodeData.blockedPositions);
 
         // Edges
         foreach (var nodeData in graphData.nodes)

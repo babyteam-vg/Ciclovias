@@ -12,7 +12,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private TaskDialogManager taskDialogManager;
     [SerializeField] private TutorialDialogManager tutorialDialogManager;
 
-    public event Action<Vector2Int> OnCursorMove;
+    public event Action<Vector2Int, Vector2Int> OnCursorMove;
     public event Action<Vector2Int> NothingDetected;
 
     public event Action<Vector2Int> OnLeftClickDown;
@@ -115,7 +115,7 @@ public class InputManager : MonoBehaviour
                 Vector2Int validGridPosition = gridPosition.Value;
                 if (lastGridPosition != validGridPosition)
                 {
-                    OnCursorMove?.Invoke(validGridPosition);
+                    OnCursorMove?.Invoke(validGridPosition, validGridPosition);
                     lastGridPosition = validGridPosition;
                 }
 

@@ -30,9 +30,11 @@ public struct TutorialSection
     public SectionType type;
     [TextArea(2, 4)] public List<string> dialogs;
     public bool checkRequirements;
-    public Vector2Int start;
+    public Vector2Int start;                        // Coordinates for the Pathfinding Alogrythm, Visibles by the Player
     public Vector2Int end;
-    public bool dontAddToPath; // If True, the Path Won't Automatically Seal When the Section is Completed
+    public bool dontAddToPath;                      // If True, the Path Won't Automatically Seal When the Section is Completed
+    public Vector2Int auxStart;                     // Hidden Coordinates, for More Complex Tutorials
+    public Vector2Int auxEnd;
     public MapData tutorialMap;
     public Keyframe keyframe;
 }

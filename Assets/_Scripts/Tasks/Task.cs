@@ -21,7 +21,6 @@ public class Task
 
     [Header("Flavor")]
     public bool flavorMet;
-    public int currentToCross;
 
     // :::::::::: METHODS ::::::::::
     // ::::: Requirements
@@ -53,27 +52,27 @@ public class Task
             case FlavorType.Visit:
                 return $"Visit the {info.flavorDetails.compound.compoundName}";
 
-            case FlavorType.Cross:
-                switch (info.flavorDetails.toCross)
+            case FlavorType.DontCross:
+                switch (info.flavorDetails.dontCross)
                 {
                     case CellContent.Attraction:
-                        return $"Go through {info.flavorDetails.numberToCross} attractions";
+                        return $"Avoid attractions";
                     case CellContent.Crossing:
-                        return $"Go through {info.flavorDetails.numberToCross} intersections with traffic lights";
+                        return $"Avoid traffic lights";
                     case CellContent.Dangerous:
-                        return $"Go through {info.flavorDetails.numberToCross} dangerous areas";
+                        return $"Avoid dangerous areas";
                     case CellContent.Green:
-                        return $"Go through {info.flavorDetails.numberToCross} green areas";
+                        return $"Avoid green areas";
                     case CellContent.Repulsive:
-                        return $"Go through {info.flavorDetails.numberToCross} repulsive areas";
+                        return $"Avoid repulsive areas";
                     case CellContent.Road:
-                        return $"Cross the street {info.flavorDetails.numberToCross} time(s)";
+                        return $"Avoid the streets";
                     case CellContent.Sidewalk:
-                        return $"Go through {info.flavorDetails.numberToCross} sidewalks";
+                        return $"Avoid sidewalks";
                     case CellContent.Traffic:
-                        return $"Go through {info.flavorDetails.numberToCross} entrances";
+                        return $"Avoid compound entrances and unmarked crossings";
                     case CellContent.Zebra:
-                        return $"Go through {info.flavorDetails.numberToCross} zebra crosses";
+                        return $"Avoid zebra crosses";
                 }
                 break;
 
@@ -106,7 +105,6 @@ public class Task
             usedMaterial = this.usedMaterial,
 
             flavorMet = this.flavorMet,
-            currentToCross = this.currentToCross
         };
     }
 }

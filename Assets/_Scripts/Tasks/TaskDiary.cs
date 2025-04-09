@@ -147,8 +147,6 @@ public class TaskDiary : MonoBehaviour
             task.currentCharm = taskData.currentCharm;
             task.currentFlow = taskData.currentFlow;
             task.usedMaterial = taskData.usedMaterial;
-
-            task.currentToCross = taskData.currentToCross;
         }
     }
 }

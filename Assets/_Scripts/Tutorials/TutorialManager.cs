@@ -114,12 +114,14 @@ public class TutorialManager : MonoBehaviour
 
             if (currentSection.type == SectionType.Destroy) // Destroy Section
             {
-                if (graph.GetNode(currentSection.start) == null && graph.GetNode(currentSection.end) == null)
+                if (graph.GetNeighborsCount(currentSection.auxStart) == 0
+                    && graph.GetNeighborsCount(currentSection.auxEnd) == 0
+                    && !graph.AreConnectedByPath(currentSection.auxStart, currentSection.auxEnd))
                     CompleteSection();
             }
             else if (currentSection.type == SectionType.Build) // Build Section
             {
-                if (pathFound)
+                if (graph.AreConnectedByPath(currentSection.auxStart, currentSection.auxEnd))
                 {
                     TutorialLaneConnected?.Invoke(activeTutorial);
 

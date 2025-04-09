@@ -129,7 +129,8 @@ public class CellScoresCalculator
             Cell currentCell = grid.GetCell(path[i].x, path[i].y);
             totalFlow += CalculateFlow(currentCell);
 
-            if (graph.GetNeighborsCount(path[i]) > 2)
+            Node node = graph.GetNode(path[i]);
+            if (node.neighbors.Count > 2)
                 totalFlow -= 3;
 
             if (i > 1)

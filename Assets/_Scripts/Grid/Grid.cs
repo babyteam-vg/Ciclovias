@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using static Cell;
+using System.Linq;
 
 public class Grid : MonoBehaviour
 {
@@ -65,14 +66,15 @@ public class Grid : MonoBehaviour
     public bool IsWithinBounds(int x, int y) { return x >= 0 && x < width && y >= 0 && y < height; }
 
     // ::::: Get Adjacent Cells to [x][y]
-    public List<Cell> GetAdjacentCells(int x, int y)
+    public HashSet<Cell> GetAdjacentCells(int x, int y, bool considerCentral = false)
     {
-        List<Cell> adjacentCells = new List<Cell>();
+        HashSet<Cell> adjacentCells = new HashSet<Cell>();
 
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++)
             {
-                if (dx == 0 && dy == 0) continue;
+                if (!considerCentral && (dx == 0 && dy == 0))
+                    continue;
 
                 int newX = x + dx;
                 int newY = y + dy;
@@ -154,7 +156,7 @@ public class Grid : MonoBehaviour
 
             result.Add(currentCell);
 
-            List<Cell> adjacentCells = GetAdjacentCells(currentPos.x, currentPos.y);
+            HashSet<Cell> adjacentCells = GetAdjacentCells(currentPos.x, currentPos.y);
             foreach (Cell adjacentCell in adjacentCells)
             {
                 if (adjacentCell == null) continue;
@@ -168,6 +170,7 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+
         return result;
     }
 }

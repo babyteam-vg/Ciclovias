@@ -40,6 +40,9 @@ public class TaskDialogManager : DialogManager
     private void StartTaskRewardDialogs(Task task)
     {
         dialogs = task.info.rewardDialogs;
+        if (task.info.flavorDetails.flavorType != FlavorType.None && task.flavorMet)
+            dialogs.Insert(task.info.extraDialogIndex, task.info.extraDialog);
+
         portrait.sprite = task.info.character.portrait;
         characterName.text = task.info.character.characterName;
 

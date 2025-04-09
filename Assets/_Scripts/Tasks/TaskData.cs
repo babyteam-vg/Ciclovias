@@ -14,5 +14,4 @@ public class TaskData
     public int usedMaterial;
 
     public bool flavorMet;
-    public int currentToCross;
 }

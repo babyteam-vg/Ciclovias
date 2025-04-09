@@ -8,8 +8,8 @@ public class Cell
     private bool buildable;
     private bool illuminated;
 
-    // === Methods ===
-    // Constructor
+    // :::::::::: METHODS ::::::::::
+    // ::::: Constructor
     public Cell(int x, int y)
     {
         this.x = x;
@@ -19,7 +19,7 @@ public class Cell
         this.illuminated = true;
     }
 
-    // Setters and Getters
+    // ::::: Setters and Getters
     public void SetContent(CellContent content) { this.content = content; }
     public CellContent GetContent() { return content; }
 

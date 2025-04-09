@@ -15,12 +15,15 @@ public class Compound : MonoBehaviour
     [SerializeField] private TutorialManager tutorialManager;
 
     [Header("UI References")]
-    public GameObject givingTaskUI;
+    public GameObject givingTaskPrefab;
+    public Transform markers;
     public Vector3 offset = new Vector3(0, 2, 0);
 
+    private GameObject givingTaskUI;
     private Button givingTaskButton;
     private Image portrait, full, border;
     private Task givingTask;
+    private float minX, maxX, minY, maxY;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -42,29 +45,10 @@ public class Compound : MonoBehaviour
         tutorialManager.TutorialCompleted -= RecoverGivingTask;
     }
 
-    private void Start()
-    {
-        givingTaskButton = givingTaskUI.GetComponentInChildren<Button>();
-        givingTaskButton.onClick.AddListener(AcceptTaskFromButton);
-
-        portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[1];
-        full = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
-        border = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
-    }
-
     private void Update()
     {
-        // Get Screen Borders
-        float minX = full.GetPixelAdjustedRect().width / 4;
-        float maxX = Screen.width - minX;
-
-        float minY = full.GetPixelAdjustedRect().height / 8;
-        float maxY = Screen.height - full.GetPixelAdjustedRect().height * 0.88f;
-
         if (IsGivingTask())
         {
-            portrait.sprite = givingTask.info.character.portrait;
-
             Vector2 newTaskPos = mainCamera.WorldToScreenPoint(this.transform.position + offset);
 
             newTaskPos.x = Mathf.Clamp(newTaskPos.x, minX, maxX);
@@ -90,7 +74,30 @@ public class Compound : MonoBehaviour
             .OrderBy(t => t.info.id.y).ToList();
 
         givingTask = currentStateTasks.FirstOrDefault(t => t.state == TaskState.Unlocked);
-        if (IsGivingTask()) givingTaskUI.gameObject.SetActive(true);
+        if (IsGivingTask())
+        {
+            // Instantiate From Prefab
+            givingTaskUI = Instantiate(givingTaskPrefab, markers);
+            givingTaskUI.gameObject.SetActive(true);
+
+            // Assign Components
+            givingTaskButton = givingTaskUI.GetComponentInChildren<Button>();
+            givingTaskButton.onClick.AddListener(AcceptTaskFromButton);
+
+            portrait = givingTaskUI.GetComponentsInChildren<Image>(true)[1];
+            full = givingTaskUI.GetComponentsInChildren<Image>(true)[2];
+            border = givingTaskUI.GetComponentsInChildren<Image>(true)[3];
+
+            // Update Portrait
+            portrait.sprite = givingTask.info.character.portrait;
+
+            // Get Screen Borders
+            minX = full.GetPixelAdjustedRect().width / 4f;
+            maxX = Screen.width - minX;
+
+            minY = -full.GetPixelAdjustedRect().height * 0.38f;
+            maxY = Screen.height - full.GetPixelAdjustedRect().height * 0.88f;
+        }
     }
 
     public void OnAcceptedTask(Task task, bool isManualAccept)
@@ -119,6 +126,7 @@ public class Compound : MonoBehaviour
     }
     private void HideGivingTask(Tutorial _)
     {
-        givingTaskUI.gameObject.SetActive(false);
+        if (IsGivingTask())
+            givingTaskUI.gameObject.SetActive(false);
     }
 }

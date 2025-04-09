@@ -42,7 +42,8 @@ MonoBehaviour:
     toCross: 0
     numberToCross: 0
   materialReward: 0
-  unlockedTasks: []
+  unlockedTasks:
+  - {x: 1, y: 3}
   rewardDialogs:
   - This is the end of the Build, my son.
   - A tutorial was supposed to teach you about the charming score system...

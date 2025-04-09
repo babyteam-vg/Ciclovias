@@ -78,7 +78,8 @@ public abstract class DialogManager : MonoBehaviour
     protected virtual void ShowNextDialog()
     {
         currentDialog.text = "";
-        typingCoroutine = StartCoroutine(TypeDialog(dialogs[currentIndex]));
+        string processedDialog = dialogs[currentIndex].Replace("{player}", PlayerNameManager.Instance.GetPlayerName());
+        typingCoroutine = StartCoroutine(TypeDialog(processedDialog));
     }
 
     protected IEnumerator TypeDialog(string dialog)

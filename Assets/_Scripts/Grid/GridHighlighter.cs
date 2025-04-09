@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,10 +6,10 @@ public class GridHighlighter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid grid;
+    [SerializeField] private Graph graph;
     [SerializeField] private Material highlightMaterial;
     [SerializeField] private GameObject plane;
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private LaneConstructor laneConstructor;
 
     private RendererUtility rendererUtility;
 
@@ -17,8 +18,8 @@ public class GridHighlighter : MonoBehaviour
 
     private float outerOffset = 0.55f;
     private float innerOffset = 0.45f;
-    private float fadeRadius = 2.5f; // Maximum Radius
-    private float softness = 2.5f; // Opacity's Aggressiveness
+    private float fadeRadius = 2f; // Maximum Radius
+    private float softness = 0f; // Opacity's Aggressiveness
     private List<GameObject> highlights = new List<GameObject>();
     private Dictionary<CellContent, Material> contentMaterialMap;
 
@@ -34,38 +35,42 @@ public class GridHighlighter : MonoBehaviour
 
     private void OnEnable()
     {
+        graph.IntersectionAdded += HighlightBuildableCells;
+        graph.IntersectionRemoved += HighlightBuildableCells;
+
         inputManager.OnCursorMove += HighlightBuildableCells;
         inputManager.NothingDetected += ClearHighlight;
     }
+
     private void OnDisable()
     {
+        graph.IntersectionAdded -= HighlightBuildableCells;
+        graph.IntersectionRemoved -= HighlightBuildableCells;
+
         inputManager.OnCursorMove -= HighlightBuildableCells;
         inputManager.NothingDetected -= ClearHighlight;
     }
 
-    // :::::::::: PUBLIC METHODS ::::::::::
-    public void HighlightBuildableCells(Vector2Int gridPosition)
+    // :::::::::: EVENT METHODS ::::::::::
+    private void HighlightBuildableCells(Vector2Int gridPosition, Vector2Int _)
     {
         ClearHighlight(gridPosition);
 
-        List<Cell> firstLayerCells = grid.GetAdjacentCells(gridPosition.x, gridPosition.y);
-        List<Cell> secondLayerCells = new List<Cell>();
-
-        foreach (Cell cell in firstLayerCells)
-            if (cell != null)
-            {
-                List<Cell> adjacentToFirstLayer = grid.GetAdjacentCells(cell.x, cell.y);
-                secondLayerCells.AddRange(adjacentToFirstLayer);
-            }
-
-        HashSet<Cell> allCells = new HashSet<Cell>(firstLayerCells);
-        allCells.UnionWith(secondLayerCells);
-
         Vector3 centralCellWorldPos = grid.GetWorldPositionFromCellCentered(gridPosition.x, gridPosition.y);
 
+        HashSet<Cell> allCells = grid.GetAdjacentCells(gridPosition.x, gridPosition.y);
         foreach (Cell cell in allCells)
         {
             if (cell == null || !cell.GetBuildable()) continue;
+
+            Node node = graph.GetNode(gridPosition);
+            if (node != null)
+            {
+                List<Vector2Int> blockedPositions = node.blockedPositions;
+                Vector2Int cellPosition = new Vector2Int(cell.x, cell.y);
+                if (blockedPositions.Contains(cellPosition))
+                    continue;
+            }
 
             Vector3 worldPos = grid.GetWorldPositionFromCell(cell.x, cell.y);
             Vector3 centeredWorldPos = grid.GetWorldPositionFromCellCentered(cell.x, cell.y);
@@ -74,7 +79,7 @@ public class GridHighlighter : MonoBehaviour
         }
     }
 
-    public void ClearHighlight(Vector2Int _)
+    private void ClearHighlight(Vector2Int _)
     {
         foreach (GameObject highlight in highlights)
             Destroy(highlight);

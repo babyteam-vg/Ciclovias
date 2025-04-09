@@ -7,13 +7,14 @@ using UnityEngine;
 public class GridGenerator : MonoBehaviour
 {
     [SerializeField] private Grid grid;
+    [SerializeField] private Graph graph;
     [SerializeField] private MapData[] maskMaps;
     [SerializeField] private ColorToCell[] colorMappings;
 
     private Dictionary<Color, ColorToCell> colorMappingDict;
 
     // :::::::::: MONO METHODS ::::::::::
-    private void Awake() { GenerateGrid(); }
+    private void Start() { GenerateGrid(); }
 
     // :::::::::: PUBLIC METHODS ::::::::::
     // ::::: Generate a Portion of the Map
@@ -30,7 +31,6 @@ public class GridGenerator : MonoBehaviour
         int startY = newMapData.coordinates.y * height;
 
         for (int x = 0; x < width; x++)
-        {
             for (int y = 0; y < height; y++)
             {
                 int index = y * width + x;
@@ -43,7 +43,6 @@ public class GridGenerator : MonoBehaviour
                 if (colorMappingDict.TryGetValue(pixelColor, out ColorToCell colorMapping))
                     grid.SetCell(startX + x, startY + y, CreateCell(startX + x, startY + y, colorMapping, illuminated));
             }
-        }
     }
 
     // ::::: Clear a Portion of the Map
@@ -69,7 +68,6 @@ public class GridGenerator : MonoBehaviour
         }
         return null;
     }
-
 
     // :::::::::: PRIVATE METHODS ::::::::::
     // ::::: Generate the Whole Map
@@ -106,7 +104,6 @@ public class GridGenerator : MonoBehaviour
             int startY = map.coordinates.y * maxHeight;
 
             for (int x = 0; x < width; x++)
-            {
                 for (int y = 0; y < height; y++)
                 {
                     int index = y * width + x;
@@ -117,9 +114,16 @@ public class GridGenerator : MonoBehaviour
                     bool illuminated = pixelColor.a >= 0.45 && pixelColor.a <= 0.55 ? false : true;
 
                     if (colorMappingDict.TryGetValue(pixelColor, out ColorToCell colorMapping))
+                    {
+                        // Create a New Cell
                         cells[startX + x, startY + y] = CreateCell(startX + x, startY + y, colorMapping, illuminated);
+
+                        // Create a New Node
+                        Vector2Int nodePosition = new Vector2Int(startX + x, startY + y);
+                        Vector2 nodeWorldPosition = grid.GetWorldPositionFromCellCentered(startX + x, startY + y);
+                        graph.AddNode(nodePosition, nodeWorldPosition);
+                    }
                 }
-            }
         }
 
         grid.SetGridArray(cells);
@@ -158,7 +162,6 @@ public class MapData
         this.coordinates = coordinates;
     }
 }
-
 
 [System.Serializable]
 public class ColorToCell

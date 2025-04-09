@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LaneConstructor : MonoBehaviour
@@ -19,6 +20,9 @@ public class LaneConstructor : MonoBehaviour
     public event Action<Vector2Int> OnBuildStarted;
     public event Action<Vector2Int> OnLaneBuilt;
     public event Action<Vector2Int> OnBuildFinished;
+
+    public event Action BuiltOnZebra;
+    public event Action BuiltOnDangerous;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -52,13 +56,8 @@ public class LaneConstructor : MonoBehaviour
     {
         int neighbors = graph.GetNeighborsCount(gridPosition);
 
-        if (isAllowed                                                       // Not in Menu
-            && neighbors < 3                                                // Tetra-Intersection at Most
-            && grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable()) // Buildable Cell
+        if (isAllowed && neighbors < 3) 
         {
-            if (graph.GetNode(gridPosition) == null)
-                graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
-
             isBuilding = true;
             OnBuildStarted?.Invoke(gridPosition); // !
             lastCellPosition = gridPosition;
@@ -68,39 +67,60 @@ public class LaneConstructor : MonoBehaviour
     // ::::: Mouse Input: Hold
     private void ContinueBuilding(Vector2Int gridPosition)
     {
-        if (isAllowed && isBuilding &&
-            grid.IsAdjacent(lastCellPosition.Value, gridPosition) &&
-            grid.GetCell(gridPosition.x, gridPosition.y).GetBuildable() &&
-            IsInCriticalArea(gridPosition))
+        Node node = graph.GetNode(gridPosition);
+        if (node == null)
+            return;
+
+        if (isAllowed && isBuilding && lastCellPosition.HasValue        // Not in Menu & Started Building
+            && grid.IsAdjacent(lastCellPosition.Value, gridPosition)    // One of the 8 Adjacent Cells
+            && IsInCriticalArea(gridPosition))                          // Input Response Improvement
         {
-            if (lastCellPosition.HasValue && lastCellPosition.Value == gridPosition)
+            if (lastCellPosition.Value == gridPosition)
                 return; // To Prevent Duplicates
 
-            if (MaterialManager.Instance.ConsumeMaterial(1))
+            Node lastNode = graph.GetNode(lastCellPosition.Value);
+            if (lastNode.blockedPositions.Contains(gridPosition))
+                return;
+
+            if (graph.AreNeighbors(lastCellPosition.Value, gridPosition))
+                return; // Already Connected
+
+            if (!MaterialManager.Instance.ConsumeMaterial(1))
+                return; // Not Enough Material
+
+            // Check Intersection
+            List<Vector2Int> lastNeighbors = graph.GetNeighborsPos(lastCellPosition.Value);
+            foreach (Vector2Int lastNeighbor in lastNeighbors)
+                if (!graph.IsCollinear(lastNeighbor, lastCellPosition.Value, gridPosition))
+                    graph.NewIntersection(lastNeighbor, lastCellPosition.Value, node, gridPosition);
+
+            graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[0]);
+
+            OnLaneBuilt?.Invoke(gridPosition); // !
+            lastCellPosition = gridPosition;
+
+            // Tips Events
+            CellContent content = grid.GetCellContent(gridPosition.x, gridPosition.y);
+            switch (content)
             {
-                if (graph.GetNode(gridPosition) == null)
-                    graph.AddNode(gridPosition, grid.EdgeToMid(gridPosition)); // Add Node
+                case CellContent.Zebra:
+                    BuiltOnZebra?.Invoke();
+                    break;
 
-                if (lastCellPosition.HasValue && !graph.AreNeighbors(lastCellPosition.Value, gridPosition))
-                {
-                    graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
-                    AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[0]);
-
-                    OnLaneBuilt?.Invoke(gridPosition); // !
-                    lastCellPosition = gridPosition;
-                }
-            }
+                case CellContent.Dangerous:
+                    BuiltOnDangerous?.Invoke();
+                    break;
+            }                
         }
     }
 
     // ::::: Mouse Input: Up
     private void StopBuilding(Vector2Int gridPosition)
     {
-        graph.CheckAndRemoveNode(gridPosition);
         isBuilding = false;
-
+        OnBuildFinished?.Invoke(gridPosition); // !
         lastCellPosition = null;
-        OnBuildFinished?.Invoke(gridPosition);  // !
     }
 
     // ::::: Critical Areas

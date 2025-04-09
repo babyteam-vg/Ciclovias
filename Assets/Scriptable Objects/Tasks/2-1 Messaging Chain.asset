@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5017d5b16895bd44ca3b68347effd601, type: 3}
+  m_Name: 2-1 Messaging Chain
+  m_EditorClassIdentifier: 
+  id: {x: 2, y: 1}
+  title: Messaging Chain
+  character: {fileID: 11400000, guid: f6c071b75aef79644b4295346961c62e, type: 2}
+  dialogs:
+  - "Oh, the mayor finally approved my request! My boys will have safe, smooth bike
+    lanes and you\u2019re the one making it happen, right?"
+  context: Build a bike lane with a high level of safety and flowness from the Post
+    Office to the Bike Store.
+  safetyRequirement: 1
+  minSafety: 0.9
+  charmRequirement: 0
+  minCharm: 0
+  flowRequirement: 1
+  minFlow: 0.7
+  minMaterialRequirement: 0
+  minMaterial: 0
+  maxMaterialRequirement: 0
+  maxMaterial: 0
+  flavorDetails:
+    flavorType: 3
+    compound: {fileID: 0}
+    dontCross: 6
+  extraDialog: Thank goodness you avoided those construction zones! I know they're
+    temporary, but I'm so glad my boys won't need to go near them.
+  extraDialogIndex: 0
+  materialReward: 0
+  unlockedTasks: []
+  rewardDialogs:
+  - "Wait, is it true you\u2019ve already built bike lanes for the mayor and other
+    groups? That can't be. He told me the new lanes were for the Post Office."
+  - There must be some mistake... Well, whatever. You've still helped us a lot, and
+    I'm really grateful.
+  posts: []
