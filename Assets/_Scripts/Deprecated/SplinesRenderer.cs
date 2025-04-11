@@ -1,101 +1,380 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Splines;
+//if (firstSpline == null) // Spline Not Found, Starting...
+//{
+//    if (intersections.ContainsKey(firstWorldPosition)) // ...From an Intersection...
+//    {
+//        if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//        {
+//            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To an Intersection");
 
-[RequireComponent(typeof(MeshRenderer))]
-public class SplinesRenderer : MonoBehaviour
-{
-    [Header("Dependencies")]
-    //[SerializeField] private SplinesManager splinesManager;
-    [SerializeField] private GameObject plane;
+//            Intersection intersection1 = intersections[firstWorldPosition];
+//            ExpandIntersection(secondWorldPosition, firstWorldPosition, intersection1);
 
-    private RendererUtility rendererUtility;
+//            Intersection intersection2 = intersections[secondWorldPosition];
+//            ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection2);
+//        }
+//        else
+//        {
+//            if (secondSpline == null) // ...To Nothing *
+//            {
+//                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To Nothing");
+//                Intersection intersection = intersections[firstWorldPosition];
+//                ExpandIntersection(secondWorldPosition, firstWorldPosition, intersection);
+//            }
+//            else // ...To a Spline...
+//            {
+//                Intersection intersection = intersections[firstWorldPosition];
+//                Spline newSpline = ExpandIntersection(secondWorldPosition, firstWorldPosition, intersection);
 
-    [Header("Variables")]
-    [SerializeField] private float laneWidth = 0.4f;
-    [SerializeField] private int segmentsPerUnit = 15;
-    [SerializeField] private Material laneMaterial;
+//                if (secondIndex == -1) // ...at the Middle *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To a Spline > at the Middle");
+//                    CreateTripleIntersectionByCrossingStraightSplines(newSpline, 1, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                }
+//                else // ...at the Edge...
+//                {
+//                    if (isSecondIntersection) // ...and They're Not Collinear *
+//                    {
+//                        Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To a Spline > at the Edge > and They're Not Collinear");
+//                        CreateIntersectionByFusingStraighSplines(newSpline, 1, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                    }
+//                    else // ...and They're Collinear...
+//                    {
+//                        if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To a Spline > at the Edge > and They're Collinear > but Is an Intersection Spline");
+//                        }
+//                        else // ...and Is a Straight Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From an Intersection > To a Spline > at the Edge > and They're Collinear > and Is a Straight Spline");
+//                            FuseStraightSplines(newSpline, 1, secondSpline, secondIndex);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    else // ...From Nothing... ***
+//    {
+//        if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//        {
+//            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To an Intersection");
+//            Intersection intersection = intersections[secondWorldPosition];
+//            ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
+//        }
+//        else
+//        {
+//            if (secondSpline == null) // ...To Nothing *
+//            {
+//                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To Nothing");
+//                StartNewSpline(firstWorldPosition, secondWorldPosition);
+//            }
+//            else // ...To a Spline...
+//            {
+//                Spline newSpline = StartNewSpline(firstWorldPosition, secondWorldPosition);
 
-    private Dictionary<Spline, MeshFilter> splineMeshes = new Dictionary<Spline, MeshFilter>();
+//                if (secondIndex == -1) // ...at the Middle *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To a Spline > at the Middle");
+//                    CreateTripleIntersectionByCrossingStraightSplines(newSpline, 1, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                }
+//                else // ...at the Edge...
+//                {
+//                    if (isSecondIntersection) // ...and They're Not Collinear *
+//                    {
+//                        Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To a Spline > at the Edge > and They're Not Collinear");
+//                        CreateIntersectionByFusingStraighSplines(newSpline, 1, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                    }
+//                    else // ...and They're Collinear...
+//                    {
+//                        if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To a Spline > at the Edge > and They're Collinear > but Is an Intersection Spline");
+//                            // Do Nothing?
+//                        }
+//                        else // ...and Is a Straight Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Not Found > From Nothing > To a Spline > at the Edge > and They're Collinear > and Is a Straight Spline");
+//                            FuseStraightSplines(newSpline, 1, secondSpline, secondIndex);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//else // Spline Found, Starting...
+//{
+//    if (firstIndex == -1) // ...From the Middle...
+//    {
+//        if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//        {
+//            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To an Intersection");
 
-    // :::::::::: MONO METHODS ::::::::::
-    private void Awake() { rendererUtility = new RendererUtility(); }
+//            Spline newSpline = CreateTripleIntersectionFromAStraightSpline(firstSpline, firstWorldPosition, secondWorldPosition);
+//            ClearSpline(newSpline);
 
-    //private void OnEnable() { splinesManager.SplineChanged += UpdateSplineMesh; }
-    //private void OnDisable() { splinesManager.SplineChanged -= UpdateSplineMesh; }
+//            Intersection intersection = intersections[secondWorldPosition];
+//            ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
+//        }
+//        else
+//        {
+//            if (secondSpline == null) // ...To Nothing *
+//            {
+//                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To Nothing");
+//                CreateTripleIntersectionFromAStraightSpline(firstSpline, firstWorldPosition, secondWorldPosition);
+//            }
+//            else // ...To a Spline...
+//            {
+//                Spline newSpline = CreateTripleIntersectionFromAStraightSpline(firstSpline, firstWorldPosition, secondWorldPosition);
 
-    private void Start()
-    {
-        //foreach (var spline in splinesManager.splineContainer.Splines)
-        //    UpdateSplineMesh(spline);
-    }
+//                if (secondIndex == -1) // ...at the Middle *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To a Spline > at the Middle");
+//                    ClearSpline(newSpline);
+//                    CreateTripleIntersectionFromAStraightSpline(secondSpline, secondWorldPosition, firstWorldPosition);
+//                }
+//                else // ...at the Edge...
+//                {
+//                    if (isSecondIntersection) // ...and They're Not Collinear *
+//                    {
+//                        Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To a Spline > at the Edge > and They're Not Collinear");
+//                        CreateIntersectionByFusingStraighSplines(newSpline, 1, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                    }
+//                    else // ...and They're Collinear...
+//                    {
+//                        if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To a Spline > and They're Collinear > but Is an Intersection Spline");
+//                            AddKnotToSpline(newSpline, 1, secondWorldPosition);
+//                        }
+//                        else // ...and Is a Straight Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Middle > To a Spline > and They're Collinear > and Is a Straight Spline");
+//                            FuseStraightSplines(newSpline, 1, secondSpline, secondIndex);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    else // ...From the Edge...
+//    {
+//        if (isFirstIntersection) // ...with a Change of Direction...
+//        {
+//            if (IsIntersectionSpline(firstSpline)) // ...and From an Intersection Spline...
+//            {
+//                if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To an Intersection");
+//                    Intersection intersection = intersections[secondWorldPosition];
+//                    ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
+//                }
+//                else
+//                {
+//                    if (secondSpline == null) // ...To Nothing *
+//                    {
+//                        if (firstNeighbors.Count > 2) // ...but From a Conflictive Point *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To Nothing > but From a Conflictive Point");
+//                            CreateTripleIntersectionFromAnIntersectionSpline(firstWorldPosition, secondWorldPosition);
+//                        }
+//                        else  // ...and From a Single Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To Nothing > and From a Single Spline");
+//                            StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                        }
+//                    }
+//                    else // ...To a Spline...
+//                    {
+//                        if (secondIndex == -1) // ...at the Middle *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To a Spline > at the Middle");
+//                            Spline newSpline = CreateTripleIntersectionFromAStraightSpline(secondSpline, secondWorldPosition, firstWorldPosition);
+//                        }
+//                        else // ...at the Edge...
+//                        {
+//                            if (isSecondIntersection) // ...and They're Not Collinear...
+//                            {
+//                                if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To a Spline > at the Edge > and They're Not Collinear > but Is an Intersection Spline");
+//                                    StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                                }
+//                                else // ...but is a Straight Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To a Spline > at the Edge > and They're Not Collinear > but is a Straight Spline");
+//                                    CreateIntersectionFromAnIntersectionSpline(firstWorldPosition, secondWorldPosition, secondSpline, secondIndex);
+//                                }
+//                            }
+//                            else // ...and They're Collinear *
+//                            {
+//                                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From an Intersection Spline > To a Spline > at the Edge > and They're Collinear");
+//                                Spline newnSpline = StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                                FuseStraightSplines(newnSpline, 1, secondSpline, secondIndex);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            else // ...and From a Straight Spline...
+//            {
+//                if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To an Intersection");
+//                    CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                    Intersection intersection = intersections[secondWorldPosition];
+//                    Spline newSpline = ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
+//                    ClearSpline(newSpline);
+//                }
+//                else
+//                {
+//                    if (secondSpline == null) // ...To Nothing...
+//                    {
+//                        if (firstNeighbors.Count > 2) // ...but From a Conflictive Point *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To Nothing > but From a Conflictive Point");
+//                            CreateTripleIntersectionFromAnIntersectionSpline(firstWorldPosition, secondWorldPosition);
+//                        }
+//                        else  // ...and From a Single Spline *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To Nothing > and From a Single Spline");
+//                            CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                        }
+//                    }
+//                    else // ...To a Spline...
+//                    {
+//                        if (secondIndex == -1) // ...at the Middle *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To a Spline > at the Middle");
+//                            CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                            Spline newSpline = CreateTripleIntersectionFromAStraightSpline(secondSpline, secondWorldPosition, firstWorldPosition);
+//                            ClearSpline(newSpline);
+//                        }
+//                        else // ...at the Edge...
+//                        {
+//                            if (isSecondIntersection) // ...and They're Not Collinear *
+//                            {
+//                                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > and They're Not Collinear");
+//                                CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                            }
+//                            else // ...and They're Collinear...
+//                            {
+//                                if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > and They're Collinear > but Is an Intersection Spline");
+//                                    CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                                }
+//                                else // ...and Is a Straight Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > with a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > and They're Collinear > and Is a Straight Spline");
+//                                    CreateIntersectionFromStraightSpline(firstSpline, firstIndex, firstWorldPosition, secondWorldPosition);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        else // ...w/o a Change of Direction...
+//        {
+//            if (IsIntersectionSpline(firstSpline)) // ...and From an Intersection Spline...
+//            {
+//                if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To an Intersection");
 
-    // :::::::::: EVENT METHODS ::::::::::
-    private void UpdateSplineMesh(Spline spline)
-    {
-        if (!splineMeshes.TryGetValue(spline, out MeshFilter meshFilter))
-        {
-            GameObject splineObject = new GameObject("SplineMesh");
-            splineObject.transform.SetParent(transform);
+//                    Intersection intersection = intersections[secondWorldPosition];
+//                    ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
+//                }
+//                else
+//                {
+//                    if (secondSpline == null) // ...To Nothing *
+//                    {
+//                        Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To Nothing");
+//                        StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                    }
+//                    else // ...To a Spline...
+//                    {
+//                        if (secondIndex == -1) // ...at the Middle *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To a Splinee > at the Middle");
+//                            CreateTripleIntersectionFromAStraightSpline(secondSpline, secondWorldPosition, firstWorldPosition);
+//                        }
+//                        else // ...at the Edge...
+//                        {
+//                            if (isSecondIntersection) // ...and They're Not Collinear *
+//                            {
+//                                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To a Splinee > at the Edge > and They're Not Collinear");
+//                                CreateIntersectionFromAnIntersectionSpline(firstWorldPosition, secondWorldPosition, secondSpline, secondIndex);
+//                            }
+//                            else // ...and They're Collinear...
+//                            {
+//                                if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To a Splinee > at the Edge > but Is an Intersection Spline");
+//                                    StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                                }
+//                                else // ...and Is a Straight Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From an Intersection Spline > To a Splinee > at the Edge > and Is a Straight Spline");
+//                                    Spline newSpline = StartNewSpline(firstWorldPosition, secondWorldPosition);
+//                                    FuseStraightSplines(newSpline, 1, secondSpline, secondIndex);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            else // ...and From a Straight Spline...
+//            {
+//                if (intersections.ContainsKey(secondWorldPosition)) // ...To an Intersection *
+//                {
+//                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To an Intersection");
 
-            meshFilter = splineObject.AddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = splineObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = laneMaterial;
+//                    Intersection intersection = intersections[secondWorldPosition];
+//                    Spline newSpline = ExpandIntersection(firstWorldPosition, secondWorldPosition, intersection);
 
-            meshFilter.mesh = new Mesh();
-
-            splineMeshes[spline] = meshFilter;
-        }
-
-        BuildMesh(spline, meshFilter.mesh);
-    }
-
-    // :::::::::: PRIVATE METHODS ::::::::::
-    private void BuildMesh(Spline spline, Mesh mesh)
-    {
-        mesh.Clear();
-
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        List<Vector2> uvs = new List<Vector2>();
-
-        int resolution = Mathf.CeilToInt(spline.GetLength() * segmentsPerUnit);
-        for (int i = 0; i < resolution; i++)
-        {
-            float t = i / (float)(resolution - 1);
-            Vector3 position = spline.EvaluatePosition(t);
-            Vector3 tangent = spline.EvaluateTangent(t);
-            tangent = tangent.normalized;
-            Vector3 normal = -Vector3.Cross(tangent, Vector3.up).normalized;
-
-            float elevation = rendererUtility.GetMaxElevationAtPoint(position, plane) + 0.0002f;
-            Vector3 v1 = position + normal * (laneWidth * 0.5f) + Vector3.up * elevation;
-            Vector3 v2 = position - normal * (laneWidth * 0.5f) + Vector3.up * elevation;
-
-            int baseIndex = vertices.Count;
-            vertices.Add(v1);
-            vertices.Add(v2);
-
-            float uvY = t * spline.GetLength(); // Repeat
-            uvs.Add(new Vector2(0, uvY));
-            uvs.Add(new Vector2(1, uvY));
-
-            if (i > 0)
-            {
-                triangles.Add(baseIndex - 2);
-                triangles.Add(baseIndex - 1);
-                triangles.Add(baseIndex + 1);
-
-                triangles.Add(baseIndex - 2);
-                triangles.Add(baseIndex + 1);
-                triangles.Add(baseIndex);
-            }
-        }
-
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.uv = uvs.ToArray();
-
-        mesh.RecalculateNormals();
-    }
-}
+//                    FuseStraightSplines(firstSpline, firstIndex, newSpline, 1);
+//                }
+//                else
+//                {
+//                    if (secondSpline == null) // ...To Nothing *
+//                    {
+//                        Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To Nothing");
+//                        AddKnotToSpline(firstSpline, firstIndex, secondWorldPosition);
+//                    }
+//                    else // ...To a Spline...
+//                    {
+//                        if (secondIndex == -1) // ...at the Middle *
+//                        {
+//                            Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To a Spline > at the Middle");
+//                            CreateTripleIntersectionByCrossingStraightSplines(firstSpline, firstIndex, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                        }
+//                        else // ...at the Edge...
+//                        {
+//                            if (isSecondIntersection) // ...and They're Not Collinear *
+//                            {
+//                                Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > and They're Not Collinear");
+//                                AddKnotToSpline(firstSpline, firstIndex, secondWorldPosition);
+//                                CreateIntersectionByFusingStraighSplines(firstSpline, firstIndex, firstWorldPosition, secondSpline, secondIndex, secondWorldPosition);
+//                            }
+//                            else // ...and They're Collinear...
+//                            {
+//                                if (IsIntersectionSpline(secondSpline)) // ...but Is an Intersection Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > but Is an Intersection Spline");
+//                                    AddKnotToSpline(firstSpline, firstIndex, secondWorldPosition);
+//                                }
+//                                else // ...and Is a Straight Spline *
+//                                {
+//                                    Debug.Log($"{firstWorldPosition} - {secondWorldPosition} Spline Found > From the Edge > w/o a Change of Direction > and From a Straight Spline > To a Spline > at the Edge > and Is a Straight Spline");
+//                                    FuseStraightSplines(firstSpline, firstIndex, secondSpline, secondIndex);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}

@@ -8520,11 +8520,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe30a9b0db84634591466c52718ad4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 378811413}
-  taskManager: {fileID: 1736919538}
   splineManager: {fileID: 633799251}
   plane: {fileID: 445937665}
-  splineMaterial: {fileID: 2100000, guid: 4b6009912ca23fb4c993f3e0edfa1892, type: 2}
+  normalMaterial: {fileID: 2100000, guid: 638e45d3abc8c084382834437a06bebc, type: 2}
+  sealedMaterial: {fileID: 2100000, guid: 6d06794de95a5b44ea0b20cb6c9ebb6b, type: 2}
 --- !u!23 &1217385508
 MeshRenderer:
   m_ObjectHideFlags: 0

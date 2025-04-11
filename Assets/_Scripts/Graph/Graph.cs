@@ -52,13 +52,13 @@ public class Graph : MonoBehaviour
 
     // :::::::::: EXPANSION METHODS ::::::::::
     // ::::: Add a Node
-    public void AddNode(Vector2Int position, Vector2 worldPosition, bool indestructible = false, List<Vector2Int> intersectionEdges = null, List<Vector2Int> blockedPositions = null)
+    public void AddNode(Vector2Int position, Vector3 worldPosition, bool indestructible = false, bool intersection = false, List<Vector2Int> intersectionEdges = null, List<Vector2Int> blockedPositions = null)
     {
         if (!nodes.ContainsKey(position))
         {
             intersectionEdges = intersectionEdges == null ? new List<Vector2Int>() : intersectionEdges;
             blockedPositions = blockedPositions == null ? new List<Vector2Int>() : blockedPositions;
-            nodes[position] = new Node(position, worldPosition, indestructible, intersectionEdges, blockedPositions);
+            nodes[position] = new Node(position, worldPosition, indestructible, intersection, intersectionEdges, blockedPositions);
             nodePositions.Add(position);
         }
     }
@@ -112,7 +112,7 @@ public class Graph : MonoBehaviour
     }
 
     // ::::: 
-    public Vector2Int? GetFirstAdjacentNodePosition(Vector2Int position)
+    public Node GetFirstAdjacentValidNode(Node node)
     {
         Vector2Int[] directions = new Vector2Int[]
         {
@@ -128,23 +128,24 @@ public class Graph : MonoBehaviour
 
         foreach (var dir in directions)
         {
-            Vector2Int adjacentPosition = position + dir;
-            if (nodePositions.Contains(adjacentPosition))
-                return adjacentPosition;
+            Vector2Int adjacentPosition = node.position + dir;
+            if (nodePositions.Contains(adjacentPosition) && nodes[adjacentPosition].neighbors.Count > 0)
+                return nodes[adjacentPosition];
         }
 
         return null;
     }
 
     // ::::: Blocked Positions Management (Intersections)
-    public void NewIntersection(Vector2Int edgePos, Vector2Int intersectionPos, Node inputNode, Vector2Int inputPos)
+    public void NewIntersection(Vector2Int edgePos, Node intersectionNode, Vector2Int intersectionPos, Node inputNode, Vector2Int inputPos)
     {
         Node edgeNode = GetNode(edgePos);
 
-        // Input Node (First Edge of the Intersection)
         AddIntersectionsAndBlockPositions(edgePos, intersectionPos, inputNode, inputPos);
 
-        // Edge Node (Second Edge of the Intersection)
+        intersectionNode.intersection = true;
+        intersectionNode.intersectionEdges = new List<Vector2Int> { edgePos, inputPos };
+
         AddIntersectionsAndBlockPositions(inputPos, intersectionPos, edgeNode, edgePos);
 
         IntersectionAdded?.Invoke(inputPos, edgePos); // !
@@ -167,9 +168,15 @@ public class Graph : MonoBehaviour
         }
     }
 
-    public void RemoveIntersection(Node inputNode, Vector2Int inputPos, Node edgeNode, Vector2Int edgePos)
+    public void RemoveIntersection(Node inputNode, Vector2Int inputPos, Vector2Int intersectionPos, Node edgeNode, Vector2Int edgePos)
     {
         RemoveIntersectionsAndBlockedPositions(inputNode, inputPos, edgePos);
+
+        Node intersectionNode = nodes[intersectionPos];
+        intersectionNode.intersectionEdges.Remove(inputPos);
+        if (intersectionNode.intersectionEdges.Count < 2)
+            intersectionNode.intersection = false;
+
         RemoveIntersectionsAndBlockedPositions(edgeNode, edgePos, inputPos);
 
         IntersectionRemoved?.Invoke(inputPos, edgePos); // !
@@ -299,6 +306,8 @@ public class Graph : MonoBehaviour
                 worldPosition = node.worldPosition,
                 neighbors = node.neighbors.ConvertAll(neighbor => neighbor.position),
                 indestructible = node.indestructible,
+
+                intersection = node.intersection,
                 intersectionEdges = node.intersectionEdges,
                 blockedPositions = node.blockedPositions
             });
@@ -314,7 +323,7 @@ public class Graph : MonoBehaviour
 
         // Nodes
         foreach (var nodeData in graphData.nodes)
-            AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible, nodeData.intersectionEdges, nodeData.blockedPositions);
+            AddNode(nodeData.position, nodeData.worldPosition, nodeData.indestructible, nodeData.intersection, nodeData.intersectionEdges, nodeData.blockedPositions);
 
         // Edges
         foreach (var nodeData in graphData.nodes)
@@ -326,4 +335,53 @@ public class Graph : MonoBehaviour
                         node.AddNeighbor(neighbor);
                     }
     }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+
+        // Altura adicional en el eje Y
+        float yOffset = 2f;
+
+        // Dibujar conexiones entre nodos
+        Gizmos.color = Color.blue;
+        foreach (var node in nodes.Values)
+        {
+            Vector3 nodePos = node.worldPosition + Vector3.up * yOffset;
+            foreach (var neighbor in node.neighbors)
+            {
+                Vector3 neighborPos = neighbor.worldPosition + Vector3.up * yOffset;
+                // Dibujar línea entre nodos conectados
+                Gizmos.DrawLine(nodePos, neighborPos);
+            }
+        }
+
+        // Dibujar los nodos
+        foreach (var node in nodes.Values)
+        {
+            Vector3 nodePos = node.worldPosition + Vector3.up * yOffset;
+
+            if (node.intersection)
+            {
+                // Nodo de intersección - amarillo
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(nodePos, 0.2f);
+            }
+            else
+            {
+                // Nodo normal - azul
+                Gizmos.color = Color.blue;
+                Gizmos.DrawSphere(nodePos, 0.1f);
+            }
+
+            // Opcional: dibujar icono para nodos indestructibles
+            if (node.indestructible)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(nodePos, Vector3.one * 0.15f);
+            }
+        }
+    }
+    #endif
 }

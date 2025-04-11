@@ -15,12 +15,12 @@ public class Pathfinder
     public (bool pathFound, List<Vector2Int> path) FindPath(Vector2Int start, Vector2Int mid, Vector2Int end)
     {
         Node midNode = graph.GetNode(mid);
-        if (midNode == null)
+        if (midNode.neighbors.Count == 0)
         {
-            if (graph.GetFirstAdjacentNodePosition(mid).HasValue)
+            if (graph.GetFirstAdjacentValidNode(midNode) != null)
             {
-                mid = graph.GetFirstAdjacentNodePosition(mid).Value;
-                midNode = graph.GetNode(mid);
+                midNode = graph.GetFirstAdjacentValidNode(midNode);
+                mid = midNode.position;
             }
             else return (false, new List<Vector2Int>());
         }

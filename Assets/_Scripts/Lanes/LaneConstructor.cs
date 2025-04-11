@@ -92,7 +92,7 @@ public class LaneConstructor : MonoBehaviour
             List<Vector2Int> lastNeighbors = graph.GetNeighborsPos(lastCellPosition.Value);
             foreach (Vector2Int lastNeighbor in lastNeighbors)
                 if (!graph.IsCollinear(lastNeighbor, lastCellPosition.Value, gridPosition))
-                    graph.NewIntersection(lastNeighbor, lastCellPosition.Value, node, gridPosition);
+                    graph.NewIntersection(lastNeighbor, lastNode, lastCellPosition.Value, node, gridPosition);
 
             graph.AddEdge(lastCellPosition.Value, gridPosition); // Connect Nodes
             AudioManager.Instance.PlaySFX(AudioManager.Instance.sfxs[0]);

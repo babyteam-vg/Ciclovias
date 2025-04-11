@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GridGenerator : MonoBehaviour
 {
@@ -120,7 +121,7 @@ public class GridGenerator : MonoBehaviour
 
                         // Create a New Node
                         Vector2Int nodePosition = new Vector2Int(startX + x, startY + y);
-                        Vector2 nodeWorldPosition = grid.GetWorldPositionFromCellCentered(startX + x, startY + y);
+                        Vector3 nodeWorldPosition = grid.GetWorldPositionFromCellCentered(startX + x, startY + y);
                         graph.AddNode(nodePosition, nodeWorldPosition);
                     }
                 }

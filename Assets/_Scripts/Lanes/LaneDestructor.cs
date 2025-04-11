@@ -66,7 +66,7 @@ public class LaneDestructor : MonoBehaviour
 
             List<Vector2Int> neighbors = graph.GetNeighborsPos(gridPosition);
             foreach (Vector2Int neighbor in neighbors)
-                DestroyWaerfall(node, gridPosition, neighbors);
+                DestroyWaterfall(node, gridPosition, neighbors);
         }
         else if (node.indestructible)
             OnTryDestroySealed?.Invoke();
@@ -96,7 +96,7 @@ public class LaneDestructor : MonoBehaviour
                 return;
 
             List<Vector2Int> neighbors = graph.GetNeighborsPos(gridPosition);
-            DestroyWaerfall(node, gridPosition, neighbors);
+            DestroyWaterfall(node, gridPosition, neighbors);
         }
     }
 
@@ -110,11 +110,15 @@ public class LaneDestructor : MonoBehaviour
     }
 
     // ::::: Destruction Waterfall
-    private void DestroyWaerfall(Node node, Vector2Int gridPosition, List<Vector2Int> neighbors)
+    private void DestroyWaterfall(Node node, Vector2Int gridPosition, List<Vector2Int> neighbors)
     {
+        lastNeighbors = graph.GetNeighborsPos(gridPosition);
+
         // Check Intersection
         foreach (Vector2Int neighbor in neighbors)
         {
+            graph.RemoveEdge(gridPosition, neighbor);
+
             List<Vector2Int> neighbors2 = graph.GetNeighborsPos(neighbor);
             foreach (Vector2Int neighbor2 in neighbors2)
             {
@@ -122,15 +126,10 @@ public class LaneDestructor : MonoBehaviour
                 if (node2 != null)
                 {
                     if (node2.intersectionEdges.Contains(gridPosition))
-                        graph.RemoveIntersection(node, gridPosition, node2, neighbor2);
+                        graph.RemoveIntersection(node, gridPosition, neighbor, node2, neighbor2);
                 }
             }
         }
-
-        lastNeighbors = graph.GetNeighborsPos(gridPosition);
-
-        foreach (Vector2Int neighbor in neighbors)
-            graph.RemoveEdge(gridPosition, neighbor);
 
         MaterialManager.Instance.AddMaterial(1);
         if (destroySFXCoroutine == null)

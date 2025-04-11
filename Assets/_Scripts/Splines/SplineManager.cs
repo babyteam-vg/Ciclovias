@@ -18,8 +18,10 @@ public class SplineManager : MonoBehaviour
 
     [SerializeField] private List<IntersectionEntry> intersectionsList = new List<IntersectionEntry>();
     private Dictionary<Vector3, Intersection> intersections = new Dictionary<Vector3, Intersection>();
+    private HashSet<Spline> sealedSplines = new HashSet<Spline>();
 
     public event Action<Spline> SplineUpdated;
+    public event Action<Spline> SplineSealed;
 
     // :::::::::: MONO METHODS ::::::::::
     private void OnEnable()
@@ -980,14 +982,35 @@ public class SplineManager : MonoBehaviour
     // ::::: Task Sealed
     private void OnTaskSealed(Task task)
     {
-        
+        List<Vector2Int> path = task.path;
+        foreach (Vector2Int pos in path)
+        {
+            Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            (Spline spline, int index) = FindKnotAndSpline(worldPos);
+            if (spline != null) SealSpline(spline);
+        }
+
     }
 
     // ::::: Tutorial Section Completed
     private void OnTutorialSealed(List<Vector2Int> path)
     {
-        
+        foreach (Vector2Int pos in path)
+        {
+            Vector3 worldPos = grid.GetWorldPositionFromCellCentered(pos.x, pos.y);
+            (Spline spline, int index) = FindKnotAndSpline(worldPos);
+            if (spline != null) SealSpline(spline);
+        }
     }
+
+    public void SealSpline(Spline spline)
+    {
+        if (sealedSplines.Add(spline))
+            SplineSealed?.Invoke(spline);
+
+    }
+
+    public bool IsSplineSealed(Spline spline) { return sealedSplines.Contains(spline); }
 
     // :::::::::: STORAGE METHODS ::::::::::
     // ::::: Spline -> SplineData
